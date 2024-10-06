@@ -158,10 +158,14 @@ form {
 .stepCard {
     background-color: #6EC207;
     color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 20px;
     padding-left: 2%;
     padding-right: 2%;
     cursor: pointer;
+    min-width: 200px;
 }
 
 .cardUpload {
@@ -220,25 +224,41 @@ form {
     cursor: pointer;
 }
 
-.left {
-    width: 30%;
-    padding: 2%;
-}
 
 .imgDiv {
     border: 2px dashed #6EC207;
-    width: 100%;
-    height: 250px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #6EC207;
-    border-radius: 10px;
+    user-select: none;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
 }
 
+.imgDiv img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+}
 
-.right {
+#submittedDiv {
+    display: flex;
+    flex-direction: column;
+    gap: 2%;
+    align-items: center;
+    height: 100%;
     width: 100%;
+    justify-content: center;
+}
+
+#submittedDiv h1 {
+    font-size: 20pt;
+    margin: 0;
 }
 
 

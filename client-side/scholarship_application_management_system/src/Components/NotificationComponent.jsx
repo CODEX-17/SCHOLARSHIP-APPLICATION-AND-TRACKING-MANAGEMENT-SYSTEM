@@ -1,11 +1,17 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import style from './NotificationComponent.module.css'
 import { FaCircleCheck } from "react-icons/fa6";
 import { TbXboxXFilled } from "react-icons/tb";
 
 const NotificationComponent = ({ message, status }) => {
 
-  const finalMessage = message ? message : 'No notification..'
+  const [finalMessage, setFinalMessage] = useState(message)
+
+  useEffect(() => {
+    setFinalMessage(message)
+  },[])
+
+  
   const finalStatus = status ? status : true
     
   return (

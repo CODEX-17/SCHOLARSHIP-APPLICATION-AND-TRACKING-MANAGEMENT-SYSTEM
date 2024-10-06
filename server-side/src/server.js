@@ -2,11 +2,19 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const http = require('http')
+const dotenv = require('dotenv');
+
+
+dotenv.config();
 
 const corsOptions = {
-    origin: '*', 
-    credentials: true,
+    origin: 'http://localhost:5173',  // Allow the frontend origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Allow these methods
+    allowedHeaders: ['Content-Type', 'Authorization'],  // Allow specific headers
+    credentials: true,  // Allow cookies or authentication headers (if necessary)
 }
+
+
 
 //middleware//
 const app = express()
@@ -18,9 +26,15 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static('uploads'))
 const server = http.createServer(app)
 
-//const accountRoutes = require('./Routes/accountRoutes')
 
-//app.use('/account', accountRoutes)
+
+const profilesRoutes = require('./routes/profileRoutes')
+const accountsRoutes = require('./routes/accountsRoutes')
+
+app.use('/profiles', profilesRoutes)
+app.use('/accounts', accountsRoutes)
+
+app.options('/accounts/checkAccounts', cors());  // Enable preflight CORS for this route
 
 
 // database connection//

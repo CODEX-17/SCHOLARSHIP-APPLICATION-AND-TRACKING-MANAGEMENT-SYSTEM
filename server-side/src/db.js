@@ -1,13 +1,17 @@
-const mysql = require('mysql')
+const mysql = require('mysql2'); 
+const dotenv = require('dotenv')
 
-const pool = mysql.createPool(
-    {
-        connectionLimit: 10,
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'scholarship-management-system'
-    }
-)
+dotenv.config();
+
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: '',
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+  });
+  
 
 module.exports = pool

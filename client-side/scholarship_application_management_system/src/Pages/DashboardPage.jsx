@@ -1,12 +1,23 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import style from './DashboardPage.module.css'
 import logo from '../assets/tabuk_logo.png'
 import { GiHamburgerMenu } from "react-icons/gi";
 import { BiLogOutCircle } from "react-icons/bi";
+import RequestPage from './RequestPage';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardPage = () => {
 
   const [isShowSideBar, setIsShowSideBar] = useState(true)
+  const [activeDisplay, setActiveDisplay] = useState('dashboard')
+  const navigate = useNavigate()
+  const user = JSON.parse(localStorage.getItem('user')) || null
+
+  useEffect(() => {
+    if (!user) {
+       navigate('/')
+    }
+  },[])
 
   return (
     <div className={style.container}>
@@ -22,13 +33,17 @@ const DashboardPage = () => {
                     <GiHamburgerMenu size={25} cursor={'pointer'} title='hide sidebar' onClick={() => setIsShowSideBar(!isShowSideBar)}/>
                 </div>
                 <div className={style.profile}>
-                    <img src={logo} alt="profile" />
-                    <h1>Mark Reyes</h1>
+                    <img src={'http://localhost:5001/'+user?.image} alt="profile" />
+                    <h1>{user?.firstname + ' ' + user?.lastname}</h1>
                     <button>Manage Account</button>
                 </div>
                 <div className={style.menus}>
-                    <button className={style.card}>Dashboard</button>
-                    <button className={style.card}>Dashboard</button>
+                    <button className={activeDisplay === 'dashboard' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('dashboard')}>Dashboard</button>
+                    {
+                        user && user.type === 'admin' && 
+                        <button className={activeDisplay === 'request' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('request')}>Request</button>
+                    }
+                    
                 </div>
             </div>   
         )
@@ -39,9 +54,13 @@ const DashboardPage = () => {
             {
                 !isShowSideBar &&  <GiHamburgerMenu size={25} cursor={'pointer'} title='hide sidebar' onClick={() => setIsShowSideBar(!isShowSideBar)}/>
             }
-            <BiLogOutCircle size={25} cursor={'pointer'} title='logout' id={style.btnLogout}/>
+            <BiLogOutCircle size={25} cursor={'pointer'} title='logout' id={style.btnLogout} onClick={() => {localStorage.clear(), navigate('/')}}/>
         </div>
-        <div className={style.display}>Display</div>
+        <div className={style.display}>
+            {
+                activeDisplay === 'request' && <RequestPage/> 
+            }
+        </div>
       </div>
     </div>
   )

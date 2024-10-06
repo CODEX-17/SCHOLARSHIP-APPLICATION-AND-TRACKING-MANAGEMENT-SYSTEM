@@ -25,6 +25,7 @@
     display: flex;
     background-color: #f2f6ee;
     animation: fade 0.5s ease-in-out;
+    position: relative;
 }
 
 .sideBar {
@@ -84,6 +85,10 @@
 .profile img {
     width: 200px;
     height: 200px;
+    object-fit: cover;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 2px solid #6EC207;
 }
 
 .profile button {
@@ -106,7 +111,7 @@
     padding: 5%;
 }
 
-.menus button {
+.btnMenu {
     border: 2px solid #6EC207;
     width: 100%;
     padding: 2%;
@@ -117,7 +122,18 @@
     margin-bottom: 10px;
 }
 
-.menus button:hover {
+.btnMenuActive {
+    border: none;
+    width: 100%;
+    padding: 2%;
+    border-radius: 5px;
+    color: white;
+    font-family: bold;
+    background-color: #6EC207;
+    margin-bottom: 10px;
+}
+
+.btnMenu:hover{
     background-color: #6EC207;
     color: white;
 }
@@ -151,6 +167,8 @@
 .content .display {
     height: 100%;
 }
+
+
 
 
 
