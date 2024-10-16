@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Oct 16, 2024 at 02:19 AM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 8.1.6
+-- Host: localhost
+-- Generation Time: Oct 16, 2024 at 10:14 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,25 +28,23 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `accounts` (
-  `id` int(10) NOT NULL,
-  `firstname` varchar(20) NOT NULL,
-  `middlename` varchar(20) NOT NULL,
-  `lastname` varchar(20) NOT NULL,
+  `user_id` varchar(255) NOT NULL,
+  `username` varchar(20) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `type` varchar(10) NOT NULL,
   `filename` varchar(200) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `accounts`
 --
 
-INSERT INTO `accounts` (`id`, `firstname`, `middlename`, `lastname`, `email`, `password`, `type`, `filename`) VALUES
-(22, 'Edmar', 'Reyes', 'Pajares', 'admin@gmail.com', 'sha1$2de89338$1$16103b41affb1aac3583897804928bb58b3693e3', 'admin', '1728202089909.png'),
-(23, 'juan', 'dela', 'cruz', 'scholarsoftabukcity@gmail.com', 'sha1$2de89338$1$16103b41affb1aac3583897804928bb58b3693e3', 'user', '1728235909292.png'),
-(24, 'rumar', 'dacasc', 'dasds', 'pamparor@gmail.com', 'sha1$39c25d58$1$91f3d82f37caa8f0b018c71f5c012c358ac89eaf', 'user', '1728379562499.jfif'),
-(25, 'rumar', 'dacasc', 'dasds', 'pamparor@gmail.com', 'sha1$e2fd6612$1$4786624316308ca294e08cd9e81a5595cbe884c2', 'user', '1728379573717.jfif');
+INSERT INTO `accounts` (`user_id`, `username`, `email`, `password`, `type`, `filename`) VALUES
+('22', 'Edmar', 'admin@gmail.com', 'sha1$2de89338$1$16103b41affb1aac3583897804928bb58b3693e3', 'admin', '1728202089909.png'),
+('23', 'juan', 'scholarsoftabukcity@gmail.com', 'sha1$2de89338$1$16103b41affb1aac3583897804928bb58b3693e3', 'user', '1728235909292.png'),
+('24', 'rumar', 'pamparor@gmail.com', 'sha1$39c25d58$1$91f3d82f37caa8f0b018c71f5c012c358ac89eaf', 'user', '1728379562499.jfif'),
+('25', 'rumar', 'pamparor@gmail.com', 'sha1$e2fd6612$1$4786624316308ca294e08cd9e81a5595cbe884c2', 'user', '1728379573717.jfif');
 
 -- --------------------------------------------------------
 
@@ -60,14 +58,14 @@ CREATE TABLE `files` (
   `date` date DEFAULT NULL,
   `time` time DEFAULT NULL,
   `file_path` varchar(255) DEFAULT NULL,
-  `fileID` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `file_id` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `files`
 --
 
-INSERT INTO `files` (`id`, `filename`, `date`, `time`, `file_path`, `fileID`) VALUES
+INSERT INTO `files` (`id`, `filename`, `date`, `time`, `file_path`, `file_id`) VALUES
 (32, '1728235909298.pdf', '2024-10-06', '10:23:22', '/uploads/1728235909298.pdf', 'aOpwchoT'),
 (33, '1728235909302.pdf', '2024-10-06', '10:23:22', '/uploads/1728235909302.pdf', 'aOpwchoT'),
 (34, '1728235909304.pdf', '2024-10-06', '10:23:22', '/uploads/1728235909304.pdf', 'aOpwchoT'),
@@ -126,7 +124,7 @@ CREATE TABLE `profile` (
   `parent_id` varchar(200) NOT NULL,
   `profilePic` varchar(200) NOT NULL,
   `status` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `profile`
@@ -145,7 +143,7 @@ INSERT INTO `profile` (`id`, `firstname`, `middlename`, `lastname`, `birthdate`,
 -- Indexes for table `accounts`
 --
 ALTER TABLE `accounts`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`user_id`);
 
 --
 -- Indexes for table `files`
@@ -162,12 +160,6 @@ ALTER TABLE `profile`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `accounts`
---
-ALTER TABLE `accounts`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `files`
