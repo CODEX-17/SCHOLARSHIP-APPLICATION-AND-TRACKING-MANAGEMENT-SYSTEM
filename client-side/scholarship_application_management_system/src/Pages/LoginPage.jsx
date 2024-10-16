@@ -83,7 +83,7 @@ const LoginPage = () => {
             }
             <button type='submit' style={{ marginTop: '20px' }}>Login</button>
         </div>
-        <p id={style.link} onClick={() => navigate('/application-form')}>Apply For Scholarship <IoIosArrowRoundForward size={20}/></p>
+        <p id={style.link} onClick={() => navigate('/application-form')}>Create Account <IoIosArrowRoundForward size={20}/></p>
       </form>
     </div>
   )

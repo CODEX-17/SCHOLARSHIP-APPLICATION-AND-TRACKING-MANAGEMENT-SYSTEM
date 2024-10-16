@@ -347,7 +347,7 @@ const ApplicationForm = () => {
                             </div>
                             <div className='d-flex w-100 align-items-center justify-content-between mb-2'>
                                 <div className='d-flex w-100 gap-5 align-items-center'>
-                                    <h1 style={{ margin: '0', color: '#6EC207' }}>{
+                                    <h1 style={{ margin: '0', color: '#6EC207', fontSize: '15pt' }}>{
                                         currentSteps === 1 && 'Personal Information' ||
                                         currentSteps === 2 && 'Family Background' ||
                                         currentSteps === 3 && 'Upload Files'
