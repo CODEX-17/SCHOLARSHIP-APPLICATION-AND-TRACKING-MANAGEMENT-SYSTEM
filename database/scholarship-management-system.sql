@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 07, 2024 at 03:00 PM
+-- Generation Time: Oct 16, 2024 at 02:19 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -44,7 +44,9 @@ CREATE TABLE `accounts` (
 
 INSERT INTO `accounts` (`id`, `firstname`, `middlename`, `lastname`, `email`, `password`, `type`, `filename`) VALUES
 (22, 'Edmar', 'Reyes', 'Pajares', 'admin@gmail.com', 'sha1$2de89338$1$16103b41affb1aac3583897804928bb58b3693e3', 'admin', '1728202089909.png'),
-(23, 'juan', 'dela', 'cruz', 'scholarsoftabukcity@gmail.com', 'sha1$2de89338$1$16103b41affb1aac3583897804928bb58b3693e3', 'user', '1728235909292.png');
+(23, 'juan', 'dela', 'cruz', 'scholarsoftabukcity@gmail.com', 'sha1$2de89338$1$16103b41affb1aac3583897804928bb58b3693e3', 'user', '1728235909292.png'),
+(24, 'rumar', 'dacasc', 'dasds', 'pamparor@gmail.com', 'sha1$39c25d58$1$91f3d82f37caa8f0b018c71f5c012c358ac89eaf', 'user', '1728379562499.jfif'),
+(25, 'rumar', 'dacasc', 'dasds', 'pamparor@gmail.com', 'sha1$e2fd6612$1$4786624316308ca294e08cd9e81a5595cbe884c2', 'user', '1728379573717.jfif');
 
 -- --------------------------------------------------------
 
@@ -72,7 +74,19 @@ INSERT INTO `files` (`id`, `filename`, `date`, `time`, `file_path`, `fileID`) VA
 (35, '1728235909308.pdf', '2024-10-06', '10:23:22', '/uploads/1728235909308.pdf', 'aOpwchoT'),
 (36, '1728235909321.pdf', '2024-10-06', '10:23:22', '/uploads/1728235909321.pdf', 'aOpwchoT'),
 (37, '1728202089909.png', '2024-10-06', '10:24:05', '/uploads/1728202089909.png', 'cvnqQcnO'),
-(38, '1728235909292.png', '2024-10-06', '10:24:05', '/uploads/1728235909292.png', 'cvnqQcnO');
+(38, '1728235909292.png', '2024-10-06', '10:24:05', '/uploads/1728235909292.png', 'cvnqQcnO'),
+(139, '1728379562499.jfif', '2024-10-08', '17:26:02', '/uploads/1728379562499.jfif', 'TUvf9eXv'),
+(140, '1728379562499.pdf', '2024-10-08', '17:26:02', '/uploads/1728379562499.pdf', 'TUvf9eXv'),
+(141, '1728379562534.pdf', '2024-10-08', '17:26:02', '/uploads/1728379562534.pdf', 'TUvf9eXv'),
+(142, '1728379562541.pdf', '2024-10-08', '17:26:02', '/uploads/1728379562541.pdf', 'TUvf9eXv'),
+(143, '1728379562548.pdf', '2024-10-08', '17:26:02', '/uploads/1728379562548.pdf', 'TUvf9eXv'),
+(144, '1728379562556.pdf', '2024-10-08', '17:26:02', '/uploads/1728379562556.pdf', 'TUvf9eXv'),
+(145, '1728379573717.jfif', '2024-10-08', '17:26:13', '/uploads/1728379573717.jfif', 'Ik7bucPI'),
+(146, '1728379573717.pdf', '2024-10-08', '17:26:13', '/uploads/1728379573717.pdf', 'Ik7bucPI'),
+(147, '1728379573736.pdf', '2024-10-08', '17:26:13', '/uploads/1728379573736.pdf', 'Ik7bucPI'),
+(148, '1728379573740.pdf', '2024-10-08', '17:26:13', '/uploads/1728379573740.pdf', 'Ik7bucPI'),
+(149, '1728379573750.pdf', '2024-10-08', '17:26:13', '/uploads/1728379573750.pdf', 'Ik7bucPI'),
+(150, '1728379573764.pdf', '2024-10-08', '17:26:13', '/uploads/1728379573764.pdf', 'Ik7bucPI');
 
 -- --------------------------------------------------------
 
@@ -119,7 +133,9 @@ CREATE TABLE `profile` (
 --
 
 INSERT INTO `profile` (`id`, `firstname`, `middlename`, `lastname`, `birthdate`, `gender`, `civil_status`, `current_address`, `permanent_address`, `contact`, `mother_firstname`, `mother_middlename`, `mother_lastname`, `mother_current_address`, `mother_permanent_address`, `mother_contact_number`, `mother_registered_voter`, `father_firstname`, `father_middlename`, `father_lastname`, `father_current_address`, `father_permanent_address`, `father_contact_number`, `father_registered_voter`, `coe_file`, `brgy_indigency`, `cog_file`, `school_id`, `parent_id`, `profilePic`, `status`) VALUES
-(24, 'juan', 'dela', 'cruz', '2000-01-02', 'male', 'single', 'SAN GABRIEL', 'san gabriel tuguegarao city cagayan', '09123456789', 'Juliet', 'reyes', 'dela', 'san gabriel tuguegarao city cagayan', 'san gabriel tuguegarao city cagayan', '09123456789', 0, 'ANTHONY', 'perez', 'cruz', 'san gabriel tuguegarao city cagayan', 'san gabriel tuguegarao city cagayan', '09789456132', 0, '1728235909298.pdf', '1728235909302.pdf', '1728235909304.pdf', '1728235909321.pdf', '1728235909308.pdf', '1728235909292.png', 'pending');
+(24, 'juan', 'dela', 'cruz', '2000-01-02', 'male', 'single', 'SAN GABRIEL', 'san gabriel tuguegarao city cagayan', '09123456789', 'Juliet', 'reyes', 'dela', 'san gabriel tuguegarao city cagayan', 'san gabriel tuguegarao city cagayan', '09123456789', 0, 'ANTHONY', 'perez', 'cruz', 'san gabriel tuguegarao city cagayan', 'san gabriel tuguegarao city cagayan', '09789456132', 0, '1728235909298.pdf', '1728235909302.pdf', '1728235909304.pdf', '1728235909321.pdf', '1728235909308.pdf', '1728235909292.png', 'pending'),
+(25, 'rumar', 'dacasc', 'dasds', '2024-10-09', 'male', 'single', 'dasds', 'asdasdsd', '2098451', 'sdasd', 'dasdas', 'dasdasds', 'dasdasd', 'asdasds', '08988455626456', 0, 'asdasd', 'asdas', 'dasdasd', 'dasdasd', 'asdasdas', '09666666565', 0, '1728379562499.pdf', '1728379562534.pdf', '1728379562541.pdf', '1728379562556.pdf', '1728379562548.pdf', '1728379562499.jfif', ''),
+(26, 'rumar', 'dacasc', 'dasds', '2024-10-09', 'male', 'single', 'dasds', 'asdasdsd', '2098451', 'sdasd', 'dasdas', 'dasdasds', 'dasdasd', 'asdasds', '08988455626456', 0, 'asdasd', 'asdas', 'dasdasd', 'dasdasd', 'asdasdas', '09666666565', 0, '1728379573717.pdf', '1728379573736.pdf', '1728379573740.pdf', '1728379573764.pdf', '1728379573750.pdf', '1728379573717.jfif', '');
 
 --
 -- Indexes for dumped tables
@@ -151,19 +167,19 @@ ALTER TABLE `profile`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
 
 --
 -- AUTO_INCREMENT for table `profile`
 --
 ALTER TABLE `profile`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
