@@ -36,11 +36,10 @@ router.post('/checkAccounts', async (req, res) => {
             if (passwordHash.verify(password, hashPassword)) {
                 // Send user data as response
                 return res.status(200).json({
+                    user_id: user.user_id,
                     email: user.email,
                     type: user.type,
-                    firstname: user.firstname,
-                    middlename: user.middlename,
-                    lastname: user.lastname,
+                    username: user.username,
                     image: user.filename,
                     // other fields you may need to return
                 });
@@ -59,6 +58,21 @@ router.post('/checkAccounts', async (req, res) => {
     }
 });
 
+//Get all emails in db
+router.get('/getAllEmails', (req, res) => {
+    const query = 'SELECT email FROM accounts'
+
+    pool.query(query, (error, result) => {
+        if (error) {
+            console.log(error)
+            res.status(400).send(error)
+        }
+
+        res.status(200).json(result)
+    })
+})
+
+
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
@@ -73,11 +87,11 @@ const upload = multer({ storage: storage });
 //Create account
 router.post('/createAccount', upload.single('file'), (req, res) => {
     const { email, password, username } = req.body;
-    const profilePic = req.file['file'] ? req.file['file'][0].filename : 'default';
+    const profilePic = req.file ? req.file.filename : 'default';
 
-    const query = 'INSERT INTO accounts(user_id, email, password, username, filename) VALUES(?,?,?,?,?)';
+    const query = 'INSERT INTO accounts(user_id, email, password, username, type, filename) VALUES(?,?,?,?,?,?)';
 
-    pool.query(query, [generateUniqueId(), email, passwordHash.generate(password), username, profilePic], (error, result) => {
+    pool.query(query, [generateUniqueId(), email, passwordHash.generate(password), username, 'user', profilePic], (error, result) => {
         if (error) {
             console.error(error)
             res.status(400).send(error)
@@ -85,7 +99,7 @@ router.post('/createAccount', upload.single('file'), (req, res) => {
 
             if (profilePic !== 'default') {
                 const fileSql = `
-                    INSERT INTO files (filename, date, time, file_path, fileID)
+                    INSERT INTO files (filename, date, time, file_path, file_id)
                     VALUES (?, CURDATE(), CURTIME(), ?, ?)
                 `;
 
@@ -107,6 +121,30 @@ router.post('/createAccount', upload.single('file'), (req, res) => {
         }
     })
 
+});
+
+router.post('/deleteProfiles', (req, res) => {
+    const { id } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ message: 'Profile ID is required' });
+    }
+
+    const query = 'DELETE FROM profile WHERE profile_id=?';
+
+    pool.query(query, [id], (error, result) => {
+        if (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Error deleting profile' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Profile not found' });
+        }
+
+        console.log('Successfully deleted profile.');
+        return res.status(200).json({ message: 'Successfully deleted profile.' });
+    });
 });
 
 module.exports = router

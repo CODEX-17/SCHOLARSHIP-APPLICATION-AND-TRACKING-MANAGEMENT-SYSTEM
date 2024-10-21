@@ -136,6 +136,21 @@ form {
     margin: 0;
 }
 
+.loadingDiv, .successDiv {
+  display: flex;
+  width: 100%;
+  height: 100%; 
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5%;
+}
+
+.loadingDiv h1, .successDiv h1 {
+  margin: 0;
+  font-size: 15pt;
+  color: #6EC207;
+}
 
 
 

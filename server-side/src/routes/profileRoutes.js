@@ -4,6 +4,7 @@ const pool = require('../db').promise();
 const path = require('path');
 const multer = require('multer');
 const passwordHash = require('password-hash')
+const { v4: uuidv4 } = require('uuid');
 
 const nodemailer = require('nodemailer');
 const emailPassword = 'sokb hpyq oevl gmkl';
@@ -14,19 +15,11 @@ const transporter = nodemailer.createTransport({
       user: 'librarysmart69@gmail.com',
       pass: emailPassword
     }
-  });
+});
 
-// Function to generate unique imageID
+//generates a unique identifier
 const generateUniqueId = () => {
-    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const length = 8;
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * charset.length);
-        result += charset.charAt(randomIndex);
-    }
-
-    return result;
+  return uuidv4();
 };
 
 // Multer setup for file uploads
@@ -43,31 +36,32 @@ router.post('/addProfiles', upload.fields([
     { name: 'coeFile', maxCount: 1 },
     { name: 'brgyIndigencyFile', maxCount: 1 },
     { name: 'cogFile', maxCount: 1 },
-    { name: 'parentIDFile', maxCount: 1 },
     { name: 'schoolIDFile', maxCount: 1 },
-    { name: 'profilePic', maxCount: 1 } // Profile picture upload
+    { name: 'parentIDFile', maxCount: 1 }
   ]), async (req, res) => {
+
+    console.log(req.body)
+
+    const profile_id = generateUniqueId();
+    const status = 'pending';
+
     const {
-      firstname, middlename, lastname, birthdate, gender, civilStatus,
-      currentAddress, permanentAddress, contact,
+      user_id, email, firstname, middlename, lastname, birthdate, gender, civil_status,
+      current_address, permanent_address, contact,
       mother_firstname, mother_middlename, mother_lastname,
-      mother_currentAddress, mother_permanentAddress, mother_contact, mother_voters,
+      mother_current_address, mother_permanent_address, mother_contact_number, mother_registered_voter, mother_voting_years,
       father_firstname, father_middlename, father_lastname,
-      father_currentAddress, father_permanentAddress, father_contact, father_voters,
-      email, password // Include email and password here
+      father_current_address, father_permanent_address, father_contact_number, father_registered_voter, father_voting_years, profile_picture
     } = req.body;
-  
+
+
     const coeFile = req.files['coeFile'] ? req.files['coeFile'][0].filename : null;
     const brgyIndigencyFile = req.files['brgyIndigencyFile'] ? req.files['brgyIndigencyFile'][0].filename : null;
     const cogFile = req.files['cogFile'] ? req.files['cogFile'][0].filename : null;
     const parentIDFile = req.files['parentIDFile'] ? req.files['parentIDFile'][0].filename : null;
     const schoolIDFile = req.files['schoolIDFile'] ? req.files['schoolIDFile'][0].filename : null;
-    const profilePic = req.files['profilePic'] ? req.files['profilePic'][0].filename : null;
-  
-    console.log(profilePic)
 
-    const fileID = generateUniqueId(); // Generate a unique fileID for all files
-    const hashedPassword = passwordHash.generate(password); // Hash the password before storing
+    const file_id = generateUniqueId(); // Generate a unique fileID for all files
   
     // Use a connection from the pool
     const connection = await pool.getConnection();
@@ -76,59 +70,48 @@ router.post('/addProfiles', upload.fields([
   
       // Insert form data into profile table
     const profileSql = `
-        INSERT INTO profile (
-            firstname, middlename, lastname, birthdate, gender, civil_status,
-            current_address, permanent_address, contact,
-            mother_firstname, mother_middlename, mother_lastname,
-            mother_current_address, mother_permanent_address, mother_contact_number, mother_registered_voter,
-            father_firstname, father_middlename, father_lastname,
-            father_current_address, father_permanent_address, father_contact_number, father_registered_voter,
-            profilePic, parent_id, school_id, cog_file, brgy_indigency, coe_file
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       INSERT INTO profile (
+        profile_id, user_id, firstname, middlename, lastname, birthdate, gender, civil_status,
+        current_address, permanent_address, contact,
+        mother_firstname, mother_middlename, mother_lastname,
+        mother_current_address, mother_permanent_address, mother_contact_number, mother_registered_voter, mother_voting_years,
+        father_firstname, father_middlename, father_lastname,
+        father_current_address, father_permanent_address, father_contact_number, father_registered_voter, father_voting_years, profile_picture,
+        parent_id, school_id, cog_file, brgy_indigency, coe_file, status
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
     `;
 
     // Ensure that profileValues has the correct number of items
     const profileValues = [
-        firstname, middlename, lastname, birthdate, gender, civilStatus,
-        currentAddress, permanentAddress, contact,
+        profile_id, user_id, firstname, middlename, lastname, birthdate, gender, civil_status,
+        current_address, permanent_address, contact,
         mother_firstname, mother_middlename, mother_lastname,
-        mother_currentAddress, mother_permanentAddress, mother_contact, mother_voters,
+        mother_current_address, mother_permanent_address, mother_contact_number, mother_registered_voter, mother_voting_years,
         father_firstname, father_middlename, father_lastname,
-        father_currentAddress, father_permanentAddress, father_contact, father_voters,
-        profilePic ? profilePic : null, // Store fileID for profile picture
+        father_current_address, father_permanent_address, father_contact_number, father_registered_voter, father_voting_years, profile_picture,
         parentIDFile ? parentIDFile : null, // Store fileID for parent ID file
         schoolIDFile ? schoolIDFile : null, // Store fileID for school ID file
         cogFile ? cogFile : null, // Store fileID for COG file
         brgyIndigencyFile ? brgyIndigencyFile : null, // Store fileID for Barangay Indigency file
-        coeFile ? coeFile : null // Store fileID for COE file
+        coeFile ? coeFile : null, // Store fileID for COE file
+        status
     ];
   
-        await connection.query(profileSql, profileValues); // Insert into profile
-  
-      // Insert into accounts table with email and hashed password
-      const accountSql = `
-        INSERT INTO accounts (firstname, middlename, lastname, email, password, type, filename)
-        VALUES (?, ?, ?, ?, ?, 'user', ?)
-      `;
-      
-      const accountValues = [firstname, middlename, lastname, email, hashedPassword, profilePic];
-  
-      await connection.query(accountSql, accountValues); // Insert into accounts
+      await connection.query(profileSql, profileValues); // Insert into profile
   
       // Function to insert files into the 'files' table
       const insertFile = async (filename) => {
         if (!filename) return; // Skip if no file uploaded
         const fileSql = `
-          INSERT INTO files (filename, date, time, file_path, fileID)
+          INSERT INTO files (filename, date, time, file_path, file_id)
           VALUES (?, CURDATE(), CURTIME(), ?, ?)
         `;
         
-        const fileValues = [filename, `/uploads/${filename}`, fileID];
+        const fileValues = [filename, `/uploads/${filename}`, file_id];
         await connection.query(fileSql, fileValues); // Insert file into files
       };
   
       // Insert all files into the 'files' table
-      await insertFile(profilePic);
       await insertFile(coeFile);
       await insertFile(brgyIndigencyFile);
       await insertFile(cogFile);
@@ -204,10 +187,35 @@ Admin`
             console.log(error)
             res.status(400).send(error)
         }
-        console.log(result)
+
         res.status(200).json(result)
     })
 
   })
+
+  router.post('/deleteProfiles', (req, res) => {
+    const { id } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ message: 'Profile ID is required' });
+    }
+
+    const query = 'DELETE FROM profile WHERE profile_id=?';
+
+    pool.query(query, [id], (error, result) => {
+        if (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Error deleting profile' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Profile not found' });
+        }
+
+        console.log('Successfully deleted profile.');
+        return res.status(200).json({ message: 'Successfully deleted profile.' });
+    });
+});
+
 
 module.exports = router

@@ -8,211 +8,198 @@ import axios from 'axios'
 
 const ApplicationForm = () => {
 
-  const navigate = useNavigate()
+    const navigate = useNavigate()
 
-  const [isShowSubmitted, setIisShowSubmitted] = useState(false)
-  const [currentSteps, setCurrentSteps] = useState(1)
-  const [message, setMessage] = useState('')
-  const [messageStatus, setMessageStatus] = useState(true)
-
-  const [isBtnEnabled, setIsBtnEnabled] = useState(true)
-  const fileInput = useRef(null)
-
-  // personal information variables
-  const [firstname, setFirstname] = useState('') 
-  const [middlename, setMiddlename] = useState('') 
-  const [lastname, setLastname] = useState('')
-  const [birthdate, setBirthdate] = useState('') 
-  const [gender, setGender] = useState('')
-  const [contact, setContact] = useState('')
-  const [civilStatus, setCivilStatus] = useState('')
-  const [currentAddress, setCurrentAddress] = useState('')
-  const [permanentAddress, setPermanentAddress] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [profilePic, setProfilePic] = useState(null)
+    const [isShowSubmitted, setIisShowSubmitted] = useState(false)
+    const [currentSteps, setCurrentSteps] = useState(1)
+    const [message, setMessage] = useState('')
+    const [messageStatus, setMessageStatus] = useState(true)
   
- // family background variables
- // mother
- const [mfirstname, setMFirstname] = useState('') 
- const [mmiddlename, setMMiddlename] = useState('') 
- const [mlastname, setMLastname] = useState('')
- const [mcurrentAddress, setMCurrentAddress] = useState('')
- const [mpermanentAddress, setMPermanentAddress] = useState('')
- const [mcontact, setMContact] = useState(0)
- const [mVoters, setMVoters] = useState(false)
- const [mLong, setMLong] = useState(0)
+    const [isBtnEnabled, setIsBtnEnabled] = useState(true)
+    const fileInput = useRef(null)
 
-  // father
-  const [ffirstname, setFFirstname] = useState('') 
-  const [fmiddlename, setFMiddlename] = useState('') 
-  const [flastname, setFLastname] = useState('')
-  const [fcurrentAddress, setFCurrentAddress] = useState('')
-  const [fpermanentAddress, setFPermanentAddress] = useState('')
-  const [fcontact, setFContact] = useState(0)
-  const [fVoters, setFVoters] = useState(false)
-  const [fLong, setFLong] = useState(0)
+    const [requestList, setRequestList] = useState([])
 
-  // files variables
-  const [coeFile, setCoeFile] = useState(null)
-  const [brgyIndigencyFile, setBrgyIndigencyFile] = useState(null)
-  const [cogFile, setCogFile] = useState(null)
-  const [parentIDFile, setParentIDFile] = useState(null)
-  const [schoolIDFile, setSchoolIDFile] = useState(null)
-
-
-  // password requirements variables
-  const [mixChar, setMixChar] = useState(false)
-  const [specialChar, setSpecialChar] = useState(false)
-  const [validLenghtChar, setValidLenghtChar] = useState(false)
-
-  const hasLowerAndUpperCase = (value) => {
-    return /[a-z]/.test(value) && /[A-Z]/.test(value)
+    const userDetails = JSON.parse(localStorage.getItem('user')) || null
+  
+    // personal information variables
+    const [firstname, setFirstname] = useState('') 
+    const [middlename, setMiddlename] = useState('') 
+    const [lastname, setLastname] = useState('')
+    const [birthdate, setBirthdate] = useState('') 
+    const [gender, setGender] = useState('')
+    const [contact, setContact] = useState('')
+    const [civilStatus, setCivilStatus] = useState('')
+    const [currentAddress, setCurrentAddress] = useState('')
+    const [permanentAddress, setPermanentAddress] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [profilePic, setProfilePic] = useState(null)
     
-  }
-
-  const hasNumberAndSymbols = (value) => {
-    return /[0-9]/.test(value) && /[!@#$%^&*()]/.test(value)
-  }
-
-  useEffect(() => {
-
-    console.log({
-        firstname,
-        middlename,
-        lastname,
-        birthdate,
-        gender,
-        civilStatus,
-        currentAddress,
-        permanentAddress,
-        email,
-        password,
-        mfirstname,
-        mmiddlename,
-        mlastname,
-        mcurrentAddress,
-        mpermanentAddress,
-        mcontact,
-        mVoters,
-        mLong,
-        ffirstname,
-        fmiddlename,
-        flastname,
-        fcurrentAddress,
-        fpermanentAddress,
-        fcontact,
-        fVoters,
-        fLong,
-        coeFile,
-        brgyIndigencyFile,
-        cogFile,
-        schoolIDFile,
-        parentIDFile,
-        mixChar, 
-        specialChar, 
-        validLenghtChar
-  })
-
-    if (password) {
-
-        if (password=== '') {
-            setValidLenghtChar(false)
-            setSpecialChar(false)
-            setMixChar(false)
-        }
-
-        if (password.length > 11) {
-            setValidLenghtChar(true)
-        }else {
-            setValidLenghtChar(false)
-        }
-
-        if (hasLowerAndUpperCase(password)) {
-            setMixChar(true)
-        }else {
-            setMixChar(false)
-        }
-
-        if (hasNumberAndSymbols(password)) {
-            setSpecialChar(true)
-        }else {
-            setSpecialChar(false)
-        }
-
-        
+   // family background variables
+   // mother
+   const [mfirstname, setMFirstname] = useState('') 
+   const [mmiddlename, setMMiddlename] = useState('') 
+   const [mlastname, setMLastname] = useState('')
+   const [mcurrentAddress, setMCurrentAddress] = useState('')
+   const [mpermanentAddress, setMPermanentAddress] = useState('')
+   const [mcontact, setMContact] = useState(0)
+   const [mVoters, setMVoters] = useState(false)
+   const [mLong, setMLong] = useState(0)
+  
+    // father
+    const [ffirstname, setFFirstname] = useState('') 
+    const [fmiddlename, setFMiddlename] = useState('') 
+    const [flastname, setFLastname] = useState('')
+    const [fcurrentAddress, setFCurrentAddress] = useState('')
+    const [fpermanentAddress, setFPermanentAddress] = useState('')
+    const [fcontact, setFContact] = useState(0)
+    const [fVoters, setFVoters] = useState(false)
+    const [fLong, setFLong] = useState(0)
+  
+    // files variables
+    const [coeFile, setCoeFile] = useState(null)
+    const [brgyIndigencyFile, setBrgyIndigencyFile] = useState(null)
+    const [cogFile, setCogFile] = useState(null)
+    const [parentIDFile, setParentIDFile] = useState(null)
+    const [schoolIDFile, setSchoolIDFile] = useState(null)
+  
+  
+    // password requirements variables
+    const [mixChar, setMixChar] = useState(false)
+    const [specialChar, setSpecialChar] = useState(false)
+    const [validLenghtChar, setValidLenghtChar] = useState(false)
+  
+    const hasLowerAndUpperCase = (value) => {
+      return /[a-z]/.test(value) && /[A-Z]/.test(value)
+      
+    }
+  
+    const hasNumberAndSymbols = (value) => {
+      return /[0-9]/.test(value) && /[!@#$%^&*()]/.test(value)
     }
 
-    if (firstname &&
-        middlename &&
-        lastname &&
-        birthdate &&
-        gender &&
-        civilStatus &&
-        currentAddress &&
-        permanentAddress &&
-        email &&
-        password &&
-        mfirstname &&
-        mmiddlename &&
-        mlastname &&
-        mcurrentAddress &&
-        mpermanentAddress &&
-        mcontact &&
-        mVoters &&
-        mLong &&
-        ffirstname &&
-        fmiddlename &&
-        flastname &&
-        fcurrentAddress &&
-        fpermanentAddress &&
-        fcontact &&
-        fVoters &&
-        fLong &&
-        coeFile &&
-        brgyIndigencyFile &&
-        cogFile &&
-        schoolIDFile &&
-        parentIDFile && 
-        mixChar && 
-        specialChar && 
-        validLenghtChar
-    ) {
-        setIsBtnEnabled(false)
-    }
+    useEffect(() => {
+        axios.get('http://localhost:5001/profiles/getProfiles')
+        .then(res => {
+            const result = res.data
+            setRequestList(result)
 
-  },[
-    firstname,
-    middlename,
-    lastname,
-    birthdate,
-    gender,
-    civilStatus,
-    currentAddress,
-    permanentAddress,
-    email,
-    password,
-    mfirstname,
-    mmiddlename,
-    mlastname,
-    mcurrentAddress,
-    mpermanentAddress,
-    mcontact,
-    mVoters,
-    mLong,
-    ffirstname,
-    fmiddlename,
-    flastname,
-    fcurrentAddress,
-    fpermanentAddress,
-    fcontact,
-    fVoters,
-    fLong,
-    coeFile,
-    brgyIndigencyFile,
-    cogFile,
-    schoolIDFile,
-    parentIDFile
+            if (result) {
+                for (let i = 0; i < result.length; i++) {
+                    const current_user_id = result[i].user_id;
+
+                    if (current_user_id === userDetails.user_id) {
+                        setIisShowSubmitted(true)
+                    }
+                    
+                }
+            }
+        })
+        .catch(err => console.log(err))
+    },[])
+  
+    useEffect(() => {
+
+      if (password) {
+  
+          if (password=== '') {
+              setValidLenghtChar(false)
+              setSpecialChar(false)
+              setMixChar(false)
+          }
+  
+          if (password.length > 11) {
+              setValidLenghtChar(true)
+          }else {
+              setValidLenghtChar(false)
+          }
+  
+          if (hasLowerAndUpperCase(password)) {
+              setMixChar(true)
+          }else {
+              setMixChar(false)
+          }
+  
+          if (hasNumberAndSymbols(password)) {
+              setSpecialChar(true)
+          }else {
+              setSpecialChar(false)
+          }
+  
+          
+      }
+  
+      if (firstname &&
+          middlename &&
+          lastname &&
+          birthdate &&
+          gender &&
+          civilStatus &&
+          currentAddress &&
+          permanentAddress &&
+          email &&
+          password &&
+          mfirstname &&
+          mmiddlename &&
+          mlastname &&
+          mcurrentAddress &&
+          mpermanentAddress &&
+          mcontact &&
+          mVoters &&
+          mLong &&
+          ffirstname &&
+          fmiddlename &&
+          flastname &&
+          fcurrentAddress &&
+          fpermanentAddress &&
+          fcontact &&
+          fVoters &&
+          fLong &&
+          coeFile &&
+          brgyIndigencyFile &&
+          cogFile &&
+          schoolIDFile &&
+          parentIDFile && 
+          mixChar && 
+          specialChar && 
+          validLenghtChar
+      ) {
+          setIsBtnEnabled(false)
+      }
+  
+    },[
+      firstname,
+      middlename,
+      lastname,
+      birthdate,
+      gender,
+      civilStatus,
+      currentAddress,
+      permanentAddress,
+      email,
+      password,
+      mfirstname,
+      mmiddlename,
+      mlastname,
+      mcurrentAddress,
+      mpermanentAddress,
+      mcontact,
+      mVoters,
+      mLong,
+      ffirstname,
+      fmiddlename,
+      flastname,
+      fcurrentAddress,
+      fpermanentAddress,
+      fcontact,
+      fVoters,
+      fLong,
+      coeFile,
+      brgyIndigencyFile,
+      cogFile,
+      schoolIDFile,
+      parentIDFile
   ])
 
   const handleFileUpload = (e, type) => {
@@ -242,75 +229,78 @@ const ApplicationForm = () => {
 
     const formData = new FormData()
 
-     // Append personal information
-  formData.append('firstname', firstname);
-  formData.append('middlename', middlename);
-  formData.append('lastname', lastname);
-  formData.append('birthdate', birthdate);
-  formData.append('gender', gender);
-  formData.append('civilStatus', civilStatus);
-  formData.append('currentAddress', currentAddress);
-  formData.append('permanentAddress', permanentAddress);
-  formData.append('email', email);
-  formData.append('contact', contact);
-  formData.append('password', password);
+    // Append personal information
+    formData.append('user_id', userDetails && userDetails.user_id);
+    formData.append('email', userDetails && userDetails.email);
+    formData.append('firstname', firstname);
+    formData.append('middlename', middlename);
+    formData.append('lastname', lastname);
+    formData.append('birthdate', birthdate);
+    formData.append('gender', gender);
+    formData.append('civil_status', civilStatus);
+    formData.append('current_address', currentAddress);
+    formData.append('permanent_address', permanentAddress);
+    formData.append('contact', contact);
 
-  // Append mother information
-  formData.append('mother_firstname', mfirstname);
-  formData.append('mother_middlename', mmiddlename);
-  formData.append('mother_lastname', mlastname);
-  formData.append('mother_currentAddress', mcurrentAddress);
-  formData.append('mother_permanentAddress', mpermanentAddress);
-  formData.append('mother_contact', mcontact);
-  formData.append('mother_voters', mVoters);
-  formData.append('mother_long', mLong);
+    // Append mother information
+    formData.append('mother_firstname', mfirstname);
+    formData.append('mother_middlename', mmiddlename);
+    formData.append('mother_lastname', mlastname);
+    formData.append('mother_current_address', mcurrentAddress);
+    formData.append('mother_permanent_address', mpermanentAddress);
+    formData.append('mother_contact_number', mcontact);
+    formData.append('mother_registered_voter', mVoters);
+    formData.append('mother_voting_years', mLong);
 
-  // Append father information
-  formData.append('father_firstname', ffirstname);
-  formData.append('father_middlename', fmiddlename);
-  formData.append('father_lastname', flastname);
-  formData.append('father_currentAddress', fcurrentAddress);
-  formData.append('father_permanentAddress', fpermanentAddress);
-  formData.append('father_contact', fcontact);
-  formData.append('father_voters', fVoters);
-  formData.append('father_long', fLong);
+    // Append father information
+    formData.append('father_firstname', ffirstname);
+    formData.append('father_middlename', fmiddlename);
+    formData.append('father_lastname', flastname);
+    formData.append('father_current_address', fcurrentAddress);
+    formData.append('father_permanent_address', fpermanentAddress);
+    formData.append('father_contact_number', fcontact);
+    formData.append('father_registered_voter', fVoters);
+    formData.append('father_voting_years', fLong);
 
-  // Append files
-  if (profilePic) {
-    formData.append('profilePic', profilePic);
-  }
-  if (coeFile) {
-    formData.append('coeFile', coeFile);
-  }
-  if (brgyIndigencyFile) {
-    formData.append('brgyIndigencyFile', brgyIndigencyFile);
-  }
-  if (cogFile) {
-    formData.append('cogFile', cogFile);
-  }
-  if (parentIDFile) {
-    formData.append('parentIDFile', parentIDFile);
-  }
-  if (schoolIDFile) {
-    formData.append('schoolIDFile', schoolIDFile);
-  }
+    // Append files
+    if (coeFile) {
+        formData.append('coeFile', coeFile);
+    }
+    if (brgyIndigencyFile) {
+        formData.append('brgyIndigencyFile', brgyIndigencyFile);
+    }
+    if (cogFile) {
+        formData.append('cogFile', cogFile);
+    }
+    if (parentIDFile) {
+        formData.append('parentIDFile', parentIDFile);
+    }
+    if (schoolIDFile) {
+        formData.append('schoolIDFile', schoolIDFile);
+    }
 
+    formData.append('profile_picture', userDetails.image);
     
+
     axios.post('http://localhost:5001/profiles/addProfiles', formData)
     .then((res) => {
         const result = res.data
         const message = result.message
-
         console.log(message)
-
         setIisShowSubmitted(true)
+
+        let updatedDetails = userDetails
+
+        updatedDetails.apply_status = 'pending'
+
+        localStorage.setItem('user', JSON.stringify(updatedDetails))
     })
     .catch((err) => console.log(err))
   }
 
   return (
     <div className={style.container}>
-       
+
         <form onSubmit={handleSubmit}>
             <h1 id={style.title}>Application Form For Scholarship</h1>
             <div className={style.card}>
@@ -385,6 +375,14 @@ const ApplicationForm = () => {
                                                 <input type="date" required value={birthdate} onChange={(e) => setBirthdate(e.target.value)}/>
                                             </div>
                                             <div className='d-flex gap-2 flex-column align-items-start w-50'>
+                                                <label>Contact Number</label>
+                                                <input type="tel" required value={contact} onChange={(e) => setContact(e.target.value)}/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='d-flex w-100'>
+                                        <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
+                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
                                                 <label>Gender</label>
                                                 <select required value={gender} onChange={(e) => setGender(e.target.value)}>
                                                     <option value="">Select gender</option>
@@ -408,10 +406,6 @@ const ApplicationForm = () => {
                                     <div className='d-flex w-100'>
                                         <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
                                             <div className='d-flex gap-2 flex-column align-items-start w-100'>
-                                                <label>Contact Number</label>
-                                                <input type="tel" required value={contact} onChange={(e) => setContact(e.target.value)}/>
-                                            </div>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-100'>
                                                 <label>Current Address</label>
                                                 <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={currentAddress} onChange={(e) => setCurrentAddress(e.target.value)}/>
                                             </div>
@@ -424,38 +418,6 @@ const ApplicationForm = () => {
                                                 <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={permanentAddress} onChange={(e) => setPermanentAddress(e.target.value)}/>
                                             </div>
                                         </div>
-                                    </div>
-        
-                                    <div className='d-flex w-100 mt-2'>
-                                        <h1 id={style.subtitle} style={{ color: '#6EC207' }}>Account Details</h1>
-                                    </div>
-                                    <div className='d-flex w-100'>
-                                        <div className='d-flex flex-column gap-2 w-100 align-items-center justify-content-center'>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-100'>
-                                                <label>Email</label>
-                                                <input type="email" value={email} placeholder='ex. sample@gmail.com' required onChange={(e) => setEmail(e.target.value)}/>
-                                            </div>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-100'>
-                                                <label>Password</label>
-                                                <input type="text" required value={password} onChange={(e) => setPassword(e.target.value)}/>
-                                            </div>
-                                            <div className='d-flex flex-column w-100'>
-                                                <p><FaCircleCheck color={validLenghtChar ? '#6EC207' : 'gray'}/> at least 12 characters long.</p>
-                                                <p><FaCircleCheck color={mixChar ? '#6EC207' : 'gray'}/> contains a mix of uppercase and lowercase letters.</p>
-                                                <p><FaCircleCheck color={specialChar ? '#6EC207' : 'gray'}/> includes numbers and special characters.</p>
-                                            </div>
-                                        </div>
-                                        <div className='d-flex p-2'>
-                                            <div className={style.imgDiv} onClick={() => fileInput.current.click()}>
-                                                {
-                                                    profilePic ? 
-                                                    <img src={URL.createObjectURL(profilePic)} alt="profile" /> :
-                                                    'Upload image here.'
-                                                }
-                                            </div>
-                                            <input type="file" ref={fileInput} style={{ display: 'none' }} onChange={(e) => setProfilePic(e.target.files[0])}/>
-                                        </div>
-                                        
                                     </div>
                                     
                                 </>
@@ -500,10 +462,10 @@ const ApplicationForm = () => {
                                     <div className='d-flex w-100 align-items-center justify-content-between gap-2'>
                                         <div className='d-flex flex-column w-50'>
                                             <div className='d-flex align-items-center gap-2'>
-                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required value={mVoters} onChange={(e) => setMVoters(e.target.value)}/>
-                                                <p>Are you registered voter of Tabuk City?</p>
+                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required value={mVoters} onChange={(e) => setMVoters(e.target.checked)}/>
+                                                <p>Are you registered voter of Tabuk City? For how many years?</p>
                                             </div>
-                                            <input type="number" maxLength={4} placeholder='How long ?' disabled={mVoters ? false : true} required={mVoters ? false : true} value={mLong} onChange={(e) => setMLong(e.target.value)}/>
+                                            <input type="number" maxLength={4} placeholder='How many years?' disabled={mVoters ? false : true} required={mVoters ? false : true} value={mLong} onChange={(e) => setMLong(e.target.value)}/>
                                         </div>
                                         <div className='d-flex gap-2 flex-column align-items-start w-50'>
                                             <label>Contact Number</label>
@@ -512,7 +474,7 @@ const ApplicationForm = () => {
                                         
                                     </div>
         
-                                    <div className='d-flex w-100 mt-5'>
+                                    <div className='d-flex w-100 mt-2'>
                                         <h1 id={style.subtitle}>Father Information</h1>
                                     </div>
                                     <div className='d-flex w-100 mb-0'>
@@ -548,10 +510,10 @@ const ApplicationForm = () => {
                                     <div className='d-flex w-100 align-items-center justify-content-between gap-2'>
                                         <div className='d-flex flex-column w-50'>
                                             <div className='d-flex align-items-center gap-2'>
-                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required value={fVoters} onChange={(e) => setFVoters(e.target.value)}/>
-                                                <p>Are you registered voter of Tabuk City?</p>
+                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required value={fVoters} onChange={(e) => setFVoters(e.target.checked)}/>
+                                                <p>Are you registered voter of Tabuk City? For how many years?</p>
                                             </div>
-                                            <input type="number" maxLength={4} placeholder='How long ?' disabled={fVoters ? false : true} required={mVoters ? false : true} value={fLong} onChange={(e) => setFLong(e.target.value)}/>
+                                            <input type="number" maxLength={4} placeholder='How many years?' disabled={fVoters ? false : true} required={mVoters ? false : true} value={fLong} onChange={(e) => setFLong(e.target.value)}/>
                                         </div>
                                         <div className='d-flex gap-2 flex-column align-items-start w-50'>
                                             <label>Contact Number</label>

@@ -66,22 +66,22 @@ const RequestPage = () => {
         },
         {
           title: 'Profile Picture',
-          dataIndex: 'profilePic',
-          key: 'profilePic',
-          render: (data) => <img id={style.profilePic} src={'http://localhost:5001/'+data} alt="Profile" width={50} height={50} />,
+          dataIndex: 'profile_picture',
+          key: 'profile_picture',
+          render: (data) => <img id={style.profilePic} src={'http://localhost:5001/' + data} alt="Profile" width={50} height={50} />,
         },
         {
             title: 'Action',
-            dataIndex: 'profilePic',
-            key: 'profilePic',
             render: (data, record) => 
             <div className='d-flex gap-2'>
                 <button className={style.btn} title='View Details' onClick={() => {setIsShowModal(true), setSelectedData(record), console.log(record)}}><AiFillProfile size={15}/> View</button>
             </div>
         },
-      ];
+    ];
       
-  
+    const handleQualification = (qualified) => {
+        console.log(qualified)
+    }
 
   return (
     <div className={style.container}>
@@ -96,7 +96,7 @@ const RequestPage = () => {
                         <div className={style.section}>
                             <div className={style.top}>
                                 <h1>Personal Information</h1>
-                                <img src={'http://localhost:5001/' + selectedData.profilePic} alt='profile'/>
+                                <img src={'http://localhost:5001/' + selectedData.profile_picture} alt='profile'/>
                             </div>
                             <div className={style.bot}>
                                 <div className='d-flex flex-column'>
@@ -228,18 +228,17 @@ const RequestPage = () => {
                                     <h2>Parent ID</h2>
                                     <div className={style.fileCard}>{selectedData.parent_id} <FaDownload cursor={'pointer'} title='download' onClick={() => window.location.href=`http://localhost:5001/${selectedData.parent_id}`}/></div>
                                 </div>
-                                <div className='d-flex w-100 flex-column mt-5'>
-                                    <h2>Qualified?</h2>
-                                    <div className='d-flex gap-2 mt-2'>
-                                        <button>Qualified</button>
-                                        <button style={{ backgroundColor: '#B8001F' }}>Not Qualified</button>
-                                    </div>
-                                    
-                                </div>
-                                
                             </div>
                         </div>
                      
+                    </div>
+                    <div className={style.botMenu}>
+                        <h2>Qualified Applicant?</h2>
+                        <div className='d-flex gap-2 mt-2'>
+                            <button onClick={() => handleQualification(true)}>Qualified</button>
+                            <button style={{ backgroundColor: '#B8001F' }} onClick={() => handleQualification(false)}>Not Qualified</button>
+                        </div>
+                        
                     </div>
                 </div>
         

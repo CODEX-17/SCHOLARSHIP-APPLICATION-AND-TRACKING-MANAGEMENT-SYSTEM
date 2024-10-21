@@ -1,5 +1,11 @@
 # React + Vite
 
+command to start:
+
+cd server-side && npm start
+
+cd client-side\scholarship_application_management_system && npm run dev
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

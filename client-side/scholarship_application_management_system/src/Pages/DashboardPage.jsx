@@ -5,6 +5,8 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { BiLogOutCircle } from "react-icons/bi";
 import RequestPage from './RequestPage';
 import { useNavigate } from 'react-router-dom';
+import ApplicationForm from './ApplicationForm';
+import MyApplication from './MyApplication';
 
 const DashboardPage = () => {
 
@@ -34,17 +36,28 @@ const DashboardPage = () => {
                 </div>
                 <div className={style.profile}>
                     <img src={'http://localhost:5001/'+user?.image} alt="profile" />
-                    <h1>{user?.firstname + ' ' + user?.lastname}</h1>
+                    <h1>{user?.username}</h1>
                     <button>Manage Account</button>
                 </div>
                 <div className={style.menus}>
-                    <button className={activeDisplay === 'dashboard' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('dashboard')}>Dashboard</button>
+                <button className={activeDisplay === 'dashboard' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('dashboard')}>Dashboard</button>
+                    {
+                        user && user.type === 'user' && (
+                        <>
+                            <button className={activeDisplay === 'apply' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('apply')}>Apply for Scholar</button>
+                            <button className={activeDisplay === 'my-application' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('my-application')}>My Applications</button>
+                        </>
+                        )
+                        
+                    }
+                    
                     {
                         user && user.type === 'admin' && 
                         <button className={activeDisplay === 'request' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('request')}>Request</button>
                     }
                     
                 </div>
+                
             </div>   
         )
     }
@@ -58,8 +71,11 @@ const DashboardPage = () => {
         </div>
         <div className={style.display}>
             {
-                activeDisplay === 'request' && <RequestPage/> 
+                activeDisplay === 'request' && <RequestPage/> ||
+                activeDisplay === 'apply' && <ApplicationForm/> ||
+                activeDisplay === 'my-application' && <MyApplication/>
             }
+            
         </div>
       </div>
     </div>
