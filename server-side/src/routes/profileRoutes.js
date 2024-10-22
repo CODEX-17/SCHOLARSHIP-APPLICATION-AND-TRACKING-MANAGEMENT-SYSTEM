@@ -71,19 +71,19 @@ router.post('/addProfiles', upload.fields([
       // Insert form data into profile table
     const profileSql = `
        INSERT INTO profile (
-        profile_id, user_id, firstname, middlename, lastname, birthdate, gender, civil_status,
+        profile_id, user_id, email, firstname, middlename, lastname, birthdate, gender, civil_status,
         current_address, permanent_address, contact,
         mother_firstname, mother_middlename, mother_lastname,
         mother_current_address, mother_permanent_address, mother_contact_number, mother_registered_voter, mother_voting_years,
         father_firstname, father_middlename, father_lastname,
         father_current_address, father_permanent_address, father_contact_number, father_registered_voter, father_voting_years, profile_picture,
         parent_id, school_id, cog_file, brgy_indigency, coe_file, status
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
     `;
 
     // Ensure that profileValues has the correct number of items
     const profileValues = [
-        profile_id, user_id, firstname, middlename, lastname, birthdate, gender, civil_status,
+        profile_id, user_id, email, firstname, middlename, lastname, birthdate, gender, civil_status,
         current_address, permanent_address, contact,
         mother_firstname, mother_middlename, mother_lastname,
         mother_current_address, mother_permanent_address, mother_contact_number, mother_registered_voter, mother_voting_years,
@@ -193,29 +193,6 @@ Admin`
 
   })
 
-  router.post('/deleteProfiles', (req, res) => {
-    const { id } = req.body;
-
-    if (!id) {
-        return res.status(400).json({ message: 'Profile ID is required' });
-    }
-
-    const query = 'DELETE FROM profile WHERE profile_id=?';
-
-    pool.query(query, [id], (error, result) => {
-        if (error) {
-            console.log(error);
-            return res.status(500).send({ message: 'Error deleting profile' });
-        }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Profile not found' });
-        }
-
-        console.log('Successfully deleted profile.');
-        return res.status(200).json({ message: 'Successfully deleted profile.' });
-    });
-});
 
 
 module.exports = router

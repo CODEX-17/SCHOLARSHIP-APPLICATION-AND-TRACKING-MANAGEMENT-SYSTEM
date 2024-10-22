@@ -6,6 +6,17 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const multer = require('multer');
 
+const nodemailer = require('nodemailer');
+const emailPassword = 'sokb hpyq oevl gmkl';
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'librarysmart69@gmail.com',
+      pass: emailPassword
+    }
+});
+
 //generates a unique identifier
 const generateUniqueId = () => {
     return uuidv4();
@@ -144,6 +155,61 @@ router.post('/deleteProfiles', (req, res) => {
 
         console.log('Successfully deleted profile.');
         return res.status(200).json({ message: 'Successfully deleted profile.' });
+    });
+});
+
+router.post('/updateStatusProfile', (req, res) => {
+    const { id, status, firstname, email } = req.body;
+
+    if (!id || !status || !firstname || !email) {
+        return res.status(400).json({ message: 'The data is not properly sending.' });
+    }
+
+    const query = 'UPDATE profile SET status=? WHERE profile_id=? ';
+
+    pool.query(query, [status, id], (error, result) => {
+        if (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Error updating profile' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Profile not found' });
+        }
+
+        const mailOptions = {
+            to: email,
+            from: 'librarysmart69@gmail.com',
+            subject: 'Congratulations! Your Scholarship Application is Approved',
+            text: `Hi ${firstname},
+          
+                    Congratulations!
+                    
+                    We are excited to inform you that after reviewing your application, you have met all the necessary requirements and have been officially selected as a scholar in our program.
+                    
+                    Your application has been approved by the admin, and we are thrilled to welcome you to the scholarship community. 
+                    
+                    Please stay tuned for further instructions regarding the next steps. If you have any questions or need additional information, don't hesitate to reach out to us.
+                    
+                    Once again, congratulations, and we look forward to seeing all the great things you will accomplish!
+                    
+                    Best regards,  
+                    Admin`
+          };
+           
+      
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              console.log(error);
+              return res.status(500).json({ message: 'Error sending email' });
+            }
+    
+            console.log('Successfully update Status.');
+            res.status(200).json({ message: 'Successfully update Status.' });
+    
+          });
+
+        
     });
 });
 
