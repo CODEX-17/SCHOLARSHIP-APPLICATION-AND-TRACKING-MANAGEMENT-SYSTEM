@@ -32,9 +32,13 @@ const ApplicationForm = () => {
     const [civilStatus, setCivilStatus] = useState('')
     const [currentAddress, setCurrentAddress] = useState('')
     const [permanentAddress, setPermanentAddress] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [profilePic, setProfilePic] = useState(null)
+    const email = useState(userDetails?.email || null)
+    
+
+    //Same in current variable
+    const [isSameInCurrentAddPersonal, setIsSameInCurrentAddPersonal] = useState(false)
+    const [isSameInCurrentAddFather, setIsSameInCurrentAddFather] = useState(false)
+    const [isSameInCurrentAddMother, setIsSameInCurrentAddMother] = useState(false)
     
    // family background variables
    // mother
@@ -63,12 +67,6 @@ const ApplicationForm = () => {
     const [cogFile, setCogFile] = useState(null)
     const [parentIDFile, setParentIDFile] = useState(null)
     const [schoolIDFile, setSchoolIDFile] = useState(null)
-  
-  
-    // password requirements variables
-    const [mixChar, setMixChar] = useState(false)
-    const [specialChar, setSpecialChar] = useState(false)
-    const [validLenghtChar, setValidLenghtChar] = useState(false)
   
     const hasLowerAndUpperCase = (value) => {
       return /[a-z]/.test(value) && /[A-Z]/.test(value)
@@ -101,75 +99,8 @@ const ApplicationForm = () => {
   
     useEffect(() => {
 
-      if (password) {
-  
-          if (password=== '') {
-              setValidLenghtChar(false)
-              setSpecialChar(false)
-              setMixChar(false)
-          }
-  
-          if (password.length > 11) {
-              setValidLenghtChar(true)
-          }else {
-              setValidLenghtChar(false)
-          }
-  
-          if (hasLowerAndUpperCase(password)) {
-              setMixChar(true)
-          }else {
-              setMixChar(false)
-          }
-  
-          if (hasNumberAndSymbols(password)) {
-              setSpecialChar(true)
-          }else {
-              setSpecialChar(false)
-          }
-  
-          
-      }
-  
-      if (firstname &&
-          middlename &&
-          lastname &&
-          birthdate &&
-          gender &&
-          civilStatus &&
-          currentAddress &&
-          permanentAddress &&
-          email &&
-          password &&
-          mfirstname &&
-          mmiddlename &&
-          mlastname &&
-          mcurrentAddress &&
-          mpermanentAddress &&
-          mcontact &&
-          mVoters &&
-          mLong &&
-          ffirstname &&
-          fmiddlename &&
-          flastname &&
-          fcurrentAddress &&
-          fpermanentAddress &&
-          fcontact &&
-          fVoters &&
-          fLong &&
-          coeFile &&
-          brgyIndigencyFile &&
-          cogFile &&
-          schoolIDFile &&
-          parentIDFile && 
-          mixChar && 
-          specialChar && 
-          validLenghtChar
-      ) {
-          setIsBtnEnabled(false)
-      }
-  
-    },[
-      firstname,
+        console.log(
+            firstname,
       middlename,
       lastname,
       birthdate,
@@ -178,7 +109,6 @@ const ApplicationForm = () => {
       currentAddress,
       permanentAddress,
       email,
-      password,
       mfirstname,
       mmiddlename,
       mlastname,
@@ -200,6 +130,100 @@ const ApplicationForm = () => {
       cogFile,
       schoolIDFile,
       parentIDFile
+        )
+        
+  
+      if (firstname &&
+          middlename &&
+          lastname &&
+          birthdate &&
+          gender &&
+          civilStatus &&
+          currentAddress &&
+          permanentAddress &&
+          email &&
+          mfirstname &&
+          mmiddlename &&
+          mlastname &&
+          mcurrentAddress &&
+          mpermanentAddress &&
+          mcontact &&
+          mVoters &&
+          mLong &&
+          ffirstname &&
+          fmiddlename &&
+          flastname &&
+          fcurrentAddress &&
+          fpermanentAddress &&
+          fcontact &&
+          fVoters &&
+          fLong &&
+          coeFile &&
+          brgyIndigencyFile &&
+          cogFile &&
+          schoolIDFile &&
+          parentIDFile
+      ) {
+          setIsBtnEnabled(false)
+      }
+  
+    },[
+      firstname,
+      middlename,
+      lastname,
+      birthdate,
+      gender,
+      civilStatus,
+      currentAddress,
+      permanentAddress,
+      mfirstname,
+      mmiddlename,
+      mlastname,
+      mcurrentAddress,
+      mpermanentAddress,
+      mcontact,
+      mVoters,
+      mLong,
+      ffirstname,
+      fmiddlename,
+      flastname,
+      fcurrentAddress,
+      fpermanentAddress,
+      fcontact,
+      fVoters,
+      fLong,
+      coeFile,
+      brgyIndigencyFile,
+      cogFile,
+      schoolIDFile,
+      parentIDFile
+  ])
+
+  //For copy current to permanent address
+  useEffect(()=> {
+
+    if (isSameInCurrentAddPersonal) {
+        setPermanentAddress(currentAddress)
+    }else {
+        setPermanentAddress('')
+    }
+
+    if (isSameInCurrentAddMother) {
+        setMPermanentAddress(mcurrentAddress)
+    }else {
+        setMPermanentAddress('')
+    }
+
+    if (isSameInCurrentAddFather) {
+        setFPermanentAddress(fcurrentAddress)
+    }else {
+        setFPermanentAddress('')
+    }
+
+  },[
+    isSameInCurrentAddFather,
+    isSameInCurrentAddMother,
+    isSameInCurrentAddPersonal
   ])
 
   const handleFileUpload = (e, type) => {
@@ -409,15 +433,23 @@ const ApplicationForm = () => {
                                                 <label>Current Address</label>
                                                 <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={currentAddress} onChange={(e) => setCurrentAddress(e.target.value)}/>
                                             </div>
+                                         
                                         </div>
                                     </div>
-                                    <div className='d-flex w-100'>
+                                    <div className='d-flex flex-column w-100'>
                                         <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
                                             <div className='d-flex gap-2 flex-column align-items-start w-100'>
                                                 <label>Permanent Address</label>
                                                 <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={permanentAddress} onChange={(e) => setPermanentAddress(e.target.value)}/>
                                             </div>
                                         </div>
+                                        {
+                                            currentAddress !== '' &&
+                                            <div className='d-flex gap-2 align-items-start w-100'>
+                                                <input id={style.checkbox} type="checkbox" onChange={() => setIsSameInCurrentAddPersonal(!isSameInCurrentAddPersonal)}/>
+                                                <p>Same as Current Address</p>
+                                            </div> 
+                                        }  
                                     </div>
                                     
                                 </>
@@ -425,7 +457,7 @@ const ApplicationForm = () => {
         
                             {
                                 currentSteps === 2 &&
-                                <>
+                                <div className={style.body}>
                                     <div className='d-flex w-100'>
                                         <h1 id={style.subtitle}>Mother Information</h1>
                                     </div>
@@ -452,14 +484,30 @@ const ApplicationForm = () => {
                                                 <label>Current Address</label>
                                                 <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={mcurrentAddress} onChange={(e) => setMCurrentAddress(e.target.value)}/>
                                             </div>
+                                         
+                                        </div>
+                                    </div>
+                                    <div className='d-flex flex-column w-100'>
+                                        <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
                                             <div className='d-flex gap-2 flex-column align-items-start w-100'>
                                                 <label>Permanent Address</label>
                                                 <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={mpermanentAddress} onChange={(e) => setMPermanentAddress(e.target.value)}/>
                                             </div>
                                         </div>
+                                        {
+                                            mcurrentAddress !== '' &&
+                                            <div className='d-flex gap-2 align-items-start w-100'>
+                                                <input id={style.checkbox} type="checkbox" onChange={() => setIsSameInCurrentAddMother(!isSameInCurrentAddMother)}/>
+                                                <p>Same as Current Address</p>
+                                            </div> 
+                                        }  
                                     </div>
         
                                     <div className='d-flex w-100 align-items-center justify-content-between gap-2'>
+                                        <div className='d-flex gap-2 flex-column align-items-start w-50'>
+                                            <label>Contact Number</label>
+                                            <input style={{ margin: '0px' }} type="tel" required value={mcontact} onChange={(e) => setMContact(e.target.value)}/>
+                                        </div>
                                         <div className='d-flex flex-column w-50'>
                                             <div className='d-flex align-items-center gap-2'>
                                                 <input type="checkbox" style={{ width: '15px', margin: '0px' }} required value={mVoters} onChange={(e) => setMVoters(e.target.checked)}/>
@@ -467,11 +515,6 @@ const ApplicationForm = () => {
                                             </div>
                                             <input type="number" maxLength={4} placeholder='How many years?' disabled={mVoters ? false : true} required={mVoters ? false : true} value={mLong} onChange={(e) => setMLong(e.target.value)}/>
                                         </div>
-                                        <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                            <label>Contact Number</label>
-                                            <input style={{ margin: '0px' }} type="tel" required value={mcontact} onChange={(e) => setMContact(e.target.value)}/>
-                                        </div>
-                                        
                                     </div>
         
                                     <div className='d-flex w-100 mt-2'>
@@ -500,14 +543,30 @@ const ApplicationForm = () => {
                                                 <label>Current Address</label>
                                                 <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={fcurrentAddress} onChange={(e) => setFCurrentAddress(e.target.value)}/>
                                             </div>
+                                         
+                                        </div>
+                                    </div>
+                                    <div className='d-flex flex-column w-100'>
+                                        <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
                                             <div className='d-flex gap-2 flex-column align-items-start w-100'>
                                                 <label>Permanent Address</label>
                                                 <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={fpermanentAddress} onChange={(e) => setFPermanentAddress(e.target.value)}/>
                                             </div>
                                         </div>
+                                        {
+                                            fcurrentAddress !== '' &&
+                                            <div className='d-flex gap-2 align-items-start w-100'>
+                                                <input id={style.checkbox} type="checkbox" onChange={() => setIsSameInCurrentAddFather(!isSameInCurrentAddFather)}/>
+                                                <p>Same as Current Address</p>
+                                            </div> 
+                                        }  
                                     </div>
         
                                     <div className='d-flex w-100 align-items-center justify-content-between gap-2'>
+                                    <div className='d-flex gap-2 flex-column align-items-start w-50'>
+                                            <label>Contact Number</label>
+                                            <input style={{ margin: '0px' }} type="tel" required value={fcontact} onChange={(e) => setFContact(e.target.value)}/>
+                                        </div>
                                         <div className='d-flex flex-column w-50'>
                                             <div className='d-flex align-items-center gap-2'>
                                                 <input type="checkbox" style={{ width: '15px', margin: '0px' }} required value={fVoters} onChange={(e) => setFVoters(e.target.checked)}/>
@@ -515,18 +574,13 @@ const ApplicationForm = () => {
                                             </div>
                                             <input type="number" maxLength={4} placeholder='How many years?' disabled={fVoters ? false : true} required={mVoters ? false : true} value={fLong} onChange={(e) => setFLong(e.target.value)}/>
                                         </div>
-                                        <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                            <label>Contact Number</label>
-                                            <input style={{ margin: '0px' }} type="tel" required value={fcontact} onChange={(e) => setFContact(e.target.value)}/>
-                                        </div>
-                                        
                                     </div>
                                 
                                     
         
                                     
                                     
-                                </>
+                                </div>
                             }
         
                                             
@@ -536,8 +590,8 @@ const ApplicationForm = () => {
                                     <div className='d-flex w-100'>
                                         <p id={style.subtitle}>Makesure the file uploaded is pdf format @sample.pdf</p>
                                     </div>
-                                    <div className='d-flex gap-2 align-items-center justify-content-between mt-5'>
-                                        <div className='d-flex w-100 gap-2'>
+                                    <div className='d-flex w-100 flex-column gap-2 align-items-center justify-content-between mt-2'>
+                                        <div className='d-flex w-100 align-items-center'>
                                             <div className={style.cardUpload} style={{ border: coeFile ? '2px solid #6EC207' : 'none' }}>
                                                 <p>Certificate of Enrollment</p>
                                                 {coeFile && <p style={{ fontSize: '8pt' }}>Filename : {coeFile.name.substring(0,10)}...</p>}

@@ -7,10 +7,12 @@ import RequestPage from './RequestPage';
 import { useNavigate } from 'react-router-dom';
 import ApplicationForm from './ApplicationForm';
 import MyApplication from './MyApplication';
+import ManageAccountComponent from '../Components/ManageAccountComponent';
 
 const DashboardPage = () => {
 
   const [isShowSideBar, setIsShowSideBar] = useState(true)
+  const [isShowManageAccount, setIsShowManageAccount] = useState(false)
   const [activeDisplay, setActiveDisplay] = useState('dashboard')
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user')) || null
@@ -20,6 +22,10 @@ const DashboardPage = () => {
        navigate('/')
     }
   },[])
+
+  const handleShowCloseManageAccount = (status) => {
+    setIsShowManageAccount(status)
+  }
 
   return (
     <div className={style.container}>
@@ -37,7 +43,7 @@ const DashboardPage = () => {
                 <div className={style.profile}>
                     <img src={'http://localhost:5001/'+user?.image} alt="profile" />
                     <h1>{user?.username}</h1>
-                    <button>Manage Account</button>
+                    <button onClick={() => setIsShowManageAccount(true)}>Manage Account</button>
                 </div>
                 <div className={style.menus}>
                 <button className={activeDisplay === 'dashboard' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('dashboard')}>Dashboard</button>
@@ -70,6 +76,14 @@ const DashboardPage = () => {
             <BiLogOutCircle size={25} cursor={'pointer'} title='logout' id={style.btnLogout} onClick={() => {localStorage.clear(), navigate('/')}}/>
         </div>
         <div className={style.display}>
+            {
+                isShowManageAccount && (
+                    <div className={style.manageAcctDiv}>
+                      <ManageAccountComponent handleShowCloseManageAccount={handleShowCloseManageAccount}/>  
+                    </div>
+                )
+            }
+
             {
                 activeDisplay === 'request' && <RequestPage/> ||
                 activeDisplay === 'apply' && <ApplicationForm/> ||
