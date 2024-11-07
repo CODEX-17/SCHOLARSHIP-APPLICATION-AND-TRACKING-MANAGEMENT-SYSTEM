@@ -46,7 +46,7 @@ router.post('/addProfiles', upload.fields([
     const status = 'pending';
 
     const {
-      user_id, email, firstname, middlename, lastname, birthdate, gender, civil_status,
+      user_id, program_id, email, firstname, middlename, lastname, birthdate, gender, civil_status,
       current_address, permanent_address, contact,
       mother_firstname, mother_middlename, mother_lastname,
       mother_current_address, mother_permanent_address, mother_contact_number, mother_registered_voter, mother_voting_years,
@@ -71,7 +71,7 @@ router.post('/addProfiles', upload.fields([
       // Insert form data into profile table
     const profileSql = `
        INSERT INTO profile (
-        profile_id, user_id, email, firstname, middlename, lastname, birthdate, gender, civil_status,
+        profile_id, user_id, program_id, email, firstname, middlename, lastname, birthdate, gender, civil_status,
         current_address, permanent_address, contact,
         mother_firstname, mother_middlename, mother_lastname,
         mother_current_address, mother_permanent_address, mother_contact_number, mother_registered_voter, mother_voting_years,
@@ -83,7 +83,7 @@ router.post('/addProfiles', upload.fields([
 
     // Ensure that profileValues has the correct number of items
     const profileValues = [
-        profile_id, user_id, email, firstname, middlename, lastname, birthdate, gender, civil_status,
+        profile_id, user_id, program_id, email, firstname, middlename, lastname, birthdate, gender, civil_status,
         current_address, permanent_address, contact,
         mother_firstname, mother_middlename, mother_lastname,
         mother_current_address, mother_permanent_address, mother_contact_number, mother_registered_voter, mother_voting_years,

@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import ApplicationForm from './ApplicationForm';
 import MyApplication from './MyApplication';
 import ManageAccountComponent from '../Components/ManageAccountComponent';
+import ProgramsPage from './ProgramsPage';
+import ProgramListPage from './ProgramListPage';
 
 const DashboardPage = () => {
 
@@ -58,8 +60,18 @@ const DashboardPage = () => {
                     }
                     
                     {
-                        user && user.type === 'admin' && 
-                        <button className={activeDisplay === 'request' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('request')}>Request</button>
+                        user && user.type === 'admin' && (
+                            <>
+                                <button 
+                                    className={activeDisplay === 'programs' ? style.btnMenuActive : style.btnMenu}
+                                    onClick={() => setActiveDisplay('programs')}
+                                >Programs</button>
+                                <button 
+                                    className={activeDisplay === 'request' ? style.btnMenuActive : style.btnMenu} 
+                                    onClick={() => setActiveDisplay('request')}
+                                >Request</button>
+                            </>
+                        )
                     }
                     
                 </div>
@@ -86,8 +98,9 @@ const DashboardPage = () => {
 
             {
                 activeDisplay === 'request' && <RequestPage/> ||
-                activeDisplay === 'apply' && <ApplicationForm/> ||
-                activeDisplay === 'my-application' && <MyApplication/>
+                activeDisplay === 'apply' && <ProgramListPage/> ||
+                activeDisplay === 'my-application' && <MyApplication/> ||
+                activeDisplay === 'programs' && <ProgramsPage/>
             }
             
         </div>

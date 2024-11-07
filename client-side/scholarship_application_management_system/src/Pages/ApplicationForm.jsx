@@ -6,14 +6,14 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { FaCircleInfo } from "react-icons/fa6";
 import axios from 'axios'
 
-const ApplicationForm = () => {
-
-    const navigate = useNavigate()
+const ApplicationForm = ({ programDetails, handleApply }) => {
 
     const [isShowSubmitted, setIisShowSubmitted] = useState(false)
     const [currentSteps, setCurrentSteps] = useState(1)
     const [message, setMessage] = useState('')
     const [messageStatus, setMessageStatus] = useState(true)
+
+    const programID = programDetails.program_id || null 
   
     const [isBtnEnabled, setIsBtnEnabled] = useState(true)
     const fileInput = useRef(null)
@@ -255,6 +255,7 @@ const ApplicationForm = () => {
 
     // Append personal information
     formData.append('user_id', userDetails && userDetails.user_id);
+    formData.append('program_id', programID);
     formData.append('email', userDetails && userDetails.email);
     formData.append('firstname', firstname);
     formData.append('middlename', middlename);
@@ -326,7 +327,7 @@ const ApplicationForm = () => {
     <div className={style.container}>
 
         <form onSubmit={handleSubmit}>
-            <h1 id={style.title}>Application Form For Scholarship</h1>
+            <h1 id={style.title}>{programDetails && programDetails.program_name}</h1>
             <div className={style.card}>
                 {
                     isShowSubmitted ? (
@@ -369,7 +370,7 @@ const ApplicationForm = () => {
                                     
                                 </div>
                                 
-                                <FaArrowRight title='Back to Login' cursor={'pointer'} size={20} onClick={() => navigate('/')}/>
+                                <FaArrowRight title='Back to Login' cursor={'pointer'} size={20} onClick={() => handleApply(false)}/>
                             </div>
                             
                             {

@@ -1,0 +1,176 @@
+@font-face {
+    font-family: black;
+    src: url('../assets/fonts/black.ttf');
+}
+
+@font-face {
+    font-family: bold;
+    src: url('../assets/fonts/bold.ttf');
+}
+
+@font-face {
+    font-family: light;
+    src: url('../assets/fonts/light.ttf');
+}
+
+@font-face {
+    font-family: normal;
+    src: url('../assets/fonts/regular.ttf');
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    font-family: normal;
+    display: flex;
+    background-color: #f2f6ee;
+    animation: fade 0.5s ease-in-out;
+    position: relative;
+}
+
+button {
+    border: none;
+    width: 100%;
+    color: white;
+    border-radius: 10px;
+    height: 40px;
+    background-color: #6EC207;
+}
+
+button:hover {
+    opacity: 0.5;
+}
+
+.previewSection {
+    flex: 20%;
+    padding: 2%;
+    height: 100%;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    background-color: #e9e9e9;
+    animation: slideRight 0.5s ease-in-out;
+}
+
+.prevContent {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+}
+
+.prevContent button {
+    border-radius: 5px;
+    position: absolute;
+    width: 100%;
+    bottom: 15px;
+}
+
+.prevContent button:disabled {
+  background-color: gray;
+}
+
+.prevContent h1 {
+    font-family: bold;
+    font-size: 15pt;
+    margin: 0;
+}
+
+.prevContent p {
+    margin: 0;
+}
+
+.listSection {
+    flex: 100%;
+    height: 100%;
+    padding: 2%;
+}
+
+.head {
+    width: 100%;
+    margin-bottom: 2%;
+} 
+
+.head h1 {
+    font-family: bold;
+}
+
+.listCard {
+    max-height: 90%;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 300px;
+    height: auto;
+    max-height: 190px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
+            0 1px 3px rgba(0, 0, 0, 0.08);
+    padding: 1%;
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: pop 0.5s ease-in-out;
+}
+
+.card button {
+    border-radius: 5px;
+}
+
+.card h3 {
+    font-family: bold;
+    font-size: 13pt;
+}
+
+
+
+
+
+@media (max-width: 768px) {
+    .sideBar {
+        position: fixed;
+    }
+}
+
+
+@keyframes pop {
+    0% {
+      transform: scale(0.5);
+    }
+    50% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideRight {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }

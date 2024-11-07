@@ -30,9 +30,11 @@ const server = http.createServer(app)
 
 const profilesRoutes = require('./routes/profileRoutes')
 const accountsRoutes = require('./routes/accountsRoutes')
+const programsRoutes = require('./routes/programsRoutes')
 
 app.use('/profiles', profilesRoutes)
 app.use('/accounts', accountsRoutes)
+app.use('/programs', programsRoutes)
 
 app.options('/accounts/checkAccounts', cors());  // Enable preflight CORS for this route
 
