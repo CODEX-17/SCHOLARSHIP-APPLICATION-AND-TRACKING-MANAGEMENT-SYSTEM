@@ -8,14 +8,17 @@ import { FaDownload } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
 import NotificationComponent from '../Components/NotificationComponent';
 import { FiPlusCircle } from "react-icons/fi";
-
+import { FaEdit } from "react-icons/fa";
+import Switch from '@mui/material/Switch';
 
 const ProgramsPage = () => {
 
     const [programList, setProgramList] = useState([])
 
     const [isShowModal, setIsShowModal] = useState(false)
+    const url = 'http://localhost:5001/'
     const [isShowModalAddProgram, setIsShowModalAddProgram] = useState(false)
+    const [isShowModalEditProgram, setIsShowModalEditProgram] = useState(false)
     const [isShowModalDelete, setIsShowModalDelete] = useState(false)
     const [selectedData, setSelectedData] = useState(null)
     const [message, setMessage] = useState('')
@@ -26,6 +29,12 @@ const ProgramsPage = () => {
  
     const [isShowNotification, setIsShowNotification] = useState(false)
     const userDetails = JSON.parse(localStorage.getItem('user')) || null
+
+    //Edit program variables
+    const [editProgramName , setEditProgramName] = useState('')
+    const [editProgramDesc, setEditProgramDesc] = useState('')
+    const [renewalProg, setRenewalProg] = useState('active')
+    const [isEditBtnDisable, setIsEditBtnDisable] = useState(true)
 
     useEffect(() => {
         axios.get('http://localhost:5001/programs/getPrograms')
@@ -43,6 +52,29 @@ const ProgramsPage = () => {
             setIsCreateBtnDisable(true)
         }
     },[programName,programDesc])
+
+    useEffect(() => {
+        if (selectedData) {
+            if (
+                editProgramDesc !== selectedData.program_desc ||
+                editProgramName !== selectedData.program_name ||
+                renewalProg !== selectedData.program_status
+            ) {
+                setIsEditBtnDisable(false)
+            }else if (
+                editProgramDesc !== '' ||
+                editProgramName !== ''
+            ) {
+                setIsEditBtnDisable(true)
+            }else {
+                setIsEditBtnDisable(true)
+            }
+        }
+    },[
+        editProgramDesc,
+        editProgramName,
+        renewalProg,
+    ])
 
     const columns = [
         {
@@ -69,7 +101,6 @@ const ProgramsPage = () => {
             </div>
         },
     ];
-      
 
     const handleCreateProgram = () => {
         
@@ -110,6 +141,61 @@ const ProgramsPage = () => {
         }
     }
 
+    const handleEditModal = () => {
+        if (selectedData) {
+            setEditProgramDesc(selectedData.program_desc)
+            setEditProgramName(selectedData.program_name)
+            setRenewalProg(selectedData.program_status)
+            setIsShowModal(false)
+            setIsShowModalEditProgram(true)
+        }
+    }
+
+    const handleRenewal = (value) => {
+        console.log(value)
+        if (value) {
+            setRenewalProg('renewal')
+        }else {
+            setRenewalProg('active')
+        }
+    }
+
+    const handleUpdateProgram = () => {
+
+        axios.post(`${url}programs/updatePrograms`, { 
+            program_desc: editProgramDesc, 
+            program_name: editProgramName, 
+            program_status: renewalProg, 
+            program_id: selectedData.program_id 
+        })
+        .then((res) => {
+            const result = res.data
+            const message = result.message
+        
+            setProgramList(() => {
+                let updated = [...programList]
+                
+                updated.map((prog) => {
+                    if (prog.program_id === selectedData.program_id) {
+                        updated.program_desc = editProgramDesc
+                        updated.program_name = editProgramName
+                        updated.program_status = renewalProg
+                    }
+                })
+
+                return updated
+            })
+
+            setMessage(message)
+            setIsShowNotification(true)
+            setIsShowModalEditProgram(false)
+
+            setTimeout(() => {
+                setIsShowNotification(false)
+            }, 3000);
+        }).catch(err => console.log(err)) 
+    }
+
   return (
     <div className={style.container}>
         {isShowNotification && (
@@ -123,11 +209,14 @@ const ProgramsPage = () => {
                 <div className={style.modal} style={{ width: 'auto', height: 'auto', maxWidth: '700px' }}>
                     <div className={style.head}>
                         <h1>Add Program</h1>
-                        <BiExit size={25} cursor={'pointer'} onClick={() => setIsShowModal(false)}/>
+                        <div className='d-flex gap-2'>
+                            <FaEdit size={22} cursor={'pointer'} title='edit' onClick={handleEditModal}/>
+                            <BiExit size={25} cursor={'pointer'} title='close' onClick={() => setIsShowModal(false)}/>
+                        </div>
                     </div>
                     <div className={style.body} style={{ display: 'flex', flexDirection: 'column', minWidth: '500px', marginTop: '5%' }}>
                         <div className='d-flex w-100 mt-1 mb-3'>
-                           <div id={style.statusDiv} title='program status'>ACTIVE</div>
+                           <div id={style.statusDiv} title='program status'>{selectedData.program_status.toUpperCase()}</div>
                         </div>
                         <div className='d-flex w-100 mb-2'>
                             <div className='d-flex w-50 flex-column'>
@@ -153,6 +242,7 @@ const ProgramsPage = () => {
                 </div>
             )
         }
+
         {
             isShowModalAddProgram &&
             <div className={style.modal} style={{ width: 'auto', height: 'auto' }}>
@@ -175,6 +265,54 @@ const ProgramsPage = () => {
                 </div>
             </div>
         }
+
+        {
+            isShowModalEditProgram && (
+                <div className={style.modal} style={{ width: 'auto', height: 'auto' }}>
+                    <div className={style.head}>
+                        <h1>Edit Program</h1>
+                        <BiExit size={25} cursor={'pointer'} onClick={() => setIsShowModalEditProgram(false)}/>
+                    </div>
+                    <div className={style.body} style={{ display: 'flex', flexDirection: 'column', minWidth: '500px', marginTop: '5%' }}>
+                        <div className='d-flex w-100 flex-column mb-2'>
+                            <label>Program name</label>
+                            <input type="text" value={editProgramName} onChange={(e) => setEditProgramName(e.target.value)}/>
+                        </div>
+                        <div className='d-flex w-100 flex-column'>
+                            <label>Program Description</label>
+                            <textarea value={editProgramDesc} onChange={(e) => setEditProgramDesc(e.target.value)}></textarea>
+                        </div>
+                        <div className='d-flex align-items-center justify-content-between mt-2'>
+                            <label style={{ color: '#6EC207' }}>Open for Renewal and New Application</label>
+                            <Switch 
+                                checked={renewalProg === 'active' ? false : true} 
+                                onChange={(e) => handleRenewal(e.target.checked)}
+                                sx={{
+                                    '& .MuiSwitch-switchBase.Mui-checked': {
+                                    color: 'green', // Custom color when switch is ON
+                                    },
+                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                    backgroundColor: '#6EC207', // Track color when switch is ON
+                                    },
+                                    '& .MuiSwitch-switchBase': {
+                                    color: '#ccc', // Custom color when switch is OFF
+                                    },
+                                    '& .MuiSwitch-switchBase + .MuiSwitch-track': {
+                                    backgroundColor: '#ccc', // Track color when switch is OFF
+                                    },
+                                }}
+                            />
+                        </div>
+                        
+                        <div className='d-flex w-100 flex-column mt-5'>
+                            <button disabled={isEditBtnDisable} onClick={handleUpdateProgram}>Update</button>
+                        </div>
+                    </div>
+                </div> 
+            )
+
+        }
+
         {
             isShowModalDelete &&
             <div className={style.modal} style={{ width: 'auto', height: 'auto' }}>

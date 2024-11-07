@@ -9,7 +9,9 @@ const ProgramListPage = () => {
   const [requestList, setRequestList] = useState([])
   const url = 'http://localhost:5001/'
   const [selectedData, setSelectedData] = useState(null)
+  const [selectedProfile, setSelectedProfile] = useState(null)
   const [isShowForm, setIsShowForm] = useState(false)
+  const [applicantStatus, setApplicantStatus] = useState('apply')
   const userDetails = JSON.parse(localStorage.getItem('user')) || null
 
   const [alreadyApplied, setAlreadyApplied] = useState(false)
@@ -37,10 +39,19 @@ const ProgramListPage = () => {
    for (let i = 0; i < requestList.length; i++) {
     if (requestList[i].user_id === userDetails.user_id && requestList[i].program_id === selectedData.program_id) {
         setAlreadyApplied(true)
-        console.log(requestList[i])
+        setSelectedProfile(requestList[i])
+        if (selectedData.program_status === 'renewal') {
+            console.log('renewal')
+            setApplicantStatus('renewal')
+        }else if (selectedData.program_status === 'active') {
+            console.log('applied')
+            setApplicantStatus('applied')
+        }
+    }else {
+        setApplicantStatus('apply')
     }
    }
-
+   
   },[selectedData])
 
   const handleShorten = (data) => {
@@ -54,9 +65,37 @@ const ProgramListPage = () => {
     setIsShowForm(status)
   }
 
+  const handleChangeTextStatus = () => {
+    console.log(alreadyApplied, selectedData)
+
+    if (alreadyApplied && selectedData.program_status === 'renewal') {
+        return 'Renew Application'
+    }else if (alreadyApplied && selectedData.program_status === 'active') {
+        return 'Already Applied'
+    }
+
+    return 'Apply'
+  }
+
+  const handleUpdateDisabledButton = () => {
+    if (applicantStatus === 'renewal' || applicantStatus === 'apply') {
+        console.log(applicantStatus)
+        return false
+    }
+
+    return true
+  }
+
   return (
         isShowForm ? (
-            <><ApplicationForm programDetails={selectedData} handleApply={handleApply}/></>
+            <>
+                <ApplicationForm 
+                    programDetails={selectedData} 
+                    handleApply={handleApply} 
+                    applicantStatus={applicantStatus}
+                    selectedProfile={selectedProfile}
+                />
+            </>
         ) : (
             <div className={style.container}>
                 {
@@ -71,7 +110,7 @@ const ProgramListPage = () => {
                                     <p><b>Program Description</b></p>
                                     <p style={{ textAlign: 'justify' }}>{selectedData.program_desc}</p>
                                 </div>
-                                <button disabled={alreadyApplied} onClick={(() => handleApply(true))}>{alreadyApplied ? 'Already Applied' : 'Apply'}</button>
+                                <button disabled={handleUpdateDisabledButton()} onClick={(() => handleApply(true))}>{handleChangeTextStatus()}</button>
                             </div>
                         </div>
                     )
@@ -89,7 +128,7 @@ const ProgramListPage = () => {
                                             <h3>{prog.program_name}</h3>
                                             <p>{handleShorten(prog.program_desc)}</p>
                                         </div>
-                                        <button onClick={() => setSelectedData(prog)}>View</button>
+                                        <button onClick={() => {setSelectedData(prog), console.log(prog)}}>View</button>
                                     </div>
                                 ))
                                 

@@ -23,6 +23,21 @@ router.get('/getPrograms', (req, res) => {
     })
 })
 
+//API get programs by id
+router.get('/getProgramsByID', (req, res) => {
+
+    const query = 'SELECT * FROM programs'
+
+    db.query(query, (error, data, field) => {
+        if (error) {
+            console.error(error)
+            res.status(404).send(error)
+        } else {
+            res.status(200).json(data)
+        }
+    })
+})
+
 //API get programs
 router.post('/addPrograms', (req, res) => {
 
@@ -37,6 +52,25 @@ router.post('/addPrograms', (req, res) => {
             console.log('Successfully added program.')
             res.status(200).json({
                 message: 'Successfully added program.'
+            })
+        }
+    })
+})
+
+//API get programs
+router.post('/updatePrograms', (req, res) => {
+
+    const { program_desc, program_name, program_status, program_id } = req.body
+    const query = 'UPDATE programs SET program_desc=?, program_name=?, program_status=? WHERE program_id=?'
+
+    db.query(query,[program_desc, program_name, program_status, program_id], (error, data, field) => {
+        if (error) {
+            console.error(error)
+            res.status(404).send(error)
+        } else {
+            console.log('Successfully update program.')
+            res.status(200).json({
+                message: 'Successfully update program.'
             })
         }
     })

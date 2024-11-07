@@ -6,14 +6,17 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { FaCircleInfo } from "react-icons/fa6";
 import axios from 'axios'
 
-const ApplicationForm = ({ programDetails, handleApply }) => {
+const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selectedProfile }) => {
 
     const [isShowSubmitted, setIisShowSubmitted] = useState(false)
     const [currentSteps, setCurrentSteps] = useState(1)
     const [message, setMessage] = useState('')
     const [messageStatus, setMessageStatus] = useState(true)
 
-    const programID = programDetails.program_id || null 
+    const programID = programDetails.program_id || null
+    const currentProfile = selectedProfile || null
+
+    const url = 'http://localhost:5001/'
   
     const [isBtnEnabled, setIsBtnEnabled] = useState(true)
     const fileInput = useRef(null)
@@ -49,7 +52,7 @@ const ApplicationForm = ({ programDetails, handleApply }) => {
    const [mpermanentAddress, setMPermanentAddress] = useState('')
    const [mcontact, setMContact] = useState(0)
    const [mVoters, setMVoters] = useState(false)
-   const [mLong, setMLong] = useState(0)
+   const [mLong, setMLong] = useState(1)
   
     // father
     const [ffirstname, setFFirstname] = useState('') 
@@ -59,7 +62,7 @@ const ApplicationForm = ({ programDetails, handleApply }) => {
     const [fpermanentAddress, setFPermanentAddress] = useState('')
     const [fcontact, setFContact] = useState(0)
     const [fVoters, setFVoters] = useState(false)
-    const [fLong, setFLong] = useState(0)
+    const [fLong, setFLong] = useState(1)
   
     // files variables
     const [coeFile, setCoeFile] = useState(null)
@@ -78,153 +81,175 @@ const ApplicationForm = ({ programDetails, handleApply }) => {
     }
 
     useEffect(() => {
-        axios.get('http://localhost:5001/profiles/getProfiles')
-        .then(res => {
-            const result = res.data
-            setRequestList(result)
+        console.log(currentProfile)
+        if (applicantStatus === 'renewal' && currentProfile) {
+            // Personal Information
+            setFirstname(currentProfile.firstname);
+            setMiddlename(currentProfile.middlename);
+            setLastname(currentProfile.lastname);
+            setBirthdate(currentProfile.birthdate);
+            setGender(currentProfile.gender);
+            setContact(currentProfile.contact);
+            setCivilStatus(currentProfile.civil_status);
+            setCurrentAddress(currentProfile.current_address);
+            setPermanentAddress(currentProfile.permanent_address);
 
-            if (result) {
-                for (let i = 0; i < result.length; i++) {
-                    const current_user_id = result[i].user_id;
+            // Mother's Information
+            setMFirstname(currentProfile.mother_firstname);
+            setMMiddlename(currentProfile.mother_middlename);
+            setMLastname(currentProfile.mother_lastname);
+            setMCurrentAddress(currentProfile.mother_current_address);
+            setMPermanentAddress(currentProfile.mother_permanent_address);
+            setMContact(currentProfile.mother_contact_number);
+            setMVoters(currentProfile.mother_registered_voter === 1); // Convert 0/1 to boolean
+            setMLong(parseInt(currentProfile.mother_voting_years, 10)); // Convert to integer
 
-                    if (current_user_id === userDetails.user_id) {
-                        setIisShowSubmitted(true)
-                    }
-                    
-                }
-            }
-        })
-        .catch(err => console.log(err))
+            // Father's Information
+            setFFirstname(currentProfile.father_firstname);
+            setFMiddlename(currentProfile.father_middlename);
+            setFLastname(currentProfile.father_lastname);
+            setFCurrentAddress(currentProfile.father_current_address);
+            setFPermanentAddress(currentProfile.father_permanent_address);
+            setFContact(currentProfile.father_contact_number);
+            setFVoters(currentProfile.father_registered_voter === 1); // Convert 0/1 to boolean
+            setFLong(parseInt(currentProfile.father_voting_years, 10)); // Convert to integer
+        }
+
     },[])
   
     useEffect(() => {
 
-        console.log(
-            firstname,
-      middlename,
-      lastname,
-      birthdate,
-      gender,
-      civilStatus,
-      currentAddress,
-      permanentAddress,
-      email,
-      mfirstname,
-      mmiddlename,
-      mlastname,
-      mcurrentAddress,
-      mpermanentAddress,
-      mcontact,
-      mVoters,
-      mLong,
-      ffirstname,
-      fmiddlename,
-      flastname,
-      fcurrentAddress,
-      fpermanentAddress,
-      fcontact,
-      fVoters,
-      fLong,
-      coeFile,
-      brgyIndigencyFile,
-      cogFile,
-      schoolIDFile,
-      parentIDFile
-        )
-        
-  
-      if (firstname &&
-          middlename &&
-          lastname &&
-          birthdate &&
-          gender &&
-          civilStatus &&
-          currentAddress &&
-          permanentAddress &&
-          email &&
-          mfirstname &&
-          mmiddlename &&
-          mlastname &&
-          mcurrentAddress &&
-          mpermanentAddress &&
-          mcontact &&
-          mVoters &&
-          mLong &&
-          ffirstname &&
-          fmiddlename &&
-          flastname &&
-          fcurrentAddress &&
-          fpermanentAddress &&
-          fcontact &&
-          fVoters &&
-          fLong &&
-          coeFile &&
-          brgyIndigencyFile &&
-          cogFile &&
-          schoolIDFile &&
-          parentIDFile
-      ) {
-          setIsBtnEnabled(false)
-      }
-  
+            console.log(
+                firstname,
+        middlename,
+        lastname,
+        birthdate,
+        gender,
+        civilStatus,
+        currentAddress,
+        permanentAddress,
+        email,
+        mfirstname,
+        mmiddlename,
+        mlastname,
+        mcurrentAddress,
+        mpermanentAddress,
+        mcontact,
+        mVoters,
+        mLong,
+        ffirstname,
+        fmiddlename,
+        flastname,
+        fcurrentAddress,
+        fpermanentAddress,
+        fcontact,
+        fVoters,
+        fLong,
+        coeFile,
+        brgyIndigencyFile,
+        cogFile,
+        schoolIDFile,
+        parentIDFile
+            )
+            
+    
+        if (firstname &&
+            middlename &&
+            lastname &&
+            birthdate &&
+            gender &&
+            civilStatus &&
+            currentAddress &&
+            permanentAddress &&
+            email &&
+            mfirstname &&
+            mmiddlename &&
+            mlastname &&
+            mcurrentAddress &&
+            mpermanentAddress &&
+            mcontact &&
+            mVoters &&
+            mLong &&
+            ffirstname &&
+            fmiddlename &&
+            flastname &&
+            fcurrentAddress &&
+            fpermanentAddress &&
+            fcontact &&
+            fVoters &&
+            fLong &&
+            coeFile &&
+            brgyIndigencyFile &&
+            cogFile &&
+            schoolIDFile &&
+            parentIDFile
+        ) {
+            setIsBtnEnabled(false)
+        }
+    
+        },[
+        firstname,
+        middlename,
+        lastname,
+        birthdate,
+        gender,
+        civilStatus,
+        currentAddress,
+        permanentAddress,
+        mfirstname,
+        mmiddlename,
+        mlastname,
+        mcurrentAddress,
+        mpermanentAddress,
+        mcontact,
+        mVoters,
+        mLong,
+        ffirstname,
+        fmiddlename,
+        flastname,
+        fcurrentAddress,
+        fpermanentAddress,
+        fcontact,
+        fVoters,
+        fLong,
+        coeFile,
+        brgyIndigencyFile,
+        cogFile,
+        schoolIDFile,
+        parentIDFile
+    ])
+
+    //For copy current to permanent address
+    useEffect(()=> {
+
+        if (applicantStatus !== 'renewal') {
+            if (isSameInCurrentAddPersonal) {
+                setPermanentAddress(currentAddress)
+            }else {
+                setPermanentAddress('')
+            }
+    
+            if (isSameInCurrentAddMother) {
+                setMPermanentAddress(mcurrentAddress)
+            }else {
+                setMPermanentAddress('')
+            }
+    
+            if (isSameInCurrentAddFather) {
+                setFPermanentAddress(fcurrentAddress)
+            }else {
+                setFPermanentAddress('')
+            }
+        }
+    
     },[
-      firstname,
-      middlename,
-      lastname,
-      birthdate,
-      gender,
-      civilStatus,
-      currentAddress,
-      permanentAddress,
-      mfirstname,
-      mmiddlename,
-      mlastname,
-      mcurrentAddress,
-      mpermanentAddress,
-      mcontact,
-      mVoters,
-      mLong,
-      ffirstname,
-      fmiddlename,
-      flastname,
-      fcurrentAddress,
-      fpermanentAddress,
-      fcontact,
-      fVoters,
-      fLong,
-      coeFile,
-      brgyIndigencyFile,
-      cogFile,
-      schoolIDFile,
-      parentIDFile
-  ])
+        isSameInCurrentAddFather,
+        isSameInCurrentAddMother,
+        isSameInCurrentAddPersonal
+    ])
 
-  //For copy current to permanent address
-  useEffect(()=> {
 
-    if (isSameInCurrentAddPersonal) {
-        setPermanentAddress(currentAddress)
-    }else {
-        setPermanentAddress('')
-    }
 
-    if (isSameInCurrentAddMother) {
-        setMPermanentAddress(mcurrentAddress)
-    }else {
-        setMPermanentAddress('')
-    }
-
-    if (isSameInCurrentAddFather) {
-        setFPermanentAddress(fcurrentAddress)
-    }else {
-        setFPermanentAddress('')
-    }
-
-  },[
-    isSameInCurrentAddFather,
-    isSameInCurrentAddMother,
-    isSameInCurrentAddPersonal
-  ])
 
   const handleFileUpload = (e, type) => {
     if (e, type) {
@@ -511,7 +536,7 @@ const ApplicationForm = ({ programDetails, handleApply }) => {
                                         </div>
                                         <div className='d-flex flex-column w-50'>
                                             <div className='d-flex align-items-center gap-2'>
-                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required value={mVoters} onChange={(e) => setMVoters(e.target.checked)}/>
+                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required checked={mVoters} onChange={(e) => {setMVoters(e.target.checked)}}/>
                                                 <p>Are you registered voter of Tabuk City? For how many years?</p>
                                             </div>
                                             <input type="number" maxLength={4} placeholder='How many years?' disabled={mVoters ? false : true} required={mVoters ? false : true} value={mLong} onChange={(e) => setMLong(e.target.value)}/>
@@ -570,7 +595,7 @@ const ApplicationForm = ({ programDetails, handleApply }) => {
                                         </div>
                                         <div className='d-flex flex-column w-50'>
                                             <div className='d-flex align-items-center gap-2'>
-                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required value={fVoters} onChange={(e) => setFVoters(e.target.checked)}/>
+                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required checked={fVoters} onChange={(e) => setFVoters(e.target.checked)}/>
                                                 <p>Are you registered voter of Tabuk City? For how many years?</p>
                                             </div>
                                             <input type="number" maxLength={4} placeholder='How many years?' disabled={fVoters ? false : true} required={mVoters ? false : true} value={fLong} onChange={(e) => setFLong(e.target.value)}/>

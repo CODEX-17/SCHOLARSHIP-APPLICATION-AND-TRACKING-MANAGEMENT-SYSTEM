@@ -159,7 +159,7 @@ Admin`
     }
   });
 
-
+  //GET ALL PROFILES
   router.get('/getProfiles', async (req, res)  => {
     const sql = 'SELECT * FROM profile'
 
@@ -175,6 +175,26 @@ Admin`
         res.status(500).json({ error: 'An error occurred while fetching profiles' });
     }
   })
+
+
+  //GET PROFILES BY ID
+  router.get('/getProfilesByID', async (req, res)  => {
+    const { profile_id } = req.params
+    const sql = 'SELECT * FROM profile'
+
+    try {
+        // Use async/await to handle the query
+        const [rows] = await pool.query(sql); // No callbacks, we get the result using promise API
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'No profiles found' });
+        }
+        res.status(200).json(rows); // Send the result back as JSON
+    } catch (error) {
+        console.error('Error fetching profiles:', error);
+        res.status(500).json({ error: 'An error occurred while fetching profiles' });
+    }
+  })
+
 
 
   router.post('/checkAccounts', (req, res) => {
