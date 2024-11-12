@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 29, 2024 at 01:04 PM
+-- Generation Time: Nov 12, 2024 at 03:09 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -123,6 +123,7 @@ INSERT INTO `files` (`id`, `filename`, `date`, `time`, `file_path`, `file_id`) V
 CREATE TABLE `profile` (
   `profile_id` varchar(255) NOT NULL,
   `user_id` varchar(255) NOT NULL,
+  `program_id` varchar(255) NOT NULL,
   `email` varchar(100) NOT NULL,
   `firstname` varchar(50) DEFAULT NULL,
   `middlename` varchar(50) DEFAULT NULL,
@@ -162,9 +163,33 @@ CREATE TABLE `profile` (
 -- Dumping data for table `profile`
 --
 
-INSERT INTO `profile` (`profile_id`, `user_id`, `email`, `firstname`, `middlename`, `lastname`, `birthdate`, `gender`, `civil_status`, `current_address`, `permanent_address`, `contact`, `mother_firstname`, `mother_middlename`, `mother_lastname`, `mother_current_address`, `mother_permanent_address`, `mother_contact_number`, `mother_registered_voter`, `mother_voting_years`, `father_firstname`, `father_middlename`, `father_lastname`, `father_current_address`, `father_permanent_address`, `father_contact_number`, `father_registered_voter`, `father_voting_years`, `coe_file`, `brgy_indigency`, `cog_file`, `school_id`, `parent_id`, `profile_picture`, `status`) VALUES
-('3ec1effa-e43a-403f-bda9-039c6c34589c', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', 'scholarsoftabukcity@gmail.com', 'jason', 'maca', 'baka', '2012-02-16', 'male', 'single', 'SAN GABRIEL', 'SAN GABRIEL', '09760202622', 'ruben', 'camo', 'reyes', 'SAN GABRIEL', 'SAN GABRIEL', '09760202622', 0, '1', 'jane', 'reyes', 'tero', 'SAN GABRIEL', 'SAN GABRIEL', '09760202622', 0, '6', '1730037777807.pdf', '1730037777823.pdf', '1730037777824.pdf', '1730037777825.pdf', '1730037777824.pdf', '1728235909292.png', 'pending'),
-('fe0ebeae-85fe-441a-a646-efe88cdcfce1', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb529', 'scholarsoftabukcity@gmail.com', 'mark', 'hilario', 'reyes', '2024-10-04', 'male', 'single', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 'rome', 'jiohn', 'reyes', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 0, '6', 'shine', 'marie', 'reyes', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 0, '3', '1729127389452.pdf', '1729127389482.pdf', '1729127389499.pdf', '1729127389525.pdf', '1729127389506.pdf', '1728202089909.png', 'approved');
+INSERT INTO `profile` (`profile_id`, `user_id`, `program_id`, `email`, `firstname`, `middlename`, `lastname`, `birthdate`, `gender`, `civil_status`, `current_address`, `permanent_address`, `contact`, `mother_firstname`, `mother_middlename`, `mother_lastname`, `mother_current_address`, `mother_permanent_address`, `mother_contact_number`, `mother_registered_voter`, `mother_voting_years`, `father_firstname`, `father_middlename`, `father_lastname`, `father_current_address`, `father_permanent_address`, `father_contact_number`, `father_registered_voter`, `father_voting_years`, `coe_file`, `brgy_indigency`, `cog_file`, `school_id`, `parent_id`, `profile_picture`, `status`) VALUES
+('fe0ebeae-85fe-441a-a646-efe88cdcfce1', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', 'b69e6e47-d179-4e99-8497-0e3ed9a944e3', 'scholarsoftabukcity@gmail.com', 'mark', 'hilario', 'reyes', '2024-10-04', 'male', 'single', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 'rome', 'jiohn', 'reyes', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 1, '6', 'shine', 'marie', 'reyes', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 1, '3', '1729127389452.pdf', '1729127389482.pdf', '1729127389499.pdf', '1729127389525.pdf', '1729127389506.pdf', '1728202089909.png', 'approved');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `programs`
+--
+
+CREATE TABLE `programs` (
+  `program_id` varchar(255) NOT NULL,
+  `program_name` varchar(100) NOT NULL,
+  `program_desc` varchar(255) NOT NULL,
+  `total_applicant` int(100) NOT NULL,
+  `program_status` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `programs`
+--
+
+INSERT INTO `programs` (`program_id`, `program_name`, `program_desc`, `total_applicant`, `program_status`) VALUES
+('121dasdadfsdf', 'Scholar ng bayan new', 'lroem asdasdasdasd asc ascdasxcas xcas cas dasdasdas as asdasd a asdasdasdasd asdasdas asdasdasdasd', 50, 'active'),
+('1cb44041-c38a-4744-bea8-cef5e2cf74db', 'sample programs', 'sample programs description', 0, 'active'),
+('5534ae1a-37e1-4c43-8652-3720801cfaef', 'sample programs', 'sample programs description', 0, 'active'),
+('5d6bb4c1-f47b-4748-93bc-0150b407aa5c', 'sample programs', 'sample programs description', 0, 'active'),
+('b69e6e47-d179-4e99-8497-0e3ed9a944e3', 'sample pls', 'sample pls', 0, 'renewal');
 
 --
 -- Indexes for dumped tables
@@ -187,6 +212,12 @@ ALTER TABLE `files`
 --
 ALTER TABLE `profile`
   ADD PRIMARY KEY (`profile_id`);
+
+--
+-- Indexes for table `programs`
+--
+ALTER TABLE `programs`
+  ADD PRIMARY KEY (`program_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
