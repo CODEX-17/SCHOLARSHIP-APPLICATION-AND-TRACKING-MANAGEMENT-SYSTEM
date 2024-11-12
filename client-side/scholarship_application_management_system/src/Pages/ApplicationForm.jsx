@@ -52,7 +52,7 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
    const [mpermanentAddress, setMPermanentAddress] = useState('')
    const [mcontact, setMContact] = useState(0)
    const [mVoters, setMVoters] = useState(false)
-   const [mLong, setMLong] = useState(1)
+   const [mLong, setMLong] = useState(0)
   
     // father
     const [ffirstname, setFFirstname] = useState('') 
@@ -62,7 +62,7 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
     const [fpermanentAddress, setFPermanentAddress] = useState('')
     const [fcontact, setFContact] = useState(0)
     const [fVoters, setFVoters] = useState(false)
-    const [fLong, setFLong] = useState(1)
+    const [fLong, setFLong] = useState(0)
   
     // files variables
     const [coeFile, setCoeFile] = useState(null)
@@ -151,7 +151,6 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
         schoolIDFile,
         parentIDFile
             )
-            
     
         if (firstname &&
             middlename &&
@@ -162,22 +161,18 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
             currentAddress &&
             permanentAddress &&
             email &&
-            mfirstname &&
-            mmiddlename &&
-            mlastname &&
+            mfirstname !== '' &&
+            mmiddlename !== '' &&
+            mlastname !== '' &&
             mcurrentAddress &&
             mpermanentAddress &&
             mcontact &&
-            mVoters &&
-            mLong &&
             ffirstname &&
             fmiddlename &&
             flastname &&
             fcurrentAddress &&
             fpermanentAddress &&
             fcontact &&
-            fVoters &&
-            fLong &&
             coeFile &&
             brgyIndigencyFile &&
             cogFile &&
@@ -185,6 +180,8 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
             parentIDFile
         ) {
             setIsBtnEnabled(false)
+        }else{
+            setIsBtnEnabled(true)
         }
     
         },[
@@ -247,9 +244,6 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
         isSameInCurrentAddMother,
         isSameInCurrentAddPersonal
     ])
-
-
-
 
   const handleFileUpload = (e, type) => {
     if (e, type) {
@@ -536,7 +530,7 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
                                         </div>
                                         <div className='d-flex flex-column w-50'>
                                             <div className='d-flex align-items-center gap-2'>
-                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required checked={mVoters} onChange={(e) => {setMVoters(e.target.checked)}}/>
+                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required checked={mVoters} onChange={(e) => {setMVoters(e.target.checked), setMLong(1)}}/>
                                                 <p>Are you registered voter of Tabuk City? For how many years?</p>
                                             </div>
                                             <input type="number" maxLength={4} placeholder='How many years?' disabled={mVoters ? false : true} required={mVoters ? false : true} value={mLong} onChange={(e) => setMLong(e.target.value)}/>
@@ -595,7 +589,7 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
                                         </div>
                                         <div className='d-flex flex-column w-50'>
                                             <div className='d-flex align-items-center gap-2'>
-                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required checked={fVoters} onChange={(e) => setFVoters(e.target.checked)}/>
+                                                <input type="checkbox" style={{ width: '15px', margin: '0px' }} required checked={fVoters} onChange={(e) => {setFVoters(e.target.checked), setFLong(1)}}/>
                                                 <p>Are you registered voter of Tabuk City? For how many years?</p>
                                             </div>
                                             <input type="number" maxLength={4} placeholder='How many years?' disabled={fVoters ? false : true} required={mVoters ? false : true} value={fLong} onChange={(e) => setFLong(e.target.value)}/>

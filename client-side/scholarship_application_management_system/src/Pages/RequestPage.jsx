@@ -14,6 +14,7 @@ const RequestPage = () => {
     const [requestList, setRequestList] = useState([])
 
     const [isShowModal, setIsShowModal] = useState(false)
+    const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
     const [selectedData, setSelectedData] = useState(null)
     const [message, setMessage] = useState('')
 
@@ -82,7 +83,7 @@ const RequestPage = () => {
             <div className='d-flex gap-2'>
                 <button className={style.btn} title='View Details' onClick={() => {setIsShowModal(true), setSelectedData(record), console.log(record)}}><AiFillProfile size={15}/> View</button>
                 {
-                    record.status === 'rejected' && <button className={style.btn} style={{ backgroundColor: '#B8001F' }} title='Delete Request' onClick={() => {setIsShowModal(true), setSelectedData(record), console.log(record)}}><AiFillDelete size={15}/> Delete</button>
+                    record.status === 'rejected' && <button className={style.btn} style={{ backgroundColor: '#B8001F' }} title='Delete Request' onClick={() => {setSelectedData(record), setIsShowDeleteModal(true)}}><AiFillDelete size={15}/> Delete</button>
                 }
                 
             </div>
@@ -129,14 +130,54 @@ const RequestPage = () => {
 
     }
 
+    const handleDelete = () => {
+        if (selectedData && selectedData.profile_id) {
+            const id = selectedData.profile_id;
+    
+            axios.post('http://localhost:5001/accounts/deleteProfiles', { id })
+                .then((res) => {
+                    const result = res.data;
+                    const message = result.message;
+                    setMessage(message);
+    
+                    const updateData = requestList.filter(data => data.profile_id !== id);
+                    setRequestList(updateData);
+    
+                    setIsShowDeleteModal(false);
+                    setIsShowNotification(true);
+    
+                    setTimeout(() => {
+                        setIsShowNotification(false);
+                    }, 3000);
+                })
+                .catch((err) => console.log(err));
+        } else {
+            console.log('No profile selected or profile ID missing.');
+        }
+
+    }
+
   return (
     <div className={style.container}>
-        {isShowNotification && (
-            <div className={style.notification}>
-                <NotificationComponent message={message} status={true}/>
-            </div>
-            
-        )}
+        {
+            isShowNotification && (
+                <div className={style.notification}>
+                    <NotificationComponent message={message} status={true}/>
+                </div>
+            )
+        }
+        {
+            isShowDeleteModal && (
+                <div className={style.modalDelete}>
+                    <h2>Are you sure you want to delete?</h2>
+                    <p>Once deleted, you will not be able to retrieve this data.</p>
+                    <div className='d-flex gap-3'>
+                        <button onClick={handleDelete}>Confirm</button>
+                        <button style={{ backgroundColor: '#B8001F' }} onClick={() => setIsShowDeleteModal(false)}>Cancel</button>
+                    </div>
+                </div>
+            )
+        }
         {
             (isShowModal && selectedData) && (
                 <div className={style.modal}>

@@ -39,6 +39,47 @@
 }
 
 
+.modalDelete {
+    background-color: white;
+    width: auto;
+    height: auto;
+    padding: 2%;
+    border-radius: 10px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: absolute;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
+    0 1px 3px rgba(0, 0, 0, 0.08);
+    animation: pop 0.5s ease-in-out;
+}
+
+.modalDelete h2 {
+    font-family: bold;
+    font-size: 20pt;
+}
+
+.modalDelete p {
+    font-size: 10pt;
+}
+
+.modalDelete button {
+    width: 100px;
+    font-family: bold;
+    border: none;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #6EC207;
+    color: white;
+}
+
+.modalDelete button:hover {
+    opacity: 0.5;
+}
+
+
 .btn {
     background-color: #6EC207;
     color: white;

@@ -78,7 +78,7 @@ router.post('/addProfiles', upload.fields([
         father_firstname, father_middlename, father_lastname,
         father_current_address, father_permanent_address, father_contact_number, father_registered_voter, father_voting_years, profile_picture,
         parent_id, school_id, cog_file, brgy_indigency, coe_file, status
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     // Ensure that profileValues has the correct number of items
@@ -118,8 +118,7 @@ router.post('/addProfiles', upload.fields([
       await insertFile(parentIDFile);
       await insertFile(schoolIDFile);
   
-      // Commit the transaction
-      await connection.commit();
+      
 
       const mailOptions = {
         to: email,
@@ -149,7 +148,18 @@ Admin`
 
       });
 
-      
+      const programQuery = 'SELECT total_applicant FROM programs WHERE program_id=?'
+      const updateProgramQuery = 'UPDATE programs SET total_applicant=? WHERE program_id=?'
+      const currentTotalApplicant = await connection.query(programQuery, [program_id]);
+
+      if (currentTotalApplicant) {
+        const updatedNumber = currentTotalApplicant[0][0].total_applicant + 1
+        await connection.query(updateProgramQuery, [updatedNumber, program_id])
+      }
+
+      // Commit the transaction
+      await connection.commit();
+
     } catch (err) {
       await connection.rollback(); // Rollback in case of error
       console.error('Transaction failed:', err);
