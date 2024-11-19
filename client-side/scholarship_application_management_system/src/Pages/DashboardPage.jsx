@@ -5,11 +5,11 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { BiLogOutCircle } from "react-icons/bi";
 import RequestPage from './RequestPage';
 import { useNavigate } from 'react-router-dom';
-import ApplicationForm from './ApplicationForm';
 import MyApplication from './MyApplication';
 import ManageAccountComponent from '../Components/ManageAccountComponent';
 import ProgramsPage from './ProgramsPage';
 import ProgramListPage from './ProgramListPage';
+import NotificationComponent from '../Components/NotificationComponent';
 
 const DashboardPage = () => {
 
@@ -18,6 +18,12 @@ const DashboardPage = () => {
   const [activeDisplay, setActiveDisplay] = useState('dashboard')
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user')) || null
+
+  const [isShowNotification, setIsShowNotification] = useState(false)
+
+  
+  const [message, setMessage] = useState('')
+  const [notifStatus, setNotifStatus] = useState(true)
 
   useEffect(() => {
     if (!user) {
@@ -28,6 +34,19 @@ const DashboardPage = () => {
   const handleShowCloseManageAccount = (status) => {
     setIsShowManageAccount(status)
   }
+
+  const notificationConfig = (message, status) => {
+    setMessage(message)
+    setNotifStatus(status)
+    setIsShowNotification(true)
+
+    setTimeout(() => {
+        setIsShowNotification(false)
+        setMessage('')
+    }, 3000);
+  }
+
+
 
   return (
     <div className={style.container}>
@@ -88,10 +107,16 @@ const DashboardPage = () => {
             <BiLogOutCircle size={25} cursor={'pointer'} title='logout' id={style.btnLogout} onClick={() => {localStorage.clear(), navigate('/')}}/>
         </div>
         <div className={style.display}>
+            { 
+                isShowNotification &&
+                    <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+                        <NotificationComponent message={message} status={notifStatus}/>
+                    </div>
+            }
             {
                 isShowManageAccount && (
                     <div className={style.manageAcctDiv}>
-                      <ManageAccountComponent handleShowCloseManageAccount={handleShowCloseManageAccount}/>  
+                      <ManageAccountComponent handleShowCloseManageAccount={handleShowCloseManageAccount} notificationConfig={notificationConfig}/>  
                     </div>
                 )
             }

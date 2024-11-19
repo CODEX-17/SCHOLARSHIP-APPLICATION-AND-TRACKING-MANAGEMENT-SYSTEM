@@ -11,7 +11,6 @@ const NotificationComponent = ({ message, status }) => {
     setFinalMessage(message)
   },[])
 
-  
   const finalStatus = status ? status : true
     
   return (
