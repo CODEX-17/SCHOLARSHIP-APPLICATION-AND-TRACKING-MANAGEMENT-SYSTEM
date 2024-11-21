@@ -11,7 +11,7 @@ const ProgramListPage = () => {
   const [selectedData, setSelectedData] = useState(null)
   const [selectedProfile, setSelectedProfile] = useState(null)
   const [isShowForm, setIsShowForm] = useState(false)
-  const [applicantStatus, setApplicantStatus] = useState('apply')
+  const [applicantStatus, setApplicantStatus] = useState(null)
   const userDetails = JSON.parse(localStorage.getItem('user')) || null
 
   const [alreadyApplied, setAlreadyApplied] = useState(false)
@@ -20,7 +20,69 @@ const ProgramListPage = () => {
     axios.get(`${url}programs/getPrograms`)
     .then((res) => {
         const result = res.data
-        setProgramList(result)
+        console.log(userDetails)
+        if (result.length > 0) {
+
+            let updated = [...result]
+
+            for (let i = 0; i < updated.length; i++) {
+                console.log(updated[i].program_id, userDetails.program_id )
+                  if (
+                    updated[i].program_id === userDetails.program_id &&
+                    userDetails.apply_status === 'applying'
+                  ) {
+                    console.log('yes')
+                    updated[i].program_prev = 'Application Submitted'
+                  }
+              
+                  else if (
+                    updated[i].program_id === userDetails.program_id &&
+                    userDetails.apply_status === 'applied' &&
+                    updated[i].program_status === 'renewal'
+                  ) {
+                    updated[i].program_prev = 'Renew Application'
+                  }
+              
+                  else if (
+                    updated[i].program_id === userDetails.program_id &&
+                    userDetails.apply_status === 'applied' &&
+                    updated[i].program_status !== 'renewal'
+                  ) {
+                    updated[i].program_prev = 'Already Applied'
+                  }
+              
+                  else if (
+                    userDetails.apply_status === 'free' ||
+                    userDetails.apply_status === 'rejected' &&
+                    updated[i].program_id !== userDetails.program_id
+                  ) {
+                    updated[i].program_prev = 'Apply'
+                  }
+
+                  else if (
+                    userDetails.apply_status === 'applied' &&
+                    updated[i].program_id !== userDetails.program_id ||
+                    userDetails.apply_status === 'applying' &&
+                    updated[i].program_id !== userDetails.program_id
+                  ) {
+                    updated[i].program_prev = 'Unable to apply'
+                  }
+              
+              
+                  else if (
+                    updated[i].program_id === userDetails.program_id &&
+                    userDetails.apply_status === 'rejected'
+                  ) {
+                    updated[i].program_prev = 'Application Rejected'
+                  }
+                
+            }
+
+            console.log(updated)
+
+            setProgramList(updated)
+    
+        }
     })
     .catch(err => console.log(err))
 
@@ -31,6 +93,10 @@ const ProgramListPage = () => {
     })
     .catch(err => console.log(err))
   },[])
+
+  useEffect(() => {
+    setApplicantStatus(userDetails?.apply_status)
+  },[userDetails])
 
 
   useEffect(() => {
@@ -65,25 +131,17 @@ const ProgramListPage = () => {
     setIsShowForm(status)
   }
 
-  const handleChangeTextStatus = () => {
-    console.log(alreadyApplied, selectedData)
-
-    if (alreadyApplied && selectedData.program_status === 'renewal') {
-        return 'Renew Application'
-    }else if (alreadyApplied && selectedData.program_status === 'active') {
-        return 'Already Applied'
-    }
-
-    return 'Apply'
-  }
 
   const handleUpdateDisabledButton = () => {
-    if (applicantStatus === 'renewal' || applicantStatus === 'apply') {
-        console.log(applicantStatus)
+    if ( 
+        selectedData?.program_prev === 'Renew Application' ||
+        selectedData?.program_prev === 'Apply' ||
+        selectedData?.program_prev === 'Renew Application'
+    ) {
         return false
+    }else {
+        return true
     }
-
-    return true
   }
 
   return (
@@ -110,7 +168,7 @@ const ProgramListPage = () => {
                                     <p><b>Program Description</b></p>
                                     <p style={{ textAlign: 'justify' }}>{selectedData.program_desc}</p>
                                 </div>
-                                <button disabled={handleUpdateDisabledButton()} onClick={(() => handleApply(true))}>{handleChangeTextStatus()}</button>
+                                <button disabled={handleUpdateDisabledButton()} onClick={(() => handleApply(true))}>{selectedData?.program_prev}</button>
                             </div>
                         </div>
                     )

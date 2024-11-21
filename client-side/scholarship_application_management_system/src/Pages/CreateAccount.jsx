@@ -67,8 +67,6 @@ const CreateAccount = () => {
             setRenderDisplay('success')
         }, 3000);
 
-        
-        
     })
     .catch((err) => console.log(err))
   }

@@ -74,7 +74,17 @@ const LoginPage = () => {
             <div id={style.passwordInput}>
                 <input type={isShowPassword ? 'text': 'password'} placeholder='Enter password...' required onChange={(e) => setPassword(e.target.value)}/>
                 {
-                    isShowPassword ? <TbEyeClosed id={style.showIcon} size={20} onClick={() => setIsShowPassword(false)} cursor={'pointer'}/> : <TbEye id={style.showIcon} size={20} onClick={() => setIsShowPassword(true)} cursor={'pointer'}/>
+                    isShowPassword ? 
+                      <TbEyeClosed 
+                        id={style.showIcon}
+                        size={20}
+                        onClick={() => setIsShowPassword(false)} cursor={'pointer'}
+                      /> : 
+                      <TbEye 
+                        id={style.showIcon} 
+                        size={20}
+                        onClick={() => setIsShowPassword(true)} cursor={'pointer'}
+                      />
                 }
                 
             </div>

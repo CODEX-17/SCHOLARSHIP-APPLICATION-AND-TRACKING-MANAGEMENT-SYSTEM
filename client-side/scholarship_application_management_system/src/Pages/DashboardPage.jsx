@@ -86,9 +86,9 @@ const DashboardPage = () => {
                                     onClick={() => setActiveDisplay('programs')}
                                 >Programs</button>
                                 <button 
-                                    className={activeDisplay === 'request' ? style.btnMenuActive : style.btnMenu} 
-                                    onClick={() => setActiveDisplay('request')}
-                                >Request</button>
+                                    className={activeDisplay === 'applications' ? style.btnMenuActive : style.btnMenu} 
+                                    onClick={() => setActiveDisplay('applications')}
+                                >Applications</button>
                             </>
                         )
                     }
@@ -122,7 +122,7 @@ const DashboardPage = () => {
             }
 
             {
-                activeDisplay === 'request' && <RequestPage/> ||
+                activeDisplay === 'applications' && <RequestPage/> ||
                 activeDisplay === 'apply' && <ProgramListPage/> ||
                 activeDisplay === 'my-application' && <MyApplication/> ||
                 activeDisplay === 'programs' && <ProgramsPage/>

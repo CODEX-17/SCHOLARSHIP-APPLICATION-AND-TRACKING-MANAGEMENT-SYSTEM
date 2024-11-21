@@ -7,6 +7,7 @@ const path = require('path');
 const multer = require('multer');
 
 const nodemailer = require('nodemailer');
+const { rejects } = require('assert');
 const emailPassword = 'sokb hpyq oevl gmkl';
 
 const transporter = nodemailer.createTransport({
@@ -48,11 +49,12 @@ router.post('/checkAccounts', async (req, res) => {
                 // Send user data as response
                 return res.status(200).json({
                     user_id: user.user_id,
+                    program_id: user.program_id,
                     email: user.email,
                     type: user.type,
                     username: user.username,
                     image: user.filename,
-                    // other fields you may need to return
+                    apply_status: user.apply_status,
                 });
             } else {
                 console.log('Password mismatch');
@@ -84,7 +86,6 @@ router.get('/getAllEmails', (req, res) => {
 })
 
 
-
 // Multer setup for file uploads
 const storage = multer.diskStorage({
     destination: './uploads/',
@@ -100,9 +101,9 @@ router.post('/createAccount', upload.single('file'), (req, res) => {
     const { email, password, username } = req.body;
     const profilePic = req.file ? req.file.filename : 'default';
 
-    const query = 'INSERT INTO accounts(user_id, email, password, username, type, filename) VALUES(?,?,?,?,?,?)';
+    const query = 'INSERT INTO accounts(user_id, email, password, username, type, filename, apply_status) VALUES(?,?,?,?,?,?,?)';
 
-    pool.query(query, [generateUniqueId(), email, passwordHash.generate(password), username, 'user', profilePic], (error, result) => {
+    pool.query(query, [generateUniqueId(), email, passwordHash.generate(password), username, 'user', profilePic, 'free'], (error, result) => {
         if (error) {
             console.error(error)
             res.status(400).send(error)
@@ -158,59 +159,96 @@ router.post('/deleteProfiles', (req, res) => {
     });
 });
 
-router.post('/updateStatusProfile', (req, res) => {
-    const { id, status, firstname, email } = req.body;
+//Update the application status
+router.post('/updateStatusProfile', async (req, res) => {
 
-    if (!id || !status || !firstname || !email) {
+    const { profile_id, status, firstname, email, program_id, apply_status, user_id } = req.body
+    const queryProfile = 'UPDATE profile SET status=? WHERE profile_id=?'
+    const queryAccount = 'UPDATE accounts SET apply_status=? WHERE user_id=?'
+
+    const mailOptions = {
+        to: email,
+        from: 'librarysmart69@gmail.com',
+        subject: 'Congratulations! Your Scholarship Application is Approved',
+        text: `Hi ${firstname},
+    
+                Congratulations!
+                
+                We are excited to inform you that after reviewing your application, you have met all the necessary requirements and have been officially selected as a scholar in our program.
+                
+                Your application has been approved by the admin, and we are thrilled to welcome you to the scholarship community. 
+                
+                Please stay tuned for further instructions regarding the next steps. If you have any questions or need additional information, don't hesitate to reach out to us.
+                
+                Once again, congratulations, and we look forward to seeing all the great things you will accomplish!
+                
+                Best regards,  
+                Admin`
+    };
+
+    if (!profile_id || !status || !firstname || !email || !program_id || !apply_status) {
         return res.status(400).json({ message: 'The data is not properly sending.' });
     }
 
-    const query = 'UPDATE profile SET status=? WHERE profile_id=? ';
-
-    pool.query(query, [status, id], (error, result) => {
-        if (error) {
-            console.log(error);
-            return res.status(500).send({ message: 'Error updating profile' });
-        }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Profile not found' });
-        }
-
-        const mailOptions = {
-            to: email,
-            from: 'librarysmart69@gmail.com',
-            subject: 'Congratulations! Your Scholarship Application is Approved',
-            text: `Hi ${firstname},
-          
-                    Congratulations!
-                    
-                    We are excited to inform you that after reviewing your application, you have met all the necessary requirements and have been officially selected as a scholar in our program.
-                    
-                    Your application has been approved by the admin, and we are thrilled to welcome you to the scholarship community. 
-                    
-                    Please stay tuned for further instructions regarding the next steps. If you have any questions or need additional information, don't hesitate to reach out to us.
-                    
-                    Once again, congratulations, and we look forward to seeing all the great things you will accomplish!
-                    
-                    Best regards,  
-                    Admin`
-          };
-           
-      
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              console.log(error);
-              return res.status(500).json({ message: 'Error sending email' });
-            }
-    
-            console.log('Successfully update Status.');
-            res.status(200).json({ message: 'Successfully update Status.' });
-    
-          });
-
+    try {
         
-    });
+        const updatingProfileStatus = new Promise((resolve, reject) => {
+            pool.query(queryProfile, [status, profile_id], (error, data) => {
+                if (error) {
+                    reject('Error updating the profile.')
+                }else if (data.affectedRows === 0) {
+                    reject('Profile not found.')
+                }else {
+                    resolve('Profile updated successfully.')
+                }
+            })
+        })
+
+        const sendingEmail = new Promise((resolve, reject) => {
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    reject('Error sending email')
+                }else {
+                    resolve('Email send successfully.')
+                }
+            })
+        })
+
+        const updatingAccountAppStatus = new Promise((resolve, reject) => {
+            pool.query(queryAccount, [apply_status, user_id], (error, data) => {
+                if (error) {
+                    reject('Error updating the apply_status of account.')
+                }else {
+                    resolve('Successfully update the account apply_status')
+                }
+            })
+        })
+
+        await Promise.all([updatingProfileStatus, updatingAccountAppStatus, sendingEmail])
+        res.status(200).json({ message: 'Successfully update application status.' })
+
+    } catch (error) {
+        console.log(error)
+        res.status(400).send(error)
+    }
+    
 });
+
+router.post('/updateApplyStatus', (req, res) => {
+
+    const { apply_status, user_id } = req.body
+    const query = 'UPDATE accounts SET apply_status=? WHERE user_id=?'
+
+    pool.query(query, [apply_status, user_id], (error, data, field) => {
+        if (error) {
+            console.log(error)
+            res.status(400).send(error)
+        }
+
+        console.log('Successfully update application status.')
+        res.status(200).json({ message: 'Successfully update application status.' })
+    })
+
+})
 
 module.exports = router

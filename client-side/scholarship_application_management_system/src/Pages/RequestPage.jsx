@@ -17,6 +17,8 @@ const RequestPage = () => {
     const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
     const [selectedData, setSelectedData] = useState(null)
     const [message, setMessage] = useState('')
+    const [notifStatus, setNotifStatus] = useState(true)
+    const [isLoading, setIsLoading] = useState(true)
 
     const [isShowNotification, setIsShowNotification] = useState(false)
     const userDetails = JSON.parse(localStorage.getItem('user')) || null
@@ -26,10 +28,9 @@ const RequestPage = () => {
         .then((res) => {
             const result = res.data
             setRequestList(result)
-            console.log(res.data)
         })
         .catch((err) => console.log(err))
-    },[])
+    },[message])
 
     const formatDate = (dateString) => {
         // Create a new Date object from the provided date string
@@ -91,41 +92,23 @@ const RequestPage = () => {
     ];
       
     const handleQualification = (qualified) => {
-        
-        const status = qualified ? 'approved' : 'rejected'
-        const id = selectedData.profile_id
-        const firstname = selectedData.firstname
-        const email = selectedData.email
 
-        axios.post('http://localhost:5001/accounts/updateStatusProfile', { status, id, firstname, email })
+        const data = {
+            status: qualified ? 'approved' : 'rejected',
+            profile_id: selectedData.profile_id,
+            firstname: selectedData.firstname,
+            email: selectedData.email,
+            program_id: selectedData?.program_id,
+            apply_status: qualified ? 'applied' : 'rejected',
+            user_id: userDetails?.user_id
+        }
+       
+        axios.post('http://localhost:5001/accounts/updateStatusProfile', data)
         .then((res) => {
             const result = res.data
             const message = result.message
             setIsShowNotification(true)
-            setMessage(message)
-            console.log(message)
-
-            //Update the requestVariable
-            let updatedData = requestList
-
-            for (let i = 0; i < updatedData.length; i++) {
-                if (updatedData[i].profile_id === id) {
-                    updatedData[i].status = status
-                }
-            }
-
-            setRequestList(updatedData)
-            
-            //Update the selectedVariable
-            setSelectedData((data) => {
-                let updatedData = data
-                updatedData.status = status
-                return updatedData
-            })
-
-            setTimeout(() => {
-                setIsShowNotification(true)
-            }, 3000);
+            notificationConfig(message, true)
         }).catch(err => console.log(err))
 
     }
@@ -157,12 +140,24 @@ const RequestPage = () => {
 
     }
 
+    const notificationConfig = (message, status) => {
+        setMessage(message)
+        setNotifStatus(status)
+        setIsShowNotification(true)
+        
+        setTimeout(() => {
+            isShowNotification(false)
+            setMessage('')
+        }, 3000);
+    }
+
+
   return (
     <div className={style.container}>
         {
             isShowNotification && (
                 <div className={style.notification}>
-                    <NotificationComponent message={message} status={true}/>
+                    <NotificationComponent message={message} status={notifStatus}/>
                 </div>
             )
         }
@@ -181,179 +176,190 @@ const RequestPage = () => {
         {
             (isShowModal && selectedData) && (
                 <div className={style.modal}>
-                    <div className={style.head}>
-                        <h1 style={{ color: 'black' }}>Applicant Profile</h1>
-                        <BiExit size={25} cursor={'pointer'} onClick={() => setIsShowModal(false)}/>
-                    </div>
-                    <div className='d-flex flex-column'>
-                        <div className={style.body}>
-                            <div className={style.section}>
-                                <div className={style.top}>
-                                    <h1>Personal Information</h1>
-                                    <img src={'http://localhost:5001/' + selectedData.profile_picture} alt='profile'/>
+                    {
+                        isLoading ? <p>Loading...</p> :
+                        <>
+                            <div className={style.head}>
+                                <h1 style={{ color: 'black' }}>Applicant Profile</h1>
+                                <BiExit size={25} cursor={'pointer'} onClick={() => setIsShowModal(false)}/>
+                            </div>
+                            <div className={style.body}>
+                                <div className={style.section}>
+                                    <div className={style.top}>
+                                        <h1>Personal Information</h1>
+                                        <img src={'http://localhost:5001/' + selectedData.profile_picture} alt='profile'/>
+                                    </div>
+                                    <div className={style.bot}>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Firstname</h2>
+                                            <p>{selectedData.firstname}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Middlename</h2>
+                                            <p>{selectedData.middlename}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Lastname</h2>
+                                            <p>{selectedData.lastname}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Birthdate</h2>
+                                            <p>{formatDate(selectedData.birthdate)}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Gender</h2>
+                                            <p>{selectedData.gender}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Civil Status</h2>
+                                            <p>{selectedData.civil_status}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Contact</h2>
+                                            <p>{selectedData.contact}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Email</h2>
+                                            <p>{selectedData.email}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Current Address</h2>
+                                            <p>{selectedData.current_address}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Permanent Address</h2>
+                                            <p>{selectedData.permanent_address}</p>
+                                        </div>
+                                        
+                                    </div>
+                                
                                 </div>
-                                <div className={style.bot}>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Firstname</h2>
-                                        <p>{selectedData.firstname}</p>
+                                <div className={style.section}>
+                                    <div className={style.top}>
+                                        <h1>Family Background</h1>
                                     </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Middlename</h2>
-                                        <p>{selectedData.middlename}</p>
+                                    <div className={style.bot}>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Mother's Firstname</h2>
+                                            <p>{selectedData.mother_firstname}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Mother's Middlename</h2>
+                                            <p>{selectedData.mother_middlename}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Mother's Lastname</h2>
+                                            <p>{selectedData.mother_lastname}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Current Address</h2>
+                                            <p>{selectedData.mother_current_address}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Permanent Address</h2>
+                                            <p>{selectedData.mother_permanent_address}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Registered Voter Since</h2>
+                                            <p>{selectedData.mother_registered_voter}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Contact</h2>
+                                            <p>{selectedData.mother_contact_number}</p>
+                                        </div>
+
+                                        <div className='d-flex flex-column'>
+                                            <h2>Father's Firstname</h2>
+                                            <p>{selectedData.father_firstname}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Father's Middlename</h2>
+                                            <p>{selectedData.father_middlename}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Father's Lastname</h2>
+                                            <p>{selectedData.father_lastname}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Current Address</h2>
+                                            <p>{selectedData.father_current_address}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Permanent Address</h2>
+                                            <p>{selectedData.father_permanent_address}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Registered Voter Since</h2>
+                                            <p>{selectedData.father_registered_voter}</p>
+                                        </div>
+                                        <div className='d-flex flex-column'>
+                                            <h2>Contact</h2>
+                                            <p>{selectedData.father_contact_number}</p>
+                                        </div>
                                     </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Lastname</h2>
-                                        <p>{selectedData.lastname}</p>
+                                </div>
+                                <div className={style.section}>
+                                    <div className={style.top}>
+                                        <h1>Documents</h1>
                                     </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Birthdate</h2>
-                                        <p>{formatDate(selectedData.birthdate)}</p>
+                                    <div className={style.bot}>
+                                        <div className='d-flex w-100 flex-column mt-3'>
+                                            <h2>Certificate of Enrollment</h2>
+                                            <div className={style.fileCard}>{selectedData.coe_file} <FaDownload cursor={'pointer'} title='download' onClick={() => window.location.href = `http://localhost:5001/${selectedData.coe_file}`}/></div>
+                                        </div>
+                                        <div className='d-flex w-100 flex-column mt-3'>
+                                            <h2>Barangay Indigency</h2>
+                                            <div className={style.fileCard}>{selectedData.brgy_indigency} <FaDownload cursor={'pointer'} title='download' onClick={() => window.location.href=`http://localhost:5001/${selectedData.brgy_indigency}`}/></div>
+                                        </div>
+                                        <div className='d-flex w-100 flex-column mt-3'>
+                                            <h2>Last Sem Certificate of Grades</h2>
+                                            <div className={style.fileCard}>{selectedData.cog_file} <FaDownload cursor={'pointer'} title='download' onClick={() => window.location.href=`http://localhost:5001/${selectedData.cog_file}`}/></div>
+                                        </div>
+                                        <div className='d-flex w-100 flex-column mt-3'>
+                                            <h2>School ID</h2>
+                                            <div className={style.fileCard}>{selectedData.school_id} <FaDownload cursor={'pointer'} title='download' onClick={() => window.location.href=`http://localhost:5001/${selectedData.school_id}`}/></div>
+                                        </div>
+                                        <div className='d-flex w-100 flex-column mt-3'>
+                                            <h2>Parent ID</h2>
+                                            <div className={style.fileCard}>{selectedData.parent_id} <FaDownload cursor={'pointer'} title='download' onClick={() => window.location.href=`http://localhost:5001/${selectedData.parent_id}`}/></div>
+                                        </div>
                                     </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Gender</h2>
-                                        <p>{selectedData.gender}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Civil Status</h2>
-                                        <p>{selectedData.civil_status}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Contact</h2>
-                                        <p>{selectedData.contact}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Email</h2>
-                                        <p>{selectedData.email}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Current Address</h2>
-                                        <p>{selectedData.current_address}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Permanent Address</h2>
-                                        <p>{selectedData.permanent_address}</p>
-                                    </div>
-                                    
                                 </div>
                             
                             </div>
-                            <div className={style.section}>
-                                <div className={style.top}>
-                                    <h1>Family Background</h1>
-                                </div>
-                                <div className={style.bot}>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Mother's Firstname</h2>
-                                        <p>{selectedData.mother_firstname}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Mother's Middlename</h2>
-                                        <p>{selectedData.mother_middlename}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Mother's Lastname</h2>
-                                        <p>{selectedData.mother_lastname}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Current Address</h2>
-                                        <p>{selectedData.mother_current_address}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Permanent Address</h2>
-                                        <p>{selectedData.mother_permanent_address}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Registered Voter Since</h2>
-                                        <p>{selectedData.mother_registered_voter}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Contact</h2>
-                                        <p>{selectedData.mother_contact_number}</p>
-                                    </div>
-
-                                    <div className='d-flex flex-column'>
-                                        <h2>Father's Firstname</h2>
-                                        <p>{selectedData.father_firstname}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Father's Middlename</h2>
-                                        <p>{selectedData.father_middlename}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Father's Lastname</h2>
-                                        <p>{selectedData.father_lastname}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Current Address</h2>
-                                        <p>{selectedData.father_current_address}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Permanent Address</h2>
-                                        <p>{selectedData.father_permanent_address}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Registered Voter Since</h2>
-                                        <p>{selectedData.father_registered_voter}</p>
-                                    </div>
-                                    <div className='d-flex flex-column'>
-                                        <h2>Contact</h2>
-                                        <p>{selectedData.father_contact_number}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className={style.section}>
-                                <div className={style.top}>
-                                    <h1>Documents</h1>
-                                </div>
-                                <div className={style.bot}>
-                                    <div className='d-flex w-100 flex-column mt-3'>
-                                        <h2>Certificate of Enrollment</h2>
-                                        <div className={style.fileCard}>{selectedData.coe_file} <FaDownload cursor={'pointer'} title='download' onClick={() => window.location.href = `http://localhost:5001/${selectedData.coe_file}`}/></div>
-                                    </div>
-                                    <div className='d-flex w-100 flex-column mt-3'>
-                                        <h2>Barangay Indigency</h2>
-                                        <div className={style.fileCard}>{selectedData.brgy_indigency} <FaDownload cursor={'pointer'} title='download' onClick={() => window.location.href=`http://localhost:5001/${selectedData.brgy_indigency}`}/></div>
-                                    </div>
-                                    <div className='d-flex w-100 flex-column mt-3'>
-                                        <h2>Last Sem Certificate of Grades</h2>
-                                        <div className={style.fileCard}>{selectedData.cog_file} <FaDownload cursor={'pointer'} title='download' onClick={() => window.location.href=`http://localhost:5001/${selectedData.cog_file}`}/></div>
-                                    </div>
-                                    <div className='d-flex w-100 flex-column mt-3'>
-                                        <h2>School ID</h2>
-                                        <div className={style.fileCard}>{selectedData.school_id} <FaDownload cursor={'pointer'} title='download' onClick={() => window.location.href=`http://localhost:5001/${selectedData.school_id}`}/></div>
-                                    </div>
-                                    <div className='d-flex w-100 flex-column mt-3'>
-                                        <h2>Parent ID</h2>
-                                        <div className={style.fileCard}>{selectedData.parent_id} <FaDownload cursor={'pointer'} title='download' onClick={() => window.location.href=`http://localhost:5001/${selectedData.parent_id}`}/></div>
-                                    </div>
-                                </div>
-                            </div>
-                        
-                        </div>
-                        {
-                            selectedData.status === 'pending' && (
-                                <div className={style.botMenu}>
-                                    <h2>Qualified Applicant?</h2>
-                                    <div className='d-flex gap-2 mt-2'>
+                            <div className={style.botMenu}>
+                                <h2>
+                                    {
+                                        selectedData?.status === 'pending' && 'Qualified Applicant?' ||
+                                        selectedData?.status === 'approved' && 'Approved Applicant' ||
+                                        selectedData?.status === 'rejected' && 'Rejected Applicant'
+                                    }
+                                </h2>
+                                {
+                                    selectedData.status === 'pending' && 
+                                    <div className='d-flex gap-2 mt-1'>
                                         <button onClick={() => handleQualification(true)}>Qualified</button>
                                         <button style={{ backgroundColor: '#B8001F' }} onClick={() => handleQualification(false)}>Not Qualified</button>
                                     </div>
-                                    
-                                </div>
-                            )
-                        }
-
-                    </div>
+                                }
+                            </div>
+                        </>
+                    }
+                    
                 </div>
-        
             )
         }
 
         <div className={style.content}>
             <div className='w-100'>
-                <h1>Request List</h1>
+                <h1>Applications List</h1>
             </div>
-            <Table className={style.table} columns={columns} dataSource={requestList} pagination={{ pageSize: 5 }} />
+            <Table 
+                className={style.table} 
+                columns={columns} 
+                dataSource={requestList} 
+                pagination={{ pageSize: 5 }} 
+            />
         </div>
     </div>
   )
