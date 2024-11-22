@@ -7,6 +7,7 @@ import { BiExit } from "react-icons/bi";
 import { FaDownload } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
 import NotificationComponent from '../Components/NotificationComponent';
+import LoadingComponents from '../Components/LoadingComponents';
 
 
 const RequestPage = () => {
@@ -18,7 +19,7 @@ const RequestPage = () => {
     const [selectedData, setSelectedData] = useState(null)
     const [message, setMessage] = useState('')
     const [notifStatus, setNotifStatus] = useState(true)
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
 
     const [isShowNotification, setIsShowNotification] = useState(false)
     const userDetails = JSON.parse(localStorage.getItem('user')) || null
@@ -92,26 +93,38 @@ const RequestPage = () => {
     ];
       
     const handleQualification = (qualified) => {
+        setIsLoading(true);
+    
+        const updatingStatus = async () => {
+            try {
+                const data = {
+                    status: qualified ? 'approved' : 'rejected',
+                    profile_id: selectedData.profile_id,
+                    firstname: selectedData.firstname,
+                    email: selectedData.email,
+                    program_id: selectedData?.program_id,
+                    apply_status: qualified ? 'applied' : 'rejected',
+                    user_id: userDetails?.user_id,
+                };
+    
+                const res = await axios.post('http://localhost:5001/accounts/updateStatusProfile', data)
+                const result = res.data;
+                const message = result.message
+    
+                setIsShowNotification(true)
+                notificationConfig(message, true)
+            } catch (error) {
+                console.log(error)
+            } finally {
+                setIsLoading(false)
+                setIsShowModal(false)
+            }
+        };
+    
+        updatingStatus();
+    };
+    
 
-        const data = {
-            status: qualified ? 'approved' : 'rejected',
-            profile_id: selectedData.profile_id,
-            firstname: selectedData.firstname,
-            email: selectedData.email,
-            program_id: selectedData?.program_id,
-            apply_status: qualified ? 'applied' : 'rejected',
-            user_id: userDetails?.user_id
-        }
-       
-        axios.post('http://localhost:5001/accounts/updateStatusProfile', data)
-        .then((res) => {
-            const result = res.data
-            const message = result.message
-            setIsShowNotification(true)
-            notificationConfig(message, true)
-        }).catch(err => console.log(err))
-
-    }
 
     const handleDelete = () => {
         if (selectedData && selectedData.profile_id) {
@@ -146,7 +159,7 @@ const RequestPage = () => {
         setIsShowNotification(true)
         
         setTimeout(() => {
-            isShowNotification(false)
+            setIsShowNotification(false)
             setMessage('')
         }, 3000);
     }
@@ -177,7 +190,11 @@ const RequestPage = () => {
             (isShowModal && selectedData) && (
                 <div className={style.modal}>
                     {
-                        isLoading ? <p>Loading...</p> :
+                        isLoading ? 
+                        <div className='d-flex align-items-center justify-content-center h-100 w-100 bg-prima'>
+                            <LoadingComponents/>
+                        </div>
+                        :
                         <>
                             <div className={style.head}>
                                 <h1 style={{ color: 'black' }}>Applicant Profile</h1>

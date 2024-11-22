@@ -135,30 +135,6 @@ router.post('/createAccount', upload.single('file'), (req, res) => {
 
 });
 
-router.post('/deleteProfiles', (req, res) => {
-    const { id } = req.body;
-
-    if (!id) {
-        return res.status(400).json({ message: 'Profile ID is required' });
-    }
-
-    const query = 'DELETE FROM profile WHERE profile_id=?';
-
-    pool.query(query, [id], (error, result) => {
-        if (error) {
-            console.log(error);
-            return res.status(500).send({ message: 'Error deleting profile' });
-        }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Profile not found' });
-        }
-
-        console.log('Successfully deleted profile.');
-        return res.status(200).json({ message: 'Successfully deleted profile.' });
-    });
-});
-
 //Update the application status
 router.post('/updateStatusProfile', async (req, res) => {
 
@@ -250,5 +226,48 @@ router.post('/updateApplyStatus', (req, res) => {
     })
 
 })
+
+router.post('/deleteProfiles', async (req, res) => {
+    const { profile_id, user_id } = req.body;
+  
+    const queryProfile = 'DELETE FROM profile WHERE profile_id=?';
+    const queryAccount = 'UPDATE accounts SET apply_status=?, program_id=? WHERE user_id=?'
+  
+    try {
+  
+      const deletingProfile = new Promise((resolve, reject) => {
+          pool.query(queryProfile, [profile_id], (error, result) => {
+            if (error) {
+                console.log(error)
+                reject('Error deleting profile.')
+            }else{
+                console.log('Successfully deleted profile.')
+                resolve('Successfully deleted profile.')
+            }
+          })
+      })
+  
+      const updatingAccount = new Promise((resolve, reject) => {
+        pool.query(queryAccount, ['free', 'n/a', user_id], (error , result) => {
+          if (error) {
+            console.log(error)
+            reject('Error updating account.')
+          }else {
+            console.log('Successfull updating account.')
+            resolve('Successfull updating account.')
+          }
+        })
+      })
+  
+      await Promise.all([deletingProfile, updatingAccount])
+      console.log('Successfully deleted applications.')
+      res.status(200).json({ message: 'Successfully deleted applications.' })
+  
+    } catch (error) {
+      console.log(error)
+      res.status(400).send(error)
+    }
+    
+  })
 
 module.exports = router

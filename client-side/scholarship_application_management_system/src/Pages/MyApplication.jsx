@@ -21,10 +21,7 @@ const MyApplication = () => {
     const [selectedData, setSelectedData] = useState(null)
 
     const formatDate = (dateString) => {
-        // Create a new Date object from the provided date string
         const date = new Date(dateString);
-    
-        // Use Intl.DateTimeFormat to format the date in the desired style
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Intl.DateTimeFormat('en-US', options).format(date);
     }
@@ -255,7 +252,6 @@ const MyApplication = () => {
                                 </div>
                             </div>
                         </div>
-                     
                     </div>
                 </div>
         

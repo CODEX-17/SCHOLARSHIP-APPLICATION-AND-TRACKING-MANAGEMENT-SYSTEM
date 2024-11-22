@@ -5,7 +5,7 @@ import { TbXboxXFilled } from "react-icons/tb";
 
 const NotificationComponent = ({ message, status }) => {
 
-  const [finalMessage, setFinalMessage] = useState(message)
+  const [finalMessage, setFinalMessage] = useState(message && message || '')
 
   useEffect(() => {
     setFinalMessage(message)

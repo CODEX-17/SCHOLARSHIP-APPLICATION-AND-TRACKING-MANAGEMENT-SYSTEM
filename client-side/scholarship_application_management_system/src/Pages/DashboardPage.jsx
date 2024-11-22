@@ -10,6 +10,7 @@ import ManageAccountComponent from '../Components/ManageAccountComponent';
 import ProgramsPage from './ProgramsPage';
 import ProgramListPage from './ProgramListPage';
 import NotificationComponent from '../Components/NotificationComponent';
+import ApplicantsList from './ApplicantsList';
 
 const DashboardPage = () => {
 
@@ -89,6 +90,10 @@ const DashboardPage = () => {
                                     className={activeDisplay === 'applications' ? style.btnMenuActive : style.btnMenu} 
                                     onClick={() => setActiveDisplay('applications')}
                                 >Applications</button>
+                                <button 
+                                    className={activeDisplay === 'applicants' ? style.btnMenuActive : style.btnMenu} 
+                                    onClick={() => setActiveDisplay('applicants')}
+                                >Applicants</button>
                             </>
                         )
                     }
@@ -125,7 +130,8 @@ const DashboardPage = () => {
                 activeDisplay === 'applications' && <RequestPage/> ||
                 activeDisplay === 'apply' && <ProgramListPage/> ||
                 activeDisplay === 'my-application' && <MyApplication/> ||
-                activeDisplay === 'programs' && <ProgramsPage/>
+                activeDisplay === 'programs' && <ProgramsPage/> ||
+                activeDisplay === 'applicants' && <ApplicantsList/>
             }
             
         </div>

@@ -224,5 +224,46 @@ Admin`
   })
 
 
+router.post('/deleteProfiles', async (req, res) => {
+  const { profile_id, user_id } = req.body;
+
+  const queryProfile = 'DELETE FROM profile WHERE profile_id=?';
+  const queryAccount = 'UPDATE accounts SET apply_status=?, program_id=? WHERE user_id=?'
+
+  try {
+
+    const deletingProfile = new Promise((resolve, reject) => {
+        pool.query(queryProfile, [profile_id], (error, result) => {
+          if (error) {
+              console.log(error)
+              reject('Error deleting profile.')
+          }else{
+            resolve('Successfully deleted profile.')
+          }
+        })
+    })
+
+    const updatingAccount = new Promise((resolve, reject) => {
+      pool.query(queryAccount, ['free', 'n/a', user_id], (error , result) => {
+        if (error) {
+          console.log(error)
+          reject('Error updating account.')
+        }else {
+          resolve('Successfull updating account.')
+        }
+      })
+    })
+
+    await Promise.all([deletingProfile, updatingAccount])
+    console.log('Successfully deleted applications.')
+    res.status(200).json({ message: 'Successfully deleted applications.' })
+
+  } catch (error) {
+    res.status(400).send(error)
+  }
+  
+})
+
+
 
 module.exports = router

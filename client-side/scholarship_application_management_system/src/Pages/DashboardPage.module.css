@@ -179,12 +179,10 @@
   z-index: 3;
 }
 
-
-
-
 @media (max-width: 768px) {
     .sideBar {
-        position: fixed;
+      position: fixed;
+      z-index: 20;
     }
 }
 

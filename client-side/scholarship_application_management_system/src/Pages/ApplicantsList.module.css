@@ -1,0 +1,237 @@
+@font-face {
+    font-family: black;
+    src: url('../assets/fonts/black.ttf');
+}
+
+@font-face {
+    font-family: bold;
+    src: url('../assets/fonts/bold.ttf');
+}
+
+@font-face {
+    font-family: light;
+    src: url('../assets/fonts/light.ttf');
+}
+
+@font-face {
+    font-family: normal;
+    src: url('../assets/fonts/regular.ttf');
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    font-family: normal;
+    display: flex;
+    background-color: #f2f6ee;
+    position: relative;
+    animation: fade 0.5s ease-in-out;
+}
+
+.left {
+    width: 20%;
+    max-width: 500px;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.left.hidden {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.left .head {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+#hamburgerMenu {
+    display: none;
+}
+
+.left .head h2, .right .head h2 {
+    font-family: bold;
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.programList {
+    height: 85%;
+    overflow-y: auto;
+    padding: 10px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.047);
+    margin-bottom: 10px;
+    animation: pop 1s ease-in-out;
+    border: 2px solid white;
+}
+
+.card h2 {
+    font-size: larger;
+    font-family: bold;
+}
+
+.card p {
+    font-size: small;
+}
+
+.card button {
+    width: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+    font-size: small;
+}
+
+.right {
+    background-color: white;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.right .head {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.applicantsList {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.cardApplicant {
+    width: 400px;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background-color: rgb(232, 232, 232);
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
+            0 1px 3px rgba(0, 0, 0, 0.08);
+    margin: 10px;
+    animation: pop 1s ease-in-out;
+}
+
+.cardApplicant img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #6EC207;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
+            0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.cardApplicant h2 {
+    font-size: large;
+    font-family: bold;
+    margin: 0;
+}
+
+.cardApplicant p {
+    margin: 0;
+    font-size: small;
+}
+
+
+
+/* mobile responsive */
+@media (max-width: 2185px) {
+
+  .applicantsList {
+      flex-wrap: nowrap;
+  }
+
+}
+
+@media (max-width: 425px) {
+    .left {
+      background-color: #f1f5ed;
+      height: 100%;
+      position: fixed;
+      width: 100%;
+    }
+
+    #hamburgerMenu {
+        display: flex;
+    }
+
+    .applicantsList {
+        flex-direction: column;
+    }
+
+    .cardApplicant {
+        width: 90%;
+    }
+}
+
+
+@keyframes pop {
+    0% {
+      transform: scale(0.5);
+    }
+    50% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideRight {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }

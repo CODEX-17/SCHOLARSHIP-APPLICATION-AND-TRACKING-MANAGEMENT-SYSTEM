@@ -253,11 +253,11 @@ const ProgramsPage = () => {
                    <div className={style.body} style={{ display: 'flex', flexDirection: 'column', minWidth: '500px', marginTop: '5%' }}>
                     <div className='d-flex w-100 flex-column mb-2'>
                         <label>Program name</label>
-                        <input type="text" onChange={(e) => setProgramName(e.target.value)}/>
+                        <input type="text" placeholder='Scholar ng Bayan' onChange={(e) => setProgramName(e.target.value)}/>
                     </div>
                     <div className='d-flex w-100 flex-column'>
                         <label>Program Description</label>
-                        <textarea onChange={(e) => setProgramDesc(e.target.value)}></textarea>
+                        <textarea placeholder='Write description about the scholarship program.' onChange={(e) => setProgramDesc(e.target.value)}></textarea>
                     </div>
                     <div className='d-flex w-100 flex-column mt-5'>
                         <button disabled={isCreateBtnDisable} onClick={handleCreateProgram}>Create</button>
@@ -276,11 +276,11 @@ const ProgramsPage = () => {
                     <div className={style.body} style={{ display: 'flex', flexDirection: 'column', minWidth: '500px', marginTop: '5%' }}>
                         <div className='d-flex w-100 flex-column mb-2'>
                             <label>Program name</label>
-                            <input type="text" value={editProgramName} onChange={(e) => setEditProgramName(e.target.value)}/>
+                            <input type="text" placeholder='Scholar ng Bayan' value={editProgramName} onChange={(e) => setEditProgramName(e.target.value)}/>
                         </div>
                         <div className='d-flex w-100 flex-column'>
                             <label>Program Description</label>
-                            <textarea value={editProgramDesc} onChange={(e) => setEditProgramDesc(e.target.value)}></textarea>
+                            <textarea value={editProgramDesc} placeholder='Write description about the scholarship program.' onChange={(e) => setEditProgramDesc(e.target.value)}></textarea>
                         </div>
                         <div className='d-flex align-items-center justify-content-between mt-2'>
                             <label style={{ color: '#6EC207' }}>Open for Renewal and New Application</label>

@@ -1,10 +1,11 @@
 import React from 'react'
 import style from './LoadingComponents.module.css'
 
-const LoadingComponents = () => {
+const LoadingComponents = ({ message }) => {
   return (
     <div className={style.container}>
-      loading
+      <span className={style.loader}></span>
+      <h1>{message && message || 'Loading...'}</h1>
     </div>
   )
 }
