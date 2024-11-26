@@ -1,0 +1,219 @@
+@font-face {
+    font-family: black;
+    src: url('../assets/fonts/black.ttf');
+}
+
+@font-face {
+    font-family: bold;
+    src: url('../assets/fonts/bold.ttf');
+}
+
+@font-face {
+    font-family: light;
+    src: url('../assets/fonts/light.ttf');
+}
+
+@font-face {
+    font-family: normal;
+    src: url('../assets/fonts/regular.ttf');
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    font-family: normal;
+    display: flex;
+    flex-direction: column;
+    background-color: #f2f6ee;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: fade 0.5s ease-in-out;
+}
+
+.modal {
+    background-color: white;
+    border-radius: 10px;
+    position: absolute;
+    z-index: 20;
+    width: 50%;
+    height: 90%;
+    min-height: 80%;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.047);
+    padding: 20px;
+    animation: pop 0.5s ease-in-out;
+}
+
+.modalHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modalHead h3 {
+    font-family: bold;
+    font-size: 1.5rem;
+}
+
+.body {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+.content {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.content label {
+    font-family: bold;
+    font-size: 1rem;
+}
+
+.content label b {
+    color: red;
+}
+
+.content input {
+    border: none;
+    border-radius: 5px;
+    height: 40px;
+    width: 100%;
+    outline: none;
+    padding-left: 10px;
+    background-color: rgba(128, 128, 128, 0.114);
+}
+
+.content input::placeholder, 
+.content textarea::placeholder{
+    font-size: .8rem;
+}
+
+.content textarea {
+    border: none;
+    border-radius: 5px;
+    height: 100%;
+    width: 100%;
+    outline: none;
+    padding: 10px;
+    background-color: rgba(128, 128, 128, 0.114);
+}
+
+.content p {
+    font-size: 0.8rem;
+    color: red;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+.content button {
+    border-radius: 5px;
+    height: 40px;
+    min-height: 40px;
+}
+
+.contentBody {
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;  
+}
+
+.imageContainer {
+    border: 2px dashed #6EC207;
+    border-radius: 10px;
+    width: 500px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: gray;
+    cursor: pointer;
+    font-size: 0.7rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.imageContainer img {
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.imageContainer p {
+    font-size: 1rem;
+    font-family: bold;
+    margin: 0;
+    color: gray;
+}
+
+
+@media (max-width: 1440px) {
+    .body {
+        height: 90%;
+        overflow-y: auto;
+        padding-right: 10px;
+        align-items: center;
+    }
+
+    .modal {
+        height: 90%;
+    }
+
+    .contentBody {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .imageContainer {
+        width: 100%;
+    }
+}   
+
+@media (max-width: 425px) {
+    .modal {
+        width: 90%;
+    }
+}   
+
+
+@keyframes pop {
+    0% {
+      transform: scale(0.5);
+    }
+    50% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideRight {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }

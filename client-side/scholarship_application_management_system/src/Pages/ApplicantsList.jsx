@@ -31,6 +31,7 @@ const ApplicantsList = () => {
     axios.get(`${url}/profiles/getProfiles`)
     .then((res) => {setApplicationList(res.data)})
     .catch(err => console.log(err))
+    
   },[message])
 
   const handleSelectCurrentApplicants = (program_id) => {

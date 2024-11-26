@@ -1,0 +1,147 @@
+@font-face {
+    font-family: black;
+    src: url('../assets/fonts/black.ttf');
+}
+
+@font-face {
+    font-family: bold;
+    src: url('../assets/fonts/bold.ttf');
+}
+
+@font-face {
+    font-family: light;
+    src: url('../assets/fonts/light.ttf');
+}
+
+@font-face {
+    font-family: normal;
+    src: url('../assets/fonts/regular.ttf');
+}
+
+
+@keyframes pop {
+    0% {
+      transform: scale(0.5);
+    }
+    50% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1);
+    }
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    font-family: normal;
+    display: flex;
+    padding: 5%;
+    background-color: #f2f6ee;
+    position: relative;
+    animation: fade 0.5s ease-in-out;
+}
+
+h2 {
+    font-family: bold;
+}
+
+.head {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.135);
+    padding-bottom: 10px;
+}
+
+.content {
+    height: 100%;
+    overflow-y: auto;
+    padding-top: 10px;
+    padding-right: 10px;
+}
+
+.card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.047);
+}
+
+.card h3 {
+    font-family: bold;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.card p {
+    font-size: .8rem;
+    padding-left: 20px;
+}
+
+.imgContainer {
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.137);
+    border-radius: 10px;
+    height: 500px;
+    max-height: 500px;
+    max-width: 500px;
+    width: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    user-select: none;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.047);
+}
+
+.imgContainer img {
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* mobile responsive */
+@media (max-width: 425px) {
+
+    .imgContainer {
+        width: 100%;
+        max-width: none;
+        min-width: none;
+    }
+
+    .imgContainer img {
+        width: 100%;
+        max-width: none;
+        min-width: none;
+    }
+  
+}
+
+
+
+@keyframes slideRight {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }

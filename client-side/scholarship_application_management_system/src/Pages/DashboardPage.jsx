@@ -11,6 +11,8 @@ import ProgramsPage from './ProgramsPage';
 import ProgramListPage from './ProgramListPage';
 import NotificationComponent from '../Components/NotificationComponent';
 import ApplicantsList from './ApplicantsList';
+import Homepage from './Homepage';
+import AnnouncementTable from './AnnouncementTable';
 
 const DashboardPage = () => {
 
@@ -30,6 +32,11 @@ const DashboardPage = () => {
     if (!user) {
        navigate('/')
     }
+
+    if (user.type === 'user') {
+        setActiveDisplay('homepage')
+    }
+
   },[])
 
   const handleShowCloseManageAccount = (status) => {
@@ -68,7 +75,10 @@ const DashboardPage = () => {
                     <button onClick={() => setIsShowManageAccount(true)}>Manage Account</button>
                 </div>
                 <div className={style.menus}>
-                <button className={activeDisplay === 'dashboard' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('dashboard')}>Dashboard</button>
+
+                    <button className={activeDisplay === 'homepage' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('homepage')}>Homepage</button>
+                    <button className={activeDisplay === 'dashboard' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('dashboard')}>Dashboard</button>
+                    
                     {
                         user && user.type === 'user' && (
                         <>
@@ -94,6 +104,10 @@ const DashboardPage = () => {
                                     className={activeDisplay === 'applicants' ? style.btnMenuActive : style.btnMenu} 
                                     onClick={() => setActiveDisplay('applicants')}
                                 >Applicants</button>
+                                <button 
+                                    className={activeDisplay === 'announcements' ? style.btnMenuActive : style.btnMenu} 
+                                    onClick={() => setActiveDisplay('announcements')}
+                                >Announcements</button>
                             </>
                         )
                     }
@@ -127,6 +141,8 @@ const DashboardPage = () => {
             }
 
             {
+                activeDisplay === 'announcements' && <AnnouncementTable/> ||
+                activeDisplay === 'homepage' && <Homepage/> ||
                 activeDisplay === 'applications' && <RequestPage/> ||
                 activeDisplay === 'apply' && <ProgramListPage/> ||
                 activeDisplay === 'my-application' && <MyApplication/> ||
