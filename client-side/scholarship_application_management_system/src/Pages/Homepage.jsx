@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import style from './Homepage.module.css'
 import { AiFillNotification } from "react-icons/ai";
-import sample from '../assets/tabuk_logo.png'
 import axios from 'axios';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const Homepage = () => {
 
@@ -11,9 +12,23 @@ const Homepage = () => {
 
   useEffect(() => {
     axios.get(`${url}/announcements/getAnnouncements`)
-    .then((res) => {console.log(res.data), setPostList(res.data)})
+    .then((res) => {
+        const result = res.data
+        if (result.length > 0) {
+            const sortedDates = sortSchedulesByDateTimeDescending(result)
+            setPostList(sortedDates)
+        }
+    })
     .catch(err => console.log(err)) 
   },[])
+
+  const sortSchedulesByDateTimeDescending = (date) => {
+    return date.sort((a, b) => {
+        const dateTimeA = new Date(a.date).getTime() + new Date(`1970-01-01T${a.time}`).getTime();
+        const dateTimeB = new Date(b.date).getTime() + new Date(`1970-01-01T${b.time}`).getTime();
+        return dateTimeB - dateTimeA; // Sort newest to oldest
+    });
+}
 
   const convertToDesiredDate = (inputDate) => {
 
@@ -72,7 +87,13 @@ const Homepage = () => {
                                 {
                                     data.anc_image && 
                                     <div className={style.imgContainer}>
-                                        <img src={`${url}/${data.anc_image}`} alt="Post picture" />
+                                        <LazyLoadImage
+                                            id={style.imagePost}
+                                            height='100%'
+                                            alt="Post picture"
+                                            src={`${url}/${data.anc_image}`}
+                                            effect="blur" // You can also use "opacity" or "black-and-white"
+                                        />
                                     </div>
                                 }
                                 

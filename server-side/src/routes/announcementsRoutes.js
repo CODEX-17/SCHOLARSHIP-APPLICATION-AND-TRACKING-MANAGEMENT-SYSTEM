@@ -76,8 +76,6 @@ router.post('/addAnnouncements', upload.single('anc_image'), (req, res) => {
         anc_image = req.file && req.file.filename
     }
 
-    console.log(anc_id, anc_title, anc_content, anc_image, date, time)
- 
     const query = 'INSERT INTO announcements(anc_id, anc_title, anc_content, anc_image, date, time) VALUES(?,?,?,?,?,?)'
     
     db.query(query, [anc_id, anc_title, anc_content, anc_image, date, time], (error, data, field) => {
