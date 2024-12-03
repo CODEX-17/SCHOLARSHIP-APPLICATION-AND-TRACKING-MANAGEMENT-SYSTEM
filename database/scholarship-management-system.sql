@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 19, 2024 at 12:22 PM
+-- Generation Time: Dec 03, 2024 at 03:13 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -29,20 +29,56 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `accounts` (
   `user_id` varchar(255) NOT NULL,
+  `program_id` varchar(255) DEFAULT NULL,
   `username` varchar(20) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `type` varchar(10) NOT NULL,
-  `filename` varchar(200) NOT NULL
+  `filename` varchar(200) NOT NULL,
+  `apply_status` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `accounts`
 --
 
-INSERT INTO `accounts` (`user_id`, `username`, `email`, `password`, `type`, `filename`) VALUES
-('002cf3a9-792f-498f-ba57-40dbf0aab8fd', 'admin17', 'admin@gmail.com', 'sha1$79cc32cb$1$8c421ccd655abe3570dbf47cabf1a2986e9e223b', 'admin', '1728202089909.png'),
-('0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', 'edmar22', 'scholarsoftabukcity@gmail.com', 'sha1$2de89338$1$16103b41affb1aac3583897804928bb58b3693e3', 'user', '1728235909292.png');
+INSERT INTO `accounts` (`user_id`, `program_id`, `username`, `email`, `password`, `type`, `filename`, `apply_status`) VALUES
+('002cf3a9-792f-498f-ba57-40dbf0aab8fd', 'n/a', 'admin17', 'admin@gmail.com', 'sha1$79cc32cb$1$8c421ccd655abe3570dbf47cabf1a2986e9e223b', 'admin', '1728202089909.png', 'free'),
+('0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', 'n/a', 'edmar22', 'scholarsoftabukcity@gmail.com', 'sha1$2de89338$1$16103b41affb1aac3583897804928bb58b3693e3', 'user', '1728235909292.png', 'free');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `announcements`
+--
+
+CREATE TABLE `announcements` (
+  `anc_id` varchar(255) NOT NULL,
+  `anc_title` varchar(100) NOT NULL,
+  `anc_content` varchar(255) NOT NULL,
+  `anc_image` varchar(100) DEFAULT NULL,
+  `date` date NOT NULL,
+  `time` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `announcements`
+--
+
+INSERT INTO `announcements` (`anc_id`, `anc_title`, `anc_content`, `anc_image`, `date`, `time`) VALUES
+('050214cc-462b-4466-a527-6d359c9f4844', 'asdsdd', 'asdt', 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCI', '2024-11-27', '09:56:38'),
+('2', 'For Scholarship new', 'ito ay isang scholarship', '1732625903420.png', '2024-11-01', '00:00:00'),
+('2c11f8ab-86fb-4b7e-a093-103325ab590f', 'sample no pic', 'sample no pic', '1732630664201.png', '2024-11-26', '22:17:44'),
+('421e9ac9-1096-43c9-ba43-f092296f3bf1', 'dasds', 'sample', NULL, '2024-11-27', '09:53:52'),
+('5337621d-bde2-4e4c-8433-57d1c5eadcd9', 'sample', 'sample desc', '1732630594427.png', '2024-11-26', '22:16:34'),
+('774e75ef-e168-4a71-a8ff-269c81474117', 'For sale', 'get your fave flavor', NULL, '2024-11-27', '09:28:07'),
+('a3d3cfa8-a67e-4786-9c9d-1fc2006f6456', 'asdsd', 'dasds', '1732672691671.jpg', '2024-11-27', '09:58:11'),
+('a6cd9631-a874-4695-9889-e2144ea59610', 'test', 'test', NULL, '2024-11-27', '09:33:28'),
+('af09ea88-e6a5-4e3d-bb5b-0d02faab249d', 'dasds', 'asds', NULL, '2024-11-27', '09:54:47'),
+('d63602ae-916e-45e6-a074-cd648d612399', '2024 Academic Excellence Scholarship Now Open!', '\"We are thrilled to announce that applications for the 2024 Academic Excellence Scholarship are now open! This scholarship aims to support outstanding students who demonstrate exceptional academic performance, leadership qualities, and a commitment to com', NULL, '2024-11-26', '22:20:59'),
+('f01c86fd-d786-422b-93d9-2c9daf015d97', 'sample no pic', 'sample no pic', NULL, '2024-11-26', '22:18:30'),
+('f959cf87-9a34-431b-8f76-0cf52e987803', 'test 1', 'test1', NULL, '2024-11-27', '09:38:00'),
+('fb0a9b23-9807-442e-a4ee-e50cbc8f0f89', 'asd', 'asd', NULL, '2024-11-27', '09:35:30');
 
 -- --------------------------------------------------------
 
@@ -179,8 +215,8 @@ CREATE TABLE `profile` (
 --
 
 INSERT INTO `profile` (`profile_id`, `user_id`, `program_id`, `email`, `firstname`, `middlename`, `lastname`, `birthdate`, `gender`, `civil_status`, `current_address`, `permanent_address`, `contact`, `mother_firstname`, `mother_middlename`, `mother_lastname`, `mother_current_address`, `mother_permanent_address`, `mother_contact_number`, `mother_registered_voter`, `mother_voting_years`, `father_firstname`, `father_middlename`, `father_lastname`, `father_current_address`, `father_permanent_address`, `father_contact_number`, `father_registered_voter`, `father_voting_years`, `coe_file`, `brgy_indigency`, `cog_file`, `school_id`, `parent_id`, `profile_picture`, `status`) VALUES
-('03450c73-aada-4b90-82f5-92fc22cd6206', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', '121dasdadfsdf', 'scholarsoftabukcity@gmail.com', 'john', 'cruz', 'dela', '2024-11-06', 'male', 'single', 'cagayan', 'cagayan', '09760202655', 'jane', 'dela', 'cruz', 'cagayan', 'cagayan', '09760252533', 0, '0', 'rubeb', 'dasd', 'dass', 'cagayan', 'cagayan', '09865478599', 0, '0', '1732015270216.pdf', '1732015270216.pdf', '1732015270217.pdf', '1732015270369.pdf', '1732015270275.pdf', '1728235909292.png', 'pending'),
-('fe0ebeae-85fe-441a-a646-efe88cdcfce1', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', 'b69e6e47-d179-4e99-8497-0e3ed9a944e3', 'scholarsoftabukcity@gmail.com', 'mark', 'hilario', 'reyes', '2024-10-04', 'male', 'single', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 'rome', 'jiohn', 'reyes', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 1, '6', 'shine', 'marie', 'reyes', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 1, '3', '1729127389452.pdf', '1729127389482.pdf', '1729127389499.pdf', '1729127389525.pdf', '1729127389506.pdf', '1728202089909.png', 'approved');
+('03450c73-aada-4b90-82f5-92fc22cd6206', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', '1cb44041-c38a-4744-bea8-cef5e2cf74dx', 'scholarsoftabukcity@gmail.com', 'john', 'cruz', 'dela', '2024-11-06', 'male', 'single', 'cagayan', 'cagayan', '09760202655', 'jane', 'dela', 'cruz', 'cagayan', 'cagayan', '09760252533', 0, '0', 'rubeb', 'dasd', 'dass', 'cagayan', 'cagayan', '09865478599', 0, '0', '1732015270216.pdf', '1732015270216.pdf', '1732015270217.pdf', '1732015270369.pdf', '1732015270275.pdf', '1728235909292.png', 'approved'),
+('fe0ebeae-85fe-441a-a646-efe88cdcfce1', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', '1cb44041-c38a-4744-bea8-cef5e2cf74dx', 'scholarsoftabukcity@gmail.com', 'mark', 'hilario', 'reyes', '2024-10-04', 'male', 'single', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 'rome', 'jiohn', 'reyes', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 1, '6', 'shine', 'marie', 'reyes', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 1, '3', '1729127389452.pdf', '1729127389482.pdf', '1729127389499.pdf', '1729127389525.pdf', '1729127389506.pdf', '1728202089909.png', 'pending');
 
 -- --------------------------------------------------------
 
@@ -201,8 +237,8 @@ CREATE TABLE `programs` (
 --
 
 INSERT INTO `programs` (`program_id`, `program_name`, `program_desc`, `total_applicant`, `program_status`) VALUES
-('121dasdadfsdf', 'Scholar ng bayan new', 'lroem asdasdasdasd asc ascdasxcas xcas cas dasdasdas as asdasd a asdasdasdasd asdasdas asdasdasdasd', 3, 'active'),
 ('1cb44041-c38a-4744-bea8-cef5e2cf74db', 'sample programs', 'sample programs description', 2, 'active'),
+('1cb44041-c38a-4744-bea8-cef5e2cf74dx', 'Scholar ng bayan new', 'lroem asdasdasdasd asc ascdasxcas xcas cas dasdasdas as asdasd a asdasdasdasd asdasdas asdasdasdasd', 3, 'renewal'),
 ('5534ae1a-37e1-4c43-8652-3720801cfaef', 'sample programs', 'sample programs description', 1, 'active'),
 ('5d6bb4c1-f47b-4748-93bc-0150b407aa5c', 'sample programs', 'sample programs description', 1, 'active'),
 ('b69e6e47-d179-4e99-8497-0e3ed9a944e3', 'sample pls', 'sample pls', 0, 'renewal');
@@ -216,6 +252,12 @@ INSERT INTO `programs` (`program_id`, `program_name`, `program_desc`, `total_app
 --
 ALTER TABLE `accounts`
   ADD PRIMARY KEY (`user_id`);
+
+--
+-- Indexes for table `announcements`
+--
+ALTER TABLE `announcements`
+  ADD PRIMARY KEY (`anc_id`);
 
 --
 -- Indexes for table `files`
