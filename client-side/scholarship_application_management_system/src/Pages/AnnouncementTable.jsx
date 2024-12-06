@@ -7,6 +7,10 @@ import { BiEdit } from "react-icons/bi";
 import NotificationComponent from '../Components/NotificationComponent';
 import { FaPlus } from "react-icons/fa";
 import ModalAnnouncementsComponent from '../Components/ModalAnnouncementsComponent';
+import { deleteAnnouncements } from '../Services/announcementServices'
+import { convertDateFormatIntoString, convertTimeTo12HourFormat } from '../Utils/dateUtils';
+import { shortenSentence } from '../Utils/textUtils';
+import { parseTime } from '../Utils/timeUtils';
 
 const AnnouncementTable = () => {
 
@@ -20,12 +24,21 @@ const AnnouncementTable = () => {
     const [notifStatus, setNotifStatus] = useState(true)
     const [isShowNotification, setIsShowNotification] = useState(false)
 
-    const shortenSentences = (words) => {
-        if (words.length > 0) {
-            return words.substring(0, 50) + '...'
-        }
 
-        return words
+    const handleDelete = async (data) => {
+        setSelectedData(data)
+
+        try {
+            
+            const result = await deleteAnnouncements(data.anc_id)
+
+            if (result) notificationConfig(result.message, true)
+
+        } catch (error) {
+            console.log(error)
+            notificationConfig('Failed to delete announcement.', false)
+        }
+        
     }
 
     const columns = [
@@ -33,12 +46,17 @@ const AnnouncementTable = () => {
             title: 'Title',
             dataIndex: 'anc_title',
             key: 'anc_title',
+            sorter: (a, b) => a.anc_title.localeCompare(b.anc_title),
+            sortDirections: ['ascend', 'descend'], // No reset button
+            render: (words) => shortenSentence(words, 20),
         },
         {
             title: 'Content',
             dataIndex: 'anc_content',
             key: 'anc_content',
-            render: (words) => shortenSentences(words),
+            sorter: (a, b) => a.anc_content.localeCompare(b.anc_content),
+            sortDirections: ['ascend', 'descend'],
+            render: (words) => shortenSentence(words, 20),
         },
         {
             title: 'Image',
@@ -58,18 +76,24 @@ const AnnouncementTable = () => {
             title: 'Date posted',
             dataIndex: 'date',
             key: 'date',
+            sorter: (a, b) => new Date(a.date) - new Date(b.date),
+            sortDirections: ['ascend', 'descend'],
+            render: (date) => convertDateFormatIntoString(date) 
         },
         {
             title: 'Time posted',
             dataIndex: 'time',
             key: 'time',
+            sorter: (a, b) => parseTime(a.time) - parseTime(b.time),
+            sortDirections: ['ascend', 'descend'],
+            render: (time) => convertTimeTo12HourFormat(time) 
         },
         {
             title: 'Action',
             render: (data, record) => 
             <div className='d-flex gap-2'>
                 <button className={style.btn} title='View Details' onClick={() => { setModalType('edit'), setSelectedData(record), setIsShowModal(true)}}><BiEdit size={15}/> Edit</button>
-                <button className={style.btn} title='Delete announcement' onClick={() => {setSelectedData(record)}} style={{ backgroundColor: '#B8001F' }}><AiFillDelete size={15}/> Delete</button>
+                <button className={style.btn} title='Delete announcement' onClick={() => handleDelete(record)} style={{ backgroundColor: '#B8001F' }}><AiFillDelete size={15}/> Delete</button>
             </div>
         },
     ];

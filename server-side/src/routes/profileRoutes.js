@@ -78,7 +78,7 @@ router.post('/addProfiles', upload.fields([
         father_firstname, father_middlename, father_lastname,
         father_current_address, father_permanent_address, father_contact_number, father_registered_voter, father_voting_years, profile_picture,
         parent_id, school_id, cog_file, brgy_indigency, coe_file, status
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     // Ensure that profileValues has the correct number of items
@@ -156,6 +156,11 @@ Admin`
         const updatedNumber = currentTotalApplicant[0][0].total_applicant + 1
         await connection.query(updateProgramQuery, [updatedNumber, program_id])
       }
+
+
+      const updateAccount = 'UPDATE accounts SET program_id=?, apply_status=? WHERE user_id=?'
+
+      await connection.query(updateAccount, [program_id, 'applying',user_id])
 
       // Commit the transaction
       await connection.commit();

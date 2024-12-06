@@ -335,7 +335,7 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
 
         let updatedDetails = userDetails
 
-        updatedDetails.apply_status = 'pending'
+        updatedDetails.apply_status = 'applying'
 
         localStorage.setItem('user', JSON.stringify(updatedDetails))
     })

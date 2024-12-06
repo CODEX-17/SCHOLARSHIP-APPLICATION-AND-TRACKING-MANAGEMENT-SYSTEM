@@ -13,12 +13,13 @@ import NotificationComponent from '../Components/NotificationComponent';
 import ApplicantsList from './ApplicantsList';
 import Homepage from './Homepage';
 import AnnouncementTable from './AnnouncementTable';
+import Analytics from './Analytics';
 
 const DashboardPage = () => {
 
   const [isShowSideBar, setIsShowSideBar] = useState(true)
   const [isShowManageAccount, setIsShowManageAccount] = useState(false)
-  const [activeDisplay, setActiveDisplay] = useState('dashboard')
+  const [activeDisplay, setActiveDisplay] = useState('homepage')
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user')) || null
 
@@ -39,9 +40,6 @@ const DashboardPage = () => {
 
   },[])
 
-  const handleShowCloseManageAccount = (status) => {
-    setIsShowManageAccount(status)
-  }
 
   const notificationConfig = (message, status) => {
     setMessage(message)
@@ -77,7 +75,7 @@ const DashboardPage = () => {
                 <div className={style.menus}>
 
                     <button className={activeDisplay === 'homepage' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('homepage')}>Homepage</button>
-                    <button className={activeDisplay === 'dashboard' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('dashboard')}>Dashboard</button>
+                    {/* <button className={activeDisplay === 'dashboard' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('dashboard')}>Dashboard</button> */}
                     
                     {
                         user && user.type === 'user' && (
@@ -128,20 +126,24 @@ const DashboardPage = () => {
         <div className={style.display}>
             { 
                 isShowNotification &&
-                    <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+                    <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 20 }}>
                         <NotificationComponent message={message} status={notifStatus}/>
                     </div>
             }
             {
                 isShowManageAccount && (
                     <div className={style.manageAcctDiv}>
-                      <ManageAccountComponent handleShowCloseManageAccount={handleShowCloseManageAccount} notificationConfig={notificationConfig}/>  
+                      <ManageAccountComponent 
+                        setIsShowManageAccount={setIsShowManageAccount} 
+                        notificationConfig={notificationConfig}
+                    />  
                     </div>
                 )
             }
 
             {
                 activeDisplay === 'announcements' && <AnnouncementTable/> ||
+                activeDisplay === 'dashboard' && <Analytics/> ||
                 activeDisplay === 'homepage' && <Homepage/> ||
                 activeDisplay === 'applications' && <RequestPage/> ||
                 activeDisplay === 'apply' && <ProgramListPage/> ||

@@ -91,4 +91,23 @@ router.post('/addAnnouncements', upload.single('anc_image'), (req, res) => {
     })
 })
 
+//DELETE ANNOUNCEMENTS
+router.post('/deleteAnnouncements', (req, res) => {
+    
+    const { anc_id } = req.body
+    const query = 'DELETE FROM announcements WHERE anc_id = ?'
+    
+    db.query(query, [anc_id], (error, data, field) => {
+        if (error) {
+            console.log(error)
+            res.status(400).send(error)
+        }
+
+        console.log('Successfully delete announcement.')
+        res.status(200).json({
+            message: 'Successfully delete announcement.'
+        })
+    })
+})
+
 module.exports = router

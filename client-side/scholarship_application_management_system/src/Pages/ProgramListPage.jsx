@@ -12,11 +12,23 @@ const ProgramListPage = () => {
   const [selectedProfile, setSelectedProfile] = useState(null)
   const [isShowForm, setIsShowForm] = useState(false)
   const [applicantStatus, setApplicantStatus] = useState(null)
-  const userDetails = JSON.parse(localStorage.getItem('user')) || null
+  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem('user')) || null)
 
   const [alreadyApplied, setAlreadyApplied] = useState(false)
 
   useEffect(() => {
+
+    const user_id = userDetails?.user_id
+    axios.get(`${url}/accounts/getAcctByID`, { user_id })
+    .then((res) => {
+      const result = res.data
+      if (result) {
+        setUserDetails(result)
+        localStorage.setItem('user', JSON.stringify(result))
+      }
+    })
+    .catch(err => console.log(err))
+
     axios.get(`${url}programs/getPrograms`)
     .then((res) => {
         const result = res.data
@@ -24,9 +36,10 @@ const ProgramListPage = () => {
         if (result.length > 0) {
 
             let updated = [...result]
-
+            console.log(updated)
             for (let i = 0; i < updated.length; i++) {
-                console.log(updated[i].program_id, userDetails.program_id )
+                
+                console.log(updated[i].program_id === userDetails.program_id )
                   if (
                     updated[i].program_id === userDetails.program_id &&
                     userDetails.apply_status === 'applying'
@@ -36,9 +49,9 @@ const ProgramListPage = () => {
                   }
               
                   else if (
-                    updated[i].program_id === userDetails.program_id &&
+                    (updated[i].program_id === userDetails.program_id &&
                     userDetails.apply_status === 'applied' &&
-                    updated[i].program_status === 'renewal'
+                    updated[i].program_status === 'renewal')
                   ) {
                     updated[i].program_prev = 'Renew Application'
                   }
@@ -78,7 +91,7 @@ const ProgramListPage = () => {
                 
             }
 
-            console.log(updated)
+            console.log('updated', updated)
 
             setProgramList(updated)
     

@@ -104,7 +104,7 @@ const RequestPage = () => {
                     email: selectedData.email,
                     program_id: selectedData?.program_id,
                     apply_status: qualified ? 'applied' : 'rejected',
-                    user_id: userDetails?.user_id,
+                    user_id: selectedData?.user_id,
                 };
     
                 const res = await axios.post('http://localhost:5001/accounts/updateStatusProfile', data)

@@ -5,6 +5,7 @@ const passwordHash = require('password-hash')
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const multer = require('multer');
+const crypto = require('crypto');
 
 const nodemailer = require('nodemailer');
 const { rejects } = require('assert');
@@ -135,12 +136,58 @@ router.post('/createAccount', upload.single('file'), (req, res) => {
 
 });
 
+//UPDATE ACCOUNT
+router.post('/updateAccounts', upload.single('image'), (req, res) => {
+
+    const { username, email, user_id, image } = req.body
+    console.log(req.file)
+
+    const filename = req.file ? req.file.filename : image
+
+    const query = 'UPDATE accounts SET username=?, email=?, filename=? WHERE user_id=?'
+
+    pool.query(query,[username, email, filename, user_id], (error, data) => {
+        if (error) {
+            console.log(error)
+            res.status(500).send(error)
+        }
+
+        console.log('Successfully update account info.')
+        res.status(200).json({
+            message: 'Successfully update account info.',
+            object: {
+                username,
+                email,
+                filename,
+            }
+        })
+    })
+})
+
+//GET ACCOUNT BY USER_ID
+router.get('/getAcctByID', (req, res) => {
+    const { user_id } = req.body
+    const query = 'SELECT * FROM accounts WHERE user_id=?'
+
+    pool.query(query,[user_id], (error, result) => {
+        if (error) {
+            console.log(error)
+            res.status(400).send(error)
+        }
+
+        res.status(200).json(result)
+    })
+})
+
+
 //Update the application status
 router.post('/updateStatusProfile', async (req, res) => {
 
     const { profile_id, status, firstname, email, program_id, apply_status, user_id } = req.body
     const queryProfile = 'UPDATE profile SET status=? WHERE profile_id=?'
     const queryAccount = 'UPDATE accounts SET apply_status=? WHERE user_id=?'
+
+    console.log(req.body)
 
     const mailOptions = {
         to: email,
@@ -268,6 +315,113 @@ router.post('/deleteProfiles', async (req, res) => {
       res.status(400).send(error)
     }
     
-  })
+})
+
+
+// Forget password
+router.post('/forgotPassword', async (req, res) => {
+    const { email } = req.body;
+    console.log(email);
+
+    try {
+        // Wrap SELECT query in a promise
+        const user = await new Promise((resolve, reject) => {
+            pool.query("SELECT * FROM accounts WHERE email=?", [email], (error, data) => {
+                if (error) return reject(error);
+                resolve(data);
+            });
+        });
+
+        if (user.length === 0) { // Correct condition for no user found
+            console.log('User not found');
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Generate a reset token
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetTokenExpires = new Date(Date.now() + 3600000); // 1 hour from now
+
+        console.log('resetTokenExpires',resetTokenExpires)
+
+        // Wrap UPDATE query in a promise
+        await new Promise((resolve, reject) => {
+            pool.query(
+                'UPDATE accounts SET reset_token = ?, reset_token_expires = ? WHERE email = ?',
+                [resetToken, resetTokenExpires, email],
+                (error, results) => {
+                    if (error) return reject(error);
+                    resolve(results);
+                }
+            );
+        });
+
+        // Send reset email
+        const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+        const mailOptions = {
+            to: email,
+            from: 'librarysmart69@gmail.com',
+            subject: 'Password Reset',
+            text: `You requested a password reset. Please click this link to reset your password: ${resetUrl}`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                return res.status(500).json({ message: 'Error sending email' });
+            }
+            res.status(200).json({ message: 'Reset email sent' });
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+router.post('/reset-password/:token', async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    console.log(token, password)
+  
+    try {
+      // Find user by token and check if token is valid
+      const user = await new Promise((resolve, reject) => {
+        pool.query('SELECT * FROM accounts WHERE reset_token = ? AND reset_token_expires > ?', [token, Date.now()], (error, data) => {
+            if (error) {
+                console.log('Error in getting user.')
+                return reject(error)
+            }
+            resolve(data)
+        })
+      })
+  
+      if (user.length === 0) {
+        console.log('Token is invalid or has expired')
+        return res.status(400).json({ message: 'Token is invalid or has expired' });
+      }
+  
+      // Hash the new password
+      const hashedPassword = passwordHash.generate(password);
+  
+      // Update password and clear the reset token
+      await new Promise ((resolve, reject) => {
+        pool.query('UPDATE accounts SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE reset_token = ?', [hashedPassword, token], (error, data) => {
+            if (error) {
+                console.log('Error in updating account.')
+                return reject(error)
+            }
+            resolve('Successfully update account info.')
+        })
+      })
+  
+      res.status(200).json({ message: 'Password has been reset' });
+
+    } catch (error) {
+      console.error('Error the API');
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
 
 module.exports = router

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 03, 2024 at 03:13 AM
+-- Generation Time: Dec 06, 2024 at 02:05 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -35,16 +35,18 @@ CREATE TABLE `accounts` (
   `password` varchar(255) NOT NULL,
   `type` varchar(10) NOT NULL,
   `filename` varchar(200) NOT NULL,
-  `apply_status` varchar(10) NOT NULL
+  `apply_status` varchar(10) NOT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_token_expires` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `accounts`
 --
 
-INSERT INTO `accounts` (`user_id`, `program_id`, `username`, `email`, `password`, `type`, `filename`, `apply_status`) VALUES
-('002cf3a9-792f-498f-ba57-40dbf0aab8fd', 'n/a', 'admin17', 'admin@gmail.com', 'sha1$79cc32cb$1$8c421ccd655abe3570dbf47cabf1a2986e9e223b', 'admin', '1728202089909.png', 'free'),
-('0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', 'n/a', 'edmar22', 'scholarsoftabukcity@gmail.com', 'sha1$2de89338$1$16103b41affb1aac3583897804928bb58b3693e3', 'user', '1728235909292.png', 'free');
+INSERT INTO `accounts` (`user_id`, `program_id`, `username`, `email`, `password`, `type`, `filename`, `apply_status`, `reset_token`, `reset_token_expires`) VALUES
+('002cf3a9-792f-498f-ba57-40dbf0aab8fd', '03450c73-aada-4b90-82f5-92fc22cd6206', 'admin17', 'admin@gmail.com', 'sha1$79cc32cb$1$8c421ccd655abe3570dbf47cabf1a2986e9e223b', 'admin', '1728202089909.png', 'applied', '0', '0000-00-00 00:00:00'),
+('0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', '1cb44041-c38a-4744-bea8-cef5e2cf74db', 'edmar104', 'scholarsoftabukcity@gmail.com', 'sha1$0f98591f$1$b4dd81740de0b501274733952665357e5c9560ee', 'user', '1733463065738.jpg', 'applied', NULL, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -57,7 +59,7 @@ CREATE TABLE `announcements` (
   `anc_title` varchar(100) NOT NULL,
   `anc_content` varchar(255) NOT NULL,
   `anc_image` varchar(100) DEFAULT NULL,
-  `date` date NOT NULL,
+  `date` varchar(255) NOT NULL,
   `time` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -66,8 +68,7 @@ CREATE TABLE `announcements` (
 --
 
 INSERT INTO `announcements` (`anc_id`, `anc_title`, `anc_content`, `anc_image`, `date`, `time`) VALUES
-('050214cc-462b-4466-a527-6d359c9f4844', 'asdsdd', 'asdt', 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCI', '2024-11-27', '09:56:38'),
-('2', 'For Scholarship new', 'ito ay isang scholarship', '1732625903420.png', '2024-11-01', '00:00:00'),
+('2', 'For Scholarship new1', 'ito ay isang scholarship', '1732625903420.png', '2024-11-01', '00:00:00'),
 ('2c11f8ab-86fb-4b7e-a093-103325ab590f', 'sample no pic', 'sample no pic', '1732630664201.png', '2024-11-26', '22:17:44'),
 ('421e9ac9-1096-43c9-ba43-f092296f3bf1', 'dasds', 'sample', NULL, '2024-11-27', '09:53:52'),
 ('5337621d-bde2-4e4c-8433-57d1c5eadcd9', 'sample', 'sample desc', '1732630594427.png', '2024-11-26', '22:16:34'),
@@ -163,7 +164,22 @@ INSERT INTO `files` (`id`, `filename`, `date`, `time`, `file_path`, `file_id`) V
 (232, '1732015270216.pdf', '2024-11-19', '19:21:10', '/uploads/1732015270216.pdf', 'a527c136-7ec4-4694-8db0-521e08edeaad'),
 (233, '1732015270217.pdf', '2024-11-19', '19:21:10', '/uploads/1732015270217.pdf', 'a527c136-7ec4-4694-8db0-521e08edeaad'),
 (234, '1732015270275.pdf', '2024-11-19', '19:21:10', '/uploads/1732015270275.pdf', 'a527c136-7ec4-4694-8db0-521e08edeaad'),
-(235, '1732015270369.pdf', '2024-11-19', '19:21:10', '/uploads/1732015270369.pdf', 'a527c136-7ec4-4694-8db0-521e08edeaad');
+(235, '1732015270369.pdf', '2024-11-19', '19:21:10', '/uploads/1732015270369.pdf', 'a527c136-7ec4-4694-8db0-521e08edeaad'),
+(236, '1733486281338.pdf', '2024-12-06', '19:58:01', '/uploads/1733486281338.pdf', 'fc4381af-7bec-4d73-9783-cd52af7baea2'),
+(237, '1733486281351.pdf', '2024-12-06', '19:58:01', '/uploads/1733486281351.pdf', 'fc4381af-7bec-4d73-9783-cd52af7baea2'),
+(238, '1733486281356.pdf', '2024-12-06', '19:58:01', '/uploads/1733486281356.pdf', 'fc4381af-7bec-4d73-9783-cd52af7baea2'),
+(239, '1733486281361.pdf', '2024-12-06', '19:58:01', '/uploads/1733486281361.pdf', 'fc4381af-7bec-4d73-9783-cd52af7baea2'),
+(240, '1733486281366.pdf', '2024-12-06', '19:58:01', '/uploads/1733486281366.pdf', 'fc4381af-7bec-4d73-9783-cd52af7baea2'),
+(241, '1733486292951.pdf', '2024-12-06', '19:58:13', '/uploads/1733486292951.pdf', '846c31ab-664a-43bd-a29a-bd03a7d43a6d'),
+(242, '1733486292969.pdf', '2024-12-06', '19:58:13', '/uploads/1733486292969.pdf', '846c31ab-664a-43bd-a29a-bd03a7d43a6d'),
+(243, '1733486292975.pdf', '2024-12-06', '19:58:13', '/uploads/1733486292975.pdf', '846c31ab-664a-43bd-a29a-bd03a7d43a6d'),
+(244, '1733486292981.pdf', '2024-12-06', '19:58:13', '/uploads/1733486292981.pdf', '846c31ab-664a-43bd-a29a-bd03a7d43a6d'),
+(245, '1733486292986.pdf', '2024-12-06', '19:58:13', '/uploads/1733486292986.pdf', '846c31ab-664a-43bd-a29a-bd03a7d43a6d'),
+(246, '1733488532305.pdf', '2024-12-06', '20:35:32', '/uploads/1733488532305.pdf', '4fcfd9af-7691-4945-a3cd-86d3324b6703'),
+(247, '1733488532310.pdf', '2024-12-06', '20:35:32', '/uploads/1733488532310.pdf', '4fcfd9af-7691-4945-a3cd-86d3324b6703'),
+(248, '1733488532314.pdf', '2024-12-06', '20:35:32', '/uploads/1733488532314.pdf', '4fcfd9af-7691-4945-a3cd-86d3324b6703'),
+(249, '1733488532315.pdf', '2024-12-06', '20:35:32', '/uploads/1733488532315.pdf', '4fcfd9af-7691-4945-a3cd-86d3324b6703'),
+(250, '1733488532321.pdf', '2024-12-06', '20:35:32', '/uploads/1733488532321.pdf', '4fcfd9af-7691-4945-a3cd-86d3324b6703');
 
 -- --------------------------------------------------------
 
@@ -215,7 +231,10 @@ CREATE TABLE `profile` (
 --
 
 INSERT INTO `profile` (`profile_id`, `user_id`, `program_id`, `email`, `firstname`, `middlename`, `lastname`, `birthdate`, `gender`, `civil_status`, `current_address`, `permanent_address`, `contact`, `mother_firstname`, `mother_middlename`, `mother_lastname`, `mother_current_address`, `mother_permanent_address`, `mother_contact_number`, `mother_registered_voter`, `mother_voting_years`, `father_firstname`, `father_middlename`, `father_lastname`, `father_current_address`, `father_permanent_address`, `father_contact_number`, `father_registered_voter`, `father_voting_years`, `coe_file`, `brgy_indigency`, `cog_file`, `school_id`, `parent_id`, `profile_picture`, `status`) VALUES
-('03450c73-aada-4b90-82f5-92fc22cd6206', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', '1cb44041-c38a-4744-bea8-cef5e2cf74dx', 'scholarsoftabukcity@gmail.com', 'john', 'cruz', 'dela', '2024-11-06', 'male', 'single', 'cagayan', 'cagayan', '09760202655', 'jane', 'dela', 'cruz', 'cagayan', 'cagayan', '09760252533', 0, '0', 'rubeb', 'dasd', 'dass', 'cagayan', 'cagayan', '09865478599', 0, '0', '1732015270216.pdf', '1732015270216.pdf', '1732015270217.pdf', '1732015270369.pdf', '1732015270275.pdf', '1728235909292.png', 'approved'),
+('03450c73-aada-4b90-82f5-92fc22cd6206', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', '1cb44041-c38a-4744-bea8-cef5e2cf74dx', 'scholarsoftabukcity@gmail.com', 'john', 'cruz', 'dela', '2024-11-06', 'male', 'single', 'cagayan', 'cagayan', '09760202655', 'jane', 'dela', 'cruz', 'cagayan', 'cagayan', '09760252533', 0, '0', 'rubeb', 'dasd', 'dass', 'cagayan', 'cagayan', '09865478599', 0, '0', '1732015270216.pdf', '1732015270216.pdf', '1732015270217.pdf', '1732015270369.pdf', '1732015270275.pdf', '1728235909292.png', 'pending'),
+('2804ea06-54ca-47d5-81a5-1361e3b42729', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', '1cb44041-c38a-4744-bea8-cef5e2cf74db', 'scholarsoftabukcity@gmail.com', 'dasd', 'asdasdas', 'asdas', '2024-12-07', 'male', 'single', 'dasdas', 'asdasdsa', '09876543244', 'dasda', 'dasdas', 'dasda', 'dasdasd', 'asdasdas', '09876543244', 0, '0', 'dasdsa', 'asdas', 'dasdsa', 'dasd', 'asdasdsa', '09876543244', 0, '0', '1733488532305.pdf', '1733488532310.pdf', '1733488532314.pdf', '1733488532321.pdf', '1733488532315.pdf', '1733463065738.jpg', 'approved'),
+('abfcccea-9765-4e50-a58e-0851527afecc', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', '1cb44041-c38a-4744-bea8-cef5e2cf74db', 'scholarsoftabukcity@gmail.com', 'asdasd', 'asdasd', 'asdasd', '2024-12-07', 'male', 'single', '4A San Louis  Baguio city', 'sadasdsa', '09842657913', 'dasdasd', 'asdasd', 'asdasda', 'sdasdas', 'rfdfdsfds', '09676020622', 0, '1', 'dasd', 'asdasdas', 'dasda', 'sdasda', 'dasdasdsa', '09676020622', 0, '1', '1733486281338.pdf', '1733486281351.pdf', '1733486281356.pdf', '1733486281366.pdf', '1733486281361.pdf', '1733463065738.jpg', 'pending'),
+('b2f306d1-f49c-4303-832a-158f712d0d02', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', '1cb44041-c38a-4744-bea8-cef5e2cf74db', 'scholarsoftabukcity@gmail.com', 'asdasd', 'asdasd', 'asdasd', '2024-12-07', 'male', 'single', '4A San Louis  Baguio city', 'sadasdsa', '09842657913', 'dasdasd', 'asdasd', 'asdasda', 'sdasdas', 'rfdfdsfds', '09676020622', 0, '1', 'dasd', 'asdasdas', 'dasda', 'sdasda', 'dasdasdsa', '09676020622', 0, '1', '1733486292951.pdf', '1733486292969.pdf', '1733486292975.pdf', '1733486292986.pdf', '1733486292981.pdf', '1733463065738.jpg', 'pending'),
 ('fe0ebeae-85fe-441a-a646-efe88cdcfce1', '0a8b18ed-7735-46e1-a6b4-0eb6af8eb528', '1cb44041-c38a-4744-bea8-cef5e2cf74dx', 'scholarsoftabukcity@gmail.com', 'mark', 'hilario', 'reyes', '2024-10-04', 'male', 'single', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 'rome', 'jiohn', 'reyes', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 1, '6', 'shine', 'marie', 'reyes', 'zone 1 penablanca, cagayan', 'zone 1 penablanca, cagayan', '09760202322', 1, '3', '1729127389452.pdf', '1729127389482.pdf', '1729127389499.pdf', '1729127389525.pdf', '1729127389506.pdf', '1728202089909.png', 'pending');
 
 -- --------------------------------------------------------
@@ -237,7 +256,7 @@ CREATE TABLE `programs` (
 --
 
 INSERT INTO `programs` (`program_id`, `program_name`, `program_desc`, `total_applicant`, `program_status`) VALUES
-('1cb44041-c38a-4744-bea8-cef5e2cf74db', 'sample programs', 'sample programs description', 2, 'active'),
+('1cb44041-c38a-4744-bea8-cef5e2cf74db', 'sample programs', 'sample programs description', 5, 'renewal'),
 ('1cb44041-c38a-4744-bea8-cef5e2cf74dx', 'Scholar ng bayan new', 'lroem asdasdasdasd asc ascdasxcas xcas cas dasdasdas as asdasd a asdasdasdasd asdasdas asdasdasdasd', 3, 'renewal'),
 ('5534ae1a-37e1-4c43-8652-3720801cfaef', 'sample programs', 'sample programs description', 1, 'active'),
 ('5d6bb4c1-f47b-4748-93bc-0150b407aa5c', 'sample programs', 'sample programs description', 1, 'active'),
@@ -285,7 +304,7 @@ ALTER TABLE `programs`
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=236;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=251;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
