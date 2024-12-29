@@ -148,11 +148,13 @@ form {
 }
 
 .stepDiv {
-    width: 50%;
-    height: 100%;
+    width: 100%;
     display: flex;
     gap: 2%;
     align-items: center;
+    flex-wrap: wrap;
+    align-self: flex-start;
+    margin-bottom: 20px;
 }
 
 .stepCard {
@@ -165,8 +167,9 @@ form {
     padding-left: 2%;
     padding-right: 2%;
     cursor: pointer;
-    min-width: 200px;
     font-size: 10pt;
+    flex-grow: 1;
+    margin-bottom: 10px;
 }
 
 .cardUpload {
@@ -270,8 +273,11 @@ form {
 }
 
 
-@media (max-width: 1440px) {
-
+@media (max-width: 425px) {
+    .card {
+        width: 90%;
+        padding: 20px;
+    }
 }
 
 

@@ -21,6 +21,7 @@
 .container {
     width: 100%;
     height: 100%;
+    padding: 20px;
     font-family: normal;
     display: flex;
     flex-direction: column;
@@ -60,6 +61,11 @@
 
 .content {
     width: 80%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .container h1 {
@@ -83,8 +89,8 @@
 .modal {
     background-color: white;
     width: 50%;
-    height: 85%;
-    padding: 2%;
+    height: auto;
+    padding: 20px;
     border-radius: 10px;
     z-index: 3;
     flex-direction: column;
@@ -106,6 +112,16 @@
     justify-content: space-between;
 }
 
+.modal select {
+    background-color: rgb(234, 233, 233);
+    border: none;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    outline: none;
+    height: 40px;
+}
+
 #statusDiv {
     background-color: #6EC207;
     padding-right: 2%;
@@ -120,6 +136,7 @@
 }
 
 .body {
+    width: auto;
     height: 80%;
     display: flex;
     margin-top: 2%;
@@ -129,7 +146,7 @@
 
 .body p {
     word-break: break-all;
-  }
+}
   
 
 .body label {
@@ -140,6 +157,7 @@
 .body h2 {
     font-size: 10pt;
     font-family: bold;
+    margin: 0;
 }
 
 
@@ -184,8 +202,21 @@
     background-color: gray;
 }
 
-.section {
+.cardStatic {
+    background-color: rgba(128, 128, 128, 0.201);
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
     width: 100%;
+    font-family: bold;
+}
+
+.section {
     display: flex;
     flex-direction: column;
 }
@@ -279,6 +310,10 @@
     justify-content: space-between;
 }
 
+.menuHead h1 {
+    font-size: 2rem;
+}
+
 .menuHead button {
     padding-left: 2%;
     padding-right: 2%;
@@ -294,15 +329,19 @@
     opacity: 0.5;
 }
 
-
-
 @media (max-width: 425px) {
+
+    .modal {
+        width: 90%;
+        padding: 30px;
+    }
+
     .card h1 {
         font-size: 15pt;
     }
 
     form {
-        width: 100%;
+        width: 80%;
     }
 
     form .card {

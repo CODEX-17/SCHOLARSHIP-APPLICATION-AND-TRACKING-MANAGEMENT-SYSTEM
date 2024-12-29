@@ -135,7 +135,7 @@ const ProgramListPage = () => {
 
   const handleShorten = (data) => {
     if (data.length > 60) {
-        return data.substring(0,60) + '...'
+        return data.substring(0,50) + '...'
     }
     return data
   }
@@ -172,17 +172,24 @@ const ProgramListPage = () => {
                 {
                     selectedData && (
                         <div className={style.previewSection}>
+                            <div className={style.slotDiv}>
+                              <b>Slot :</b> {selectedData?.available_slot}/{selectedData?.limit_slot}
+                            </div>
                             <div className={style.prevContent}>
                                 <div className='d-flex flex-column'>
                                     <p>Program name</p>
-                                    <h1>{selectedData.program_name}</h1>
+                                    <h1>{selectedData?.program_name}</h1>
                                 </div>
                                 <div className='d-flex flex-column mt-5'>
                                     <p><b>Program Description</b></p>
-                                    <p style={{ textAlign: 'justify' }}>{selectedData.program_desc}</p>
+                                    <p>{selectedData?.program_desc}</p>
                                 </div>
-                                <button disabled={handleUpdateDisabledButton()} onClick={(() => handleApply(true))}>{selectedData?.program_prev}</button>
+                                
                             </div>
+                            <div className='w-100'>
+                              <button disabled={handleUpdateDisabledButton()} onClick={(() => handleApply(true))}>{selectedData?.program_prev}</button>
+                            </div>
+                           
                         </div>
                     )
                 }
@@ -197,7 +204,13 @@ const ProgramListPage = () => {
                                     <div className={style.card}>
                                         <div className='d-flex flex-column'>
                                             <h3>{prog.program_name}</h3>
-                                            <p>{handleShorten(prog.program_desc)}</p>
+                                            <p style={{ fontSize:'.8rem', color: '#6EC207' }}>Available Slot: {prog?.available_slot}</p>
+                                            
+                                            <div className='mt-2'>
+                                              <p><b>Description</b></p>
+                                              <p style={{ fontSize: '.8rem' }}>{handleShorten(prog?.program_desc)}</p>
+                                            </div>
+                                            
                                         </div>
                                         <button onClick={() => {setSelectedData(prog), console.log(prog)}}>View</button>
                                     </div>

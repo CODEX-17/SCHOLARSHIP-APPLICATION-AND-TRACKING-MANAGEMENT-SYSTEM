@@ -10,6 +10,13 @@ import NotificationComponent from '../Components/NotificationComponent';
 import { FiPlusCircle } from "react-icons/fi";
 import { FaEdit } from "react-icons/fa";
 import Switch from '@mui/material/Switch';
+import { useForm } from 'react-hook-form'
+import { addPrograms } from '../Services/programServices';
+import { 
+    convertDateFormatIntoString,
+    convertTimeTo12HourFormat
+} from '../Utils/dateUtils';
+
 
 const ProgramsPage = () => {
 
@@ -23,10 +30,44 @@ const ProgramsPage = () => {
     const [selectedData, setSelectedData] = useState(null)
     const [message, setMessage] = useState('')
 
+
+    const {
+        handleSubmit,
+        reset,
+        register,
+        setValue,
+        watch,
+        formState: { errors }
+    } = useForm({
+        defaultValues: {
+          limit_slot: '50',
+        },
+      })
+    
+    const [handleEnableCustomeSlot, setHandleEnableCustomeSlot] = useState(true)
+
+    const limit_slot = watch('limit_slot');
+
+    useEffect(() => {
+        if ([20, 50, 100].includes(Number(limit_slot))) {
+            setHandleEnableCustomeSlot(true);
+        } else {
+            setHandleEnableCustomeSlot(false);
+        }
+    }, [limit_slot])
+
+    useEffect(() => {
+        reset({
+            limit_slot: '50',
+        })
+    }, [])
+    
+    
+
     const [programName , setProgramName] = useState('')
     const [programDesc, setProgramDesc] = useState('')
     const [isCreateBtnDisable, setIsCreateBtnDisable] = useState(true)
- 
+
     const [isShowNotification, setIsShowNotification] = useState(false)
     const userDetails = JSON.parse(localStorage.getItem('user')) || null
 
@@ -94,28 +135,45 @@ const ProgramsPage = () => {
         },
         {
             title: 'Action',
-            render: (record, index) => 
+            render: (record) => 
             <div className='d-flex gap-2'>
-                <button className={style.btn} key={index} title='View Details' onClick={() => {setIsShowModal(true), setSelectedData(record)}}><AiFillProfile size={15}/> View</button>
-                <button className={style.btn} style={{ backgroundColor: '#C7253E' }} key={index} title='View Details' onClick={() => {setIsShowModalDelete(true), setSelectedData(record)}}><AiFillDelete size={15}/> Delete</button>
+                <button 
+                    className={style.btn} 
+                    title='View Details' 
+                    onClick={() => {setIsShowModal(true), setSelectedData(record)}}
+                ><AiFillProfile size={15}/> View</button>
+                <button 
+                    className={style.btn} 
+                    style={{ backgroundColor: '#C7253E' }} 
+                    title='View Details' 
+                    onClick={() => {setIsShowModalDelete(true), setSelectedData(record)}}
+                ><AiFillDelete size={15}/> Delete</button>
             </div>
         },
     ];
 
-    const handleCreateProgram = () => {
+    const handleCreateProgram = async (data) => {
         
-        axios.post('http://localhost:5001/programs/addPrograms', {programName, programDesc})
-        .then((res) => {
-            const result = res.data
-            const message = result.message
-            setMessage(message)
-            setIsShowNotification(true)
-            setIsShowModalAddProgram(false)
-            setTimeout(() => {
-                setIsShowNotification(false)
-            }, 3000);
-            
-        }).catch(err => console.log(err))
+
+
+        try {
+
+            const result = await addPrograms(data)
+
+            if (result) {
+                const message = result.message
+                setMessage(message)
+                setIsShowNotification(true)
+                setIsShowModalAddProgram(false)
+                setTimeout(() => {
+                    setIsShowNotification(false)
+                }, 3000)
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+
     }
 
     const handleDeleteProgram = () => {
@@ -196,6 +254,7 @@ const ProgramsPage = () => {
         }).catch(err => console.log(err)) 
     }
 
+
   return (
     <div className={style.container}>
         {isShowNotification && (
@@ -206,37 +265,63 @@ const ProgramsPage = () => {
         )}
         {
             (isShowModal && selectedData) && (
-                <div className={style.modal} style={{ width: 'auto', height: 'auto', maxWidth: '700px' }}>
+                <div className={style.modal}>
                     <div className={style.head}>
-                        <h1>Add Program</h1>
+                        <h1>Program Details</h1>
                         <div className='d-flex gap-2'>
                             <FaEdit size={22} cursor={'pointer'} title='edit' onClick={handleEditModal}/>
                             <BiExit size={25} cursor={'pointer'} title='close' onClick={() => setIsShowModal(false)}/>
                         </div>
                     </div>
-                    <div className={style.body} style={{ display: 'flex', flexDirection: 'column', minWidth: '500px', marginTop: '5%' }}>
-                        <div className='d-flex w-100 mt-1 mb-3'>
-                           <div id={style.statusDiv} title='program status'>{selectedData.program_status.toUpperCase()}</div>
+                    <div className={style.body} style={{ display: 'flex', flexDirection: 'column'}}>
+                        <div className='d-flex flex-column w-100 gap-2 mt-1 mb-3 align-items-start'>
+                           <div 
+                                id={style.statusDiv} 
+                                title='program status'
+                            >{selectedData.program_status.toUpperCase()}
+                            </div>
+                            <p style={{ fontStyle: 'italic', fontSize: '0.6rem', margin: 0 }}>
+                                <b>Creation Date:</b>
+                                {`
+                                    ${convertDateFormatIntoString(selectedData?.date)} 
+                                    ${convertTimeTo12HourFormat(selectedData?.time)}
+                                `}
+                            </p>
                         </div>
-                        <div className='d-flex w-100 mb-2'>
-                            <div className='d-flex w-50 flex-column'>
+                        <div className='d-flex flex-column w-100 mb-2'>
+                            <div className='d-flex w-100 flex-column'>
                                 <h2>Program name</h2>
-                                <p>{selectedData.program_name}</p>
+                                <p style={{ 
+                                    width: '100%',
+                                    overflow: 'auto',
+                                    wordWrap: 'break-word',
+                                    whiteSpace: 'normal'
+                                 }}>{selectedData?.program_name}</p>
                             </div>
-                            <div className='d-flex w-50 flex-column'>
-                                <h2>Total Applicants</h2>
-                                <p>{selectedData.total_applicant}</p>
+                            <div className='d-flex w-100 flex-column'>
+                                <h2>Program Description</h2>
+                                <div style={{
+                                    width: '100%',
+                                    overflow: 'auto',
+                                    wordWrap: 'break-word',
+                                    whiteSpace: 'normal'
+                                }}></div>
+                                <div style={{ textWrap: 'wrap', wordWrap: 'break-word' }}>{selectedData.program_desc + "dasdasddasdnakjsbndjkasbndjknasjkdnasjkndjkasndjkasndjknabsjkdnasjkdnasjkdnajksndjkasndjkansdkjnsjk"}</div>
                             </div>
                         </div>
-                        <div className='d-flex w-100 flex-column'>
-                            <h2>Program Description</h2>
-                            <div style={{
-                                width: '100%',
-                                overflow: 'auto',
-                                wordWrap: 'break-word',
-                                whiteSpace: 'normal'
-                            }}></div>
-                            <div>{selectedData.program_desc}</div>
+                        <div className='d-flex w-100 mt-3 gap-2'>
+                            <div className={style.cardStatic}>
+                                <label>Total Applicant</label>
+                                <p className='fs-1 m-0'>{selectedData?.total_applicant}</p>
+                            </div>
+                            <div className={style.cardStatic}>
+                                <label>Available Slot</label>
+                                <p className='fs-1 m-0'>{selectedData?.available_slot}</p>
+                            </div>
+                            <div className={style.cardStatic}>
+                                <label>Slot Limit</label>
+                                <p className='fs-1 m-0'>{selectedData?.limit_slot}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -245,30 +330,76 @@ const ProgramsPage = () => {
 
         {
             isShowModalAddProgram &&
-            <div className={style.modal} style={{ width: 'auto', height: 'auto' }}>
-                <div className={style.head}>
-                    <h1>Add Program</h1>
-                    <BiExit size={25} cursor={'pointer'} onClick={() => setIsShowModalAddProgram(false)}/>
-                </div>
-                   <div className={style.body} style={{ display: 'flex', flexDirection: 'column', minWidth: '500px', marginTop: '5%' }}>
-                    <div className='d-flex w-100 flex-column mb-2'>
-                        <label>Program name</label>
-                        <input type="text" placeholder='Scholar ng Bayan' onChange={(e) => setProgramName(e.target.value)}/>
+            <div className={style.modal}>
+                <form onSubmit={handleSubmit(handleCreateProgram)}>
+                    <div className={style.head}>
+                        <h1>Add Program</h1>
+                        <BiExit size={25} cursor={'pointer'} onClick={() => setIsShowModalAddProgram(false)}/>
                     </div>
-                    <div className='d-flex w-100 flex-column'>
-                        <label>Program Description</label>
-                        <textarea placeholder='Write description about the scholarship program.' onChange={(e) => setProgramDesc(e.target.value)}></textarea>
+                    <div className={style.body} style={{ display: 'flex', flexDirection: 'column', width: '100%', }}>
+                        <div className='d-flex w-100 flex-column mb-2'>
+                            <label>Program Name</label>
+                            <input 
+                                type="text" 
+                                placeholder='Scholar ng Bayan' 
+                                {...register('program_name', { required: 'Program Name is required.' })}
+                            />
+                            { errors?.program_name && <p style={{ color:'red', fontSize:'.8rem' }}>{errors.program_name?.message}</p>}
+                            
+                        </div>
+                        <div className='d-flex w-100 flex-column mb-2'>
+                            <label>Program Description</label>
+                            <textarea 
+                                placeholder='Write description about the scholarship program.' 
+                                {...register('program_desc', { required: 'Program Description is required.' })}
+                            ></textarea>
+                            { errors?.program_desc && <p style={{ color:'red', fontSize:'.8rem' }}>{errors.program_desc?.message}</p>}
+                        </div>
+                        <div className='d-flex w-100 flex-column'>
+                            <label>Program Slot limit</label>
+                            <div className='d-flex w-100 gap-2'>
+                                <select
+                                    className='w-100 flex-glow-1'
+                                    style={{ width: '70%' }}
+                                    value={limit_slot + 'Person'}
+                                    {...register('limit_slot', { required: 'Slot limit is required.' })}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setValue('limit_slot', value); // Update limit_slot
+                                    }}
+                                >
+                                    <option value={20}>20 Person</option>
+                                    <option value={50}>50 Person</option>
+                                    <option value={100}>100 Person</option>
+                                    <option value={0}>Customize Slot</option>
+                                </select>
+                                <input
+                                    className="w-100 flex-glow-1"
+                                    value={handleEnableCustomeSlot ? '' : limit_slot} // Clear input when disabled
+                                    disabled={handleEnableCustomeSlot}
+                                    type="number"
+                                    {...register('limit_slot', {
+                                        required: 'Custom slot is required.',
+                                        valueAsNumber: true,
+                                        validate: (value) =>
+                                            !handleEnableCustomeSlot || (value > 0 && value <= 1000) || 'Enter a valid slot number.',
+                                    })}
+                                    onChange={(e) => setValue('limit_slot', e.target.value)} // Update limit_slot
+                                />
+                            </div>
+                            
+                        </div>
+                        <div className='d-flex w-100 flex-column mt-5'>
+                            <button type='submit'>Create</button>
+                        </div>
                     </div>
-                    <div className='d-flex w-100 flex-column mt-5'>
-                        <button disabled={isCreateBtnDisable} onClick={handleCreateProgram}>Create</button>
-                    </div>
-                </div>
+                </form>
             </div>
         }
 
         {
             isShowModalEditProgram && (
-                <div className={style.modal} style={{ width: 'auto', height: 'auto' }}>
+                <div className={style.modal}>
                     <div className={style.head}>
                         <h1>Edit Program</h1>
                         <BiExit size={25} cursor={'pointer'} onClick={() => setIsShowModalEditProgram(false)}/>
@@ -334,7 +465,12 @@ const ProgramsPage = () => {
                 <h1>Program List</h1>
                 <button onClick={() => setIsShowModalAddProgram(true)}>Create Program <FiPlusCircle/></button>
             </div>
-            <Table className={style.table} columns={columns} dataSource={programList} pagination={{ pageSize: 5 }} />
+            <Table 
+                className={style.table} 
+                columns={columns} 
+                dataSource={programList} 
+                pagination={{ pageSize: 5 }} 
+            />
         </div>
     </div>
   )

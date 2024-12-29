@@ -7,6 +7,8 @@ const passwordHash = require('password-hash')
 const { v4: uuidv4 } = require('uuid');
 
 const nodemailer = require('nodemailer');
+const e = require('express');
+const { error } = require('console');
 const emailPassword = 'sokb hpyq oevl gmkl';
 
 const transporter = nodemailer.createTransport({
@@ -207,6 +209,29 @@ Admin`
     } catch (error) {
         console.error('Error fetching profiles:', error);
         res.status(500).json({ error: 'An error occurred while fetching profiles' });
+    }
+  })
+
+  //GET PROFILE BY USER_ID
+  router.get('/getProfileByUserID/:user_id', async (req, res)  => {
+    const { user_id } = req.params
+    console.log(req.params)
+    const query = 'SELECT * FROM profile WHERE user_id=?'
+
+    try {
+        
+      const [rows] = await pool.query(query, [user_id])
+        
+      if (rows.length === 0) {
+        console.log('No profiles found.')
+        return res.status(404).json({ message: 'No profiles found' });
+      }
+        console.log('Successfully in getting the profile.', rows)
+        res.status(200).json(rows)
+
+    } catch (error) {
+        console.log('Error in server:', error)
+        res.status(400).send(error)
     }
   })
 

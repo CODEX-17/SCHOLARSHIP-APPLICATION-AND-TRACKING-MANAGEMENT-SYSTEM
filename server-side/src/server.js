@@ -15,7 +15,6 @@ const corsOptions = {
 }
 
 
-
 //middleware//
 const app = express()
 app.use(express.json())
@@ -31,12 +30,14 @@ const server = http.createServer(app)
 const profilesRoutes = require('./routes/profileRoutes')
 const accountsRoutes = require('./routes/accountsRoutes')
 const programsRoutes = require('./routes/programsRoutes')
+const requestsRoutes = require('./routes/requestsRoutes')
 const announcementsRoutes = require('./routes/announcementsRoutes')
 
 app.use('/profiles', profilesRoutes)
 app.use('/accounts', accountsRoutes)
 app.use('/announcements', announcementsRoutes)
 app.use('/programs', programsRoutes)
+app.use('/requests', requestsRoutes)
 
 app.options('/accounts/checkAccounts', cors());  // Enable preflight CORS for this route
 

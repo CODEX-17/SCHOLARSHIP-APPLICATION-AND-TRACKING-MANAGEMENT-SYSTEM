@@ -1,0 +1,272 @@
+@font-face {
+    font-family: black;
+    src: url('../assets/fonts/black.ttf');
+}
+
+@font-face {
+    font-family: bold;
+    src: url('../assets/fonts/bold.ttf');
+}
+
+@font-face {
+    font-family: light;
+    src: url('../assets/fonts/light.ttf');
+}
+
+@font-face {
+    font-family: normal;
+    src: url('../assets/fonts/regular.ttf');
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    font-family: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f2f6ee;
+    animation: fade 0.5s ease-in-out;
+    position: relative;
+}
+
+form {
+  width: 100%;
+}
+
+.card {
+    width: 60%;
+    border-radius: 10px;
+    height: 80%;
+    max-height: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #3C3D37;
+    justify-content: flex-start;
+    padding: 2%;
+    overflow-y: auto;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
+            0 1px 3px rgba(0, 0, 0, 0.08);
+
+}
+
+.navigateButton {
+  background-color: #6EC207;
+  color: white;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.content {
+  width: 90%;
+}
+
+.content form {
+  width: 100%;
+  height: 100%;
+}
+
+.card label {
+    font-size: 12pt;
+    font-family: bold;
+}
+
+.card label b {
+  color: red;
+}
+
+.card h1 {
+    font-family: bold;
+    font-size: 20pt;
+    margin: 0;
+    margin-bottom: 30px;
+}
+
+.card p {
+    margin: 0;
+}
+
+
+.card button {
+    font-family: bold;
+    font-size: 12pt;
+    height: 40px;
+    letter-spacing: 1px;
+    width: 100%;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    background-color:#6EC207;
+    user-select: none;
+}
+
+.card button:hover {
+    opacity: 0.5;
+}
+
+.card button:disabled {
+    background-color: gray;
+}
+
+.card input {
+    width: 100%;
+    height: 40px;
+    outline: none;
+    padding-left: 2%;
+    border-radius: 5px;
+    border: none;
+    background-color: rgb(234, 233, 233);
+}
+
+.card input:disabled {
+    background-color: rgb(201, 200, 200);
+}
+
+#errorMessage {
+  color: red;
+  font-size: 0.8rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-style: italic;
+}
+
+
+.fileCard {
+  border-radius: 5px;
+  background-color: gray;
+  color: white;
+  width: 100%;
+  height: 50px;
+  padding: 10px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.imgDiv {
+    border: 2px dashed #6EC207;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6EC207;
+    user-select: none;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+}
+
+#profile_pic {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.fileDiv {
+  border: 2px dashed #6EC207;
+  width: 100%;
+  height: 100px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6EC207;
+  user-select: none;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.fileDiv h3 {
+  font-size: 1.3rem;
+}
+
+.fileDiv p {
+  font-size: 1rem;
+}
+
+
+#subtitle {
+    font-size: 20pt;
+    font-family: bold;
+    margin: 0;
+}
+
+.loadingDiv, .successDiv {
+  display: flex;
+  width: 100%;
+  height: 100%; 
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5%;
+}
+
+.loadingDiv h1, .successDiv h1 {
+  margin: 0;
+  font-size: 15pt;
+  color: #6EC207;
+}
+
+
+
+@media (max-width: 768px) {
+    .sideBar {
+        position: fixed;
+    }
+}
+
+
+@keyframes pop {
+    0% {
+      transform: scale(0.5);
+    }
+    50% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideRight {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }

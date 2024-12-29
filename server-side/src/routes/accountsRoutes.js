@@ -24,11 +24,15 @@ const generateUniqueId = () => {
     return uuidv4();
 };
 
+const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+const currentTime = new Date().toISOString().split('T')[1].split('.')[0]; // Format: HH:MM:SS
+
+
 //Check Hash
 router.post('/checkAccounts', async (req, res) => {
     const { email, password } = req.body;
 
-    const query = 'SELECT * FROM accounts WHERE email=?';
+    const query = `SELECT * FROM accounts WHERE email=? AND account_status='approved'`;
 
     try {
         // Fetch the user by email
@@ -53,8 +57,10 @@ router.post('/checkAccounts', async (req, res) => {
                     program_id: user.program_id,
                     email: user.email,
                     type: user.type,
-                    username: user.username,
-                    image: user.filename,
+                    firstname: user.firstname,
+                    middlename: user.middlename,
+                    lastname: user.lastname,
+                    profile_pic: user.profile_pic,
                     apply_status: user.apply_status,
                 });
             } else {
@@ -97,43 +103,132 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-//Create account
-router.post('/createAccount', upload.single('file'), (req, res) => {
-    const { email, password, username } = req.body;
-    const profilePic = req.file ? req.file.filename : 'default';
+router.post('/createAccount', upload.fields([
+    { name: 'valid_id', maxCount: 1 }, 
+    { name: 'profile_pic', maxCount: 1 }
+]), async (req, res) => {
+    const { 
+        firstname, 
+        middlename, 
+        lastname,
+        contact,
+        address,
+        email, 
+        password,
+    } = req.body;
 
-    const query = 'INSERT INTO accounts(user_id, email, password, username, type, filename, apply_status) VALUES(?,?,?,?,?,?,?)';
+    const user_id = generateUniqueId()
 
-    pool.query(query, [generateUniqueId(), email, passwordHash.generate(password), username, 'user', profilePic, 'free'], (error, result) => {
-        if (error) {
-            console.error(error)
-            res.status(400).send(error)
-        } else {
+    const validIdFile = req.files['valid_id'] ? req.files['valid_id'][0].filename : null;
+    const validIdFilePath = req.files['valid_id'] ? req.files['valid_id'][0].path : null;
+    const profilePicFile = req.files['profile_pic'] ? req.files['profile_pic'][0].filename : 'default';
+    const profilePicPath = req.files['profile_pic'] ? req.files['profile_pic'][0].path : null;
 
-            if (profilePic !== 'default') {
-                const fileSql = `
-                    INSERT INTO files (filename, date, time, file_path, file_id)
-                    VALUES (?, CURDATE(), CURTIME(), ?, ?)
-                `;
+    console.log(req.body)
+    console.log(req.files)
 
-                const fileValues = [profilePic, `/uploads/${profilePic}`, generateUniqueId()];
-                pool.query(fileSql, fileValues, (error, result) => {
+    const hashedPassword = passwordHash.generate(password);  // Hash the password
+
+    const insertAccountQuery = `
+        INSERT INTO accounts(
+            user_id, program_id, firstname, middlename, lastname, 
+            address, contact, email, password, type, 
+            valid_id, profile_pic, apply_status, account_status
+        ) 
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+
+    const fileSql = `
+        INSERT INTO files (filename, date, time, file_path, file_id, user_id)
+        VALUES (?, CURDATE(), CURTIME(), ?, ?, ?)`
+
+
+    const requestSql = `INSERT INTO requests(
+    request_id, request_type, 
+    user_id, application_id, 
+    date, time, request_status ) 
+    VALUES(?, ?, ?, ?, CURDATE(), CURTIME())`
+    
+    try {
+        // Insert the account into the 'accounts' table
+        await new Promise((resolve, reject) => {
+            pool.query(insertAccountQuery, [
+                user_id,
+                null,  // If program_id is optional, pass null or provide a value if needed
+                firstname,
+                middlename,
+                lastname,
+                address,
+                contact,
+                email,
+                hashedPassword,
+                'user', 
+                validIdFile,
+                profilePicFile,
+                'free',
+                'pending'
+            ], (error, result) => {
+                if (error) {
+                    console.log('Failed to insert account.', error);
+                    reject('Failed to insert account.');
+                }
+                console.log('Successfully inserted account.');
+                resolve(result);
+            });
+        });
+
+        await new Promise((resolve, reject) => {
+            pool.query(requestSql, [
+                generateUniqueId(),
+                'account',
+                generateUniqueId(),
+                null,
+                'pending'
+            ], (error, result) => {
+                if (error) {
+                    console.log('Failed to insert request.', error);
+                    reject('Failed to insert request.');
+                }
+                console.log('Successfully inserted request.');
+                resolve(result);
+            });
+        });
+
+        // Insert profile picture file if it exists
+        if (profilePicFile !== 'default') {
+            await new Promise((resolve, reject) => {
+                pool.query(fileSql, [profilePicFile, profilePicPath, generateUniqueId(), user_id], (error, result) => {
                     if (error) {
-                        console.error(error);
-                        res.status(400).send(error)
-                    } else {
-                        console.log('Account created successfully.')
-                        res.status(200).json({ message: 'Account created successfully.' })
+                        console.log('Failed to insert profile picture in file table.', error);
+                        reject(error);
                     }
-                })
-            }else {
-                console.log('Account created successfully.')
-                res.status(200).json({ message: 'Account created successfully.' })
-            }
-            
+                    console.log('Successfully inserted profile picture in file table.');
+                    resolve(result);
+                });
+            });
         }
-    })
 
+        // Insert valid ID file if it exists
+        if (validIdFile) {
+            await new Promise((resolve, reject) => {
+                pool.query(fileSql, [validIdFile, validIdFilePath, generateUniqueId(), user_id], (error, result) => {
+                    if (error) {
+                        console.log('Failed to insert valid ID in file table.', error);
+                        reject(error);
+                    }
+                    console.log('Successfully inserted valid ID in file table.');
+                    resolve(result);
+                });
+            });
+        }
+        
+
+        console.log('Successfully created account.');
+        res.status(200).json({ message: 'Successfully created account.' });
+
+    } catch (error) {
+        console.log('Failed server to create account.', error);
+        res.status(400).json({ error: error.message });
+    }
 });
 
 //UPDATE ACCOUNT
@@ -317,7 +412,6 @@ router.post('/deleteProfiles', async (req, res) => {
     
 })
 
-
 // Forget password
 router.post('/forgotPassword', async (req, res) => {
     const { email } = req.body;
@@ -421,7 +515,82 @@ router.post('/reset-password/:token', async (req, res) => {
       console.error('Error the API');
       res.status(500).json({ message: 'Server error' });
     }
-  });
+});
+
+router.get('/getAccountByUserID/:user_id', (req, res) => {
+
+    const { user_id } = req.params
+    const query = `SELECT * FROM accounts WHERE user_id=?`
+
+    try {
+        
+        pool.query(query, [user_id], (error, data) => {
+            if (error) {
+                console.log('error in getting data form database', error)
+                res.status(400).send(error)
+            }
+
+            res.status(200).json(data)
+        })
+
+
+    } catch (error) {
+        console.log('server error', error)
+        res.status(400).send(error)
+    }
+})
+
+router.post('/updateAccountStatus', async (req, res) => {
+    
+    const queryAccount = `UPDATE accounts SET account_status=? WHERE user_id=?`
+    const queryRequest = `UPDATE requests SET request_status=? WHERE request_id=?`
+
+    const { user_id, account_status, request_id } = req.body
+
+    try {
+        
+        const account = new Promise((resolve, reject) => {
+
+            if (account_status === 'rejected') {
+                
+            }
+
+            pool.query(queryAccount, [account_status, user_id], (error, result) => {
+                if (error) {
+                    console.log('Error in updating account info.', error)
+                    reject('Error in updating account info.', error)
+                }
+
+                console.log('Successfully in updating account info.')
+                resolve('Successfully in updating account info.')
+            })
+        })
+
+        const request = new Promise((resolve, reject) => {
+            pool.query(queryRequest, [account_status, request_id], (error, result) => {
+                if (error) {
+                    console.log('Error in updating request info.', error)
+                    reject('Error in updating request info.', error)
+                }
+
+                console.log('Successfully in updating request info.')
+                resolve('Successfully in updating request info.')
+            })
+        })
+        
+        await Promise.all([account, request])
+        res.status(200).json({
+            message: 'Successfully update account status.'
+        })
+
+
+    } catch (error) {
+        console.log('Server error', error)
+        res.status(400).send(error)
+    }
+
+    
+})
 
 
 module.exports = router

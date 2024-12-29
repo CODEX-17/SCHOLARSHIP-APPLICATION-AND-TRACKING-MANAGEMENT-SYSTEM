@@ -14,6 +14,10 @@ import ApplicantsList from './ApplicantsList';
 import Homepage from './Homepage';
 import AnnouncementTable from './AnnouncementTable';
 import Analytics from './Analytics';
+import { IoPerson } from "react-icons/io5";
+import { getFullname } from '../Utils/nameUtils';
+import AccountsRequestList from './Admin/Tabs/AccountsRequestList/AccountsRequestList';
+import MyProfile from './User/Tabs/MyProfile/MyProfile';
 
 const DashboardPage = () => {
 
@@ -25,6 +29,7 @@ const DashboardPage = () => {
 
   const [isShowNotification, setIsShowNotification] = useState(false)
 
+  const BASE_URL = 'http://localhost:5001'
   
   const [message, setMessage] = useState('')
   const [notifStatus, setNotifStatus] = useState(true)
@@ -68,8 +73,15 @@ const DashboardPage = () => {
                     <GiHamburgerMenu size={25} cursor={'pointer'} title='hide sidebar' onClick={() => setIsShowSideBar(!isShowSideBar)}/>
                 </div>
                 <div className={style.profile}>
-                    <img src={'http://localhost:5001/'+user?.image} alt="profile" />
-                    <h1>{user?.username}</h1>
+                    {
+                        user.profile_pic !== 'default' ? 
+                        <img src={`${BASE_URL}/${user.profile_pic}`} alt="profile" /> :
+                        <div className={style.defaultProfile}>
+                            <IoPerson size={100}/>
+                        </div>
+                    }
+                    
+                    <h1>{getFullname()}</h1>
                     <button onClick={() => setIsShowManageAccount(true)}>Manage Account</button>
                 </div>
                 <div className={style.menus}>
@@ -80,6 +92,7 @@ const DashboardPage = () => {
                     {
                         user && user.type === 'user' && (
                         <>
+                            <button className={activeDisplay === 'my-profile' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('my-profile')}>My Profile</button>
                             <button className={activeDisplay === 'apply' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('apply')}>Apply for Scholar</button>
                             <button className={activeDisplay === 'my-application' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('my-application')}>My Applications</button>
                         </>
@@ -98,6 +111,10 @@ const DashboardPage = () => {
                                     className={activeDisplay === 'applications' ? style.btnMenuActive : style.btnMenu} 
                                     onClick={() => setActiveDisplay('applications')}
                                 >Applications</button>
+                                <button 
+                                    className={activeDisplay === 'accounts-request' ? style.btnMenuActive : style.btnMenu} 
+                                    onClick={() => setActiveDisplay('accounts-request')}
+                                >Accounts Request</button>
                                 <button 
                                     className={activeDisplay === 'applicants' ? style.btnMenuActive : style.btnMenu} 
                                     onClick={() => setActiveDisplay('applicants')}
@@ -143,13 +160,15 @@ const DashboardPage = () => {
 
             {
                 activeDisplay === 'announcements' && <AnnouncementTable/> ||
+                activeDisplay === 'accounts-request' && <AccountsRequestList/> ||
                 activeDisplay === 'dashboard' && <Analytics/> ||
                 activeDisplay === 'homepage' && <Homepage/> ||
                 activeDisplay === 'applications' && <RequestPage/> ||
                 activeDisplay === 'apply' && <ProgramListPage/> ||
                 activeDisplay === 'my-application' && <MyApplication/> ||
                 activeDisplay === 'programs' && <ProgramsPage/> ||
-                activeDisplay === 'applicants' && <ApplicantsList/>
+                activeDisplay === 'applicants' && <ApplicantsList/> ||
+                activeDisplay === 'my-profile' && <MyProfile/>
             }
             
         </div>

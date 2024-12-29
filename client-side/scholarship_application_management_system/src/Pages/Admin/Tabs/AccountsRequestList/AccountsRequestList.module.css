@@ -1,0 +1,104 @@
+@font-face {
+    font-family: black;
+    src: url('../assets/fonts/black.ttf');
+}
+
+@font-face {
+    font-family: bold;
+    src: url('../assets/fonts/bold.ttf');
+}
+
+@font-face {
+    font-family: light;
+    src: url('../assets/fonts/light.ttf');
+}
+
+@font-face {
+    font-family: normal;
+    src: url('../assets/fonts/regular.ttf');
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    font-family: normal;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f2f6ee;
+    animation: fade 0.5s ease-in-out;
+    position: relative;
+}
+
+.tableDiv {
+    width: 80%;
+    border-radius: 10px;
+    background-color: transparent;
+}
+
+.table {
+    font-family: bold;
+    margin-bottom: 1%;
+    color: #38b6ff;
+    font-size: 10pt;
+    width: 100%;
+    border-radius: 10px;
+}
+
+
+.btn {
+    background-color: #6EC207;
+    color: white;
+    border: none;
+    font-family: bold;
+    font-size: 10pt;
+    height: 40px;
+    width: 100px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2%;
+}
+
+
+
+@keyframes pop {
+    0% {
+      transform: scale(0.5);
+    }
+    50% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideRight {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }

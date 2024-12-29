@@ -41,10 +41,21 @@ router.get('/getProgramsByID', (req, res) => {
 //API get programs
 router.post('/addPrograms', (req, res) => {
 
-    const { programName, programDesc } = req.body
-    const query = 'INSERT INTO programs(program_id, program_name, program_desc, total_applicant, program_status) VALUES(?,?,?,?,?)'
+    const { program_name, program_desc, limit_slot } = req.body
 
-    db.query(query,[generateUniqueId(), programName, programDesc, 0, 'active'], (error, data, field) => {
+    const query = `INSERT INTO programs(
+    program_id, program_name, 
+    program_desc, total_applicant, 
+    limit_slot, available_slot,
+    program_status, renewal, date, time
+    ) VALUES(?,?,?,?,?,?,?,?,CURDATE(), CURTIME())`
+
+    db.query(query,[
+        generateUniqueId(), program_name, 
+        program_desc, 0, 
+        limit_slot, limit_slot,
+        'active', false
+    ], (error, data, field) => {
         if (error) {
             console.error(error)
             res.status(404).send(error)

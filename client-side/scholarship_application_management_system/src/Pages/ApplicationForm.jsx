@@ -360,25 +360,25 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
                         </div>
                     ) : (
                         <>
-                            <div className='d-flex w-100 gap-10 align-items-center mb-5'>
-                                <div className={style.stepDiv}>
-                                    <div 
-                                        className={style.stepCard} 
-                                        style={{ backgroundColor: currentSteps === 1 ? '#6EC207' : 'gray' }}
-                                        onClick={() => setCurrentSteps(1)}
-                                    >Personal Information</div>
-                                    <div 
-                                        className={style.stepCard} 
-                                        style={{ backgroundColor: currentSteps === 2 ? '#6EC207' : 'gray' }}
-                                        onClick={() => setCurrentSteps(2)}
-                                    >Family Background</div>
-                                    <div 
-                                        className={style.stepCard} 
-                                        style={{ backgroundColor: currentSteps === 3 ? '#6EC207' : 'gray' }}
-                                        onClick={() => setCurrentSteps(3)}
-                                    >Upload Files</div>
-                                </div>
+                           
+                            <div className={style.stepDiv}>
+                                <div 
+                                    className={style.stepCard} 
+                                    style={{ backgroundColor: currentSteps === 1 ? '#6EC207' : 'gray' }}
+                                    onClick={() => setCurrentSteps(1)}
+                                >Personal Information</div>
+                                <div 
+                                    className={style.stepCard} 
+                                    style={{ backgroundColor: currentSteps === 2 ? '#6EC207' : 'gray' }}
+                                    onClick={() => setCurrentSteps(2)}
+                                >Family Background</div>
+                                <div 
+                                    className={style.stepCard} 
+                                    style={{ backgroundColor: currentSteps === 3 ? '#6EC207' : 'gray' }}
+                                    onClick={() => setCurrentSteps(3)}
+                                >Upload Files</div>
                             </div>
+                            
                             <div className='d-flex w-100 align-items-center justify-content-between mb-2'>
                                 <div className='d-flex w-100 gap-5 align-items-center'>
                                     <h1 style={{ margin: '0', color: '#6EC207', fontSize: '15pt' }}>{
@@ -395,67 +395,62 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
                             {
                                 currentSteps === 1 &&
                                 <>
-                                    <div className='d-flex w-100'>
-                                        <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Firstname</label>
-                                                <input type="text" required value={firstname} onChange={(e) => setFirstname(e.target.value)}/>
-                                            </div>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Middlename</label>
-                                                <input type="text" required value={middlename} onChange={(e) => setMiddlename(e.target.value)}/>
-                                            </div>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Lastname</label>
-                                                <input type="text" required value={lastname} onChange={(e) => setLastname(e.target.value)}/>
-                                            </div>
+                                 
+                                    <div className='d-flex gap-2 w-100 align-items-center justify-content-between' style={{ flexWrap: 'wrap' }}>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Firstname</label>
+                                            <input type="text" required value={firstname} onChange={(e) => setFirstname(e.target.value)}/>
+                                        </div>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Middlename</label>
+                                            <input type="text" required value={middlename} onChange={(e) => setMiddlename(e.target.value)}/>
+                                        </div>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Lastname</label>
+                                            <input type="text" required value={lastname} onChange={(e) => setLastname(e.target.value)}/>
                                         </div>
                                     </div>
-        
-                                    <div className='d-flex w-100'>
-                                        <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Birthdate</label>
-                                                <input type="date" required value={birthdate} onChange={(e) => setBirthdate(e.target.value)}/>
-                                            </div>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Contact Number</label>
-                                                <input type="tel" required value={contact} onChange={(e) => setContact(e.target.value)}/>
-                                            </div>
+                                   
+                                    <div className='d-flex gap-2 w-100 align-items-center justify-content-center' style={{ flexWrap: 'wrap' }}>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Birthdate</label>
+                                            <input type="date" required value={birthdate} onChange={(e) => setBirthdate(e.target.value)}/>
+                                        </div>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Contact Number</label>
+                                            <input type="tel" required value={contact} onChange={(e) => setContact(e.target.value)}/>
                                         </div>
                                     </div>
-                                    <div className='d-flex w-100'>
-                                        <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Gender</label>
-                                                <select required value={gender} onChange={(e) => setGender(e.target.value)}>
-                                                    <option value="">Select gender</option>
-                                                    <option value="male">Male</option>
-                                                    <option value="female">Female</option>
-                                                </select>
-                                            </div>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Civil Status</label>
-                                                <select required value={civilStatus} onChange={(e) => setCivilStatus(e.target.value)}>
-                                                    <option value="">Select gender</option>
-                                                    <option value="single">Single</option>
-                                                    <option value="married">Married</option>
-                                                    <option value="divorced">Divorced</option>
-                                                    <option value="widowed">Widowed</option>
-                                                    <option value="separated">Separated</option>
-                                                </select>
-                                            </div>
+                              
+                                    <div className='d-flex gap-2 w-100 align-items-center justify-content-center' style={{ flexWrap: 'wrap' }}>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Gender</label>
+                                            <select required value={gender} onChange={(e) => setGender(e.target.value)}>
+                                                <option value="">Select gender</option>
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                            </select>
+                                        </div>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Civil Status</label>
+                                            <select required value={civilStatus} onChange={(e) => setCivilStatus(e.target.value)}>
+                                                <option value="">Select gender</option>
+                                                <option value="single">Single</option>
+                                                <option value="married">Married</option>
+                                                <option value="divorced">Divorced</option>
+                                                <option value="widowed">Widowed</option>
+                                                <option value="separated">Separated</option>
+                                            </select>
                                         </div>
                                     </div>
-                                    <div className='d-flex w-100'>
-                                        <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-100'>
-                                                <label>Current Address</label>
-                                                <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={currentAddress} onChange={(e) => setCurrentAddress(e.target.value)}/>
-                                            </div>
-                                         
+
+                                    <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
+                                        <div className='d-flex gap-2 flex-column align-items-start w-100'>
+                                            <label>Current Address</label>
+                                            <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={currentAddress} onChange={(e) => setCurrentAddress(e.target.value)}/>
                                         </div>
                                     </div>
+                            
                                     <div className='d-flex flex-column w-100'>
                                         <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
                                             <div className='d-flex gap-2 flex-column align-items-start w-100'>
@@ -481,32 +476,29 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
                                     <div className='d-flex w-100'>
                                         <h1 id={style.subtitle}>Mother Information</h1>
                                     </div>
-                                    <div className='d-flex w-100 mb-0'>
-                                        <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Firstname</label>
-                                                <input type="text" required value={mfirstname} onChange={(e) => setMFirstname(e.target.value)}/>
-                                            </div>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Middlename</label>
-                                                <input type="text" required value={mmiddlename} onChange={(e) => setMMiddlename(e.target.value)}/>
-                                            </div>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Lastname</label>
-                                                <input type="text" required value={mlastname} onChange={(e) => setMLastname(e.target.value)}/>
-                                            </div>
+                                   
+                                    <div className='d-flex gap-2 w-100 align-items-center justify-content-between' style={{ flexWrap: 'wrap' }}>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Firstname</label>
+                                            <input type="text" required value={mfirstname} onChange={(e) => setMFirstname(e.target.value)}/>
+                                        </div>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Middlename</label>
+                                            <input type="text" required value={mmiddlename} onChange={(e) => setMMiddlename(e.target.value)}/>
+                                        </div>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Lastname</label>
+                                            <input type="text" required value={mlastname} onChange={(e) => setMLastname(e.target.value)}/>
                                         </div>
                                     </div>
-        
-                                    <div className='d-flex w-100'>
-                                        <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-100'>
-                                                <label>Current Address</label>
-                                                <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={mcurrentAddress} onChange={(e) => setMCurrentAddress(e.target.value)}/>
-                                            </div>
-                                         
+                                    
+                                    <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
+                                        <div className='d-flex gap-2 flex-column align-items-start w-100'>
+                                            <label>Current Address</label>
+                                            <input type="text" placeholder='BARANGAY / CITY / PROVINCE' required value={mcurrentAddress} onChange={(e) => setMCurrentAddress(e.target.value)}/>
                                         </div>
                                     </div>
+                                  
                                     <div className='d-flex flex-column w-100'>
                                         <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
                                             <div className='d-flex gap-2 flex-column align-items-start w-100'>
@@ -523,12 +515,12 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
                                         }  
                                     </div>
         
-                                    <div className='d-flex w-100 align-items-center justify-content-between gap-2'>
-                                        <div className='d-flex gap-2 flex-column align-items-start w-50'>
+                                    <div className='d-flex gap-2 w-100 align-items-center justify-content-between' style={{ flexWrap: 'wrap' }}>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
                                             <label>Contact Number</label>
                                             <input style={{ margin: '0px' }} type="tel" required value={mcontact} onChange={(e) => setMContact(e.target.value)}/>
                                         </div>
-                                        <div className='d-flex flex-column w-50'>
+                                        <div className='d-flex flex-column align-items-start flex-grow-1'>
                                             <div className='d-flex align-items-center gap-2'>
                                                 <input type="checkbox" style={{ width: '15px', margin: '0px' }} required checked={mVoters} onChange={(e) => {setMVoters(e.target.checked), setMLong(1)}}/>
                                                 <p>Are you registered voter of Tabuk City? For how many years?</p>
@@ -540,22 +532,22 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
                                     <div className='d-flex w-100 mt-2'>
                                         <h1 id={style.subtitle}>Father Information</h1>
                                     </div>
-                                    <div className='d-flex w-100 mb-0'>
-                                        <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Firstname</label>
-                                                <input type="text" required value={ffirstname} onChange={(e) => setFFirstname(e.target.value)}/>
-                                            </div>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Middlename</label>
-                                                <input type="text" required value={fmiddlename} onChange={(e) => setFMiddlename(e.target.value)}/>
-                                            </div>
-                                            <div className='d-flex gap-2 flex-column align-items-start w-50'>
-                                                <label>Lastname</label>
-                                                <input type="text" required value={flastname} onChange={(e) => setFLastname(e.target.value)}/>
-                                            </div>
+                                    
+                                    <div className='d-flex gap-2 w-100 align-items-center justify-content-between' style={{ flexWrap: 'wrap' }}>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Firstname</label>
+                                            <input type="text" required value={ffirstname} onChange={(e) => setFFirstname(e.target.value)}/>
+                                        </div>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Middlename</label>
+                                            <input type="text" required value={fmiddlename} onChange={(e) => setFMiddlename(e.target.value)}/>
+                                        </div>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
+                                            <label>Lastname</label>
+                                            <input type="text" required value={flastname} onChange={(e) => setFLastname(e.target.value)}/>
                                         </div>
                                     </div>
+                                   
         
                                     <div className='d-flex w-100'>
                                         <div className='d-flex gap-2 w-100 align-items-center justify-content-center'>
@@ -582,12 +574,12 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
                                         }  
                                     </div>
         
-                                    <div className='d-flex w-100 align-items-center justify-content-between gap-2'>
-                                    <div className='d-flex gap-2 flex-column align-items-start w-50'>
+                                    <div className='d-flex gap-2 w-100 align-items-center justify-content-between' style={{ flexWrap: 'wrap' }}>
+                                        <div className='d-flex gap-2 flex-column align-items-start flex-grow-1'>
                                             <label>Contact Number</label>
                                             <input style={{ margin: '0px' }} type="tel" required value={fcontact} onChange={(e) => setFContact(e.target.value)}/>
                                         </div>
-                                        <div className='d-flex flex-column w-50'>
+                                        <div className='d-flex flex-column align-items-start flex-grow-1'>
                                             <div className='d-flex align-items-center gap-2'>
                                                 <input type="checkbox" style={{ width: '15px', margin: '0px' }} required checked={fVoters} onChange={(e) => {setFVoters(e.target.checked), setFLong(1)}}/>
                                                 <p>Are you registered voter of Tabuk City? For how many years?</p>

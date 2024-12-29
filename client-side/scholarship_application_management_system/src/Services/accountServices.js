@@ -14,6 +14,17 @@ export const updateAccount = async (formData) => {
     }
 }
 
+export const createAccount = async (formData) => {
+    try {
+        const result = await axios.post(`${BASE_URL}/accounts/createAccount`, formData)
+        if (result) return result.data
+
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}
+
 export const resetPassword = async (data) => {
     try {
         const { token } = data.token
@@ -22,6 +33,37 @@ export const resetPassword = async (data) => {
 
         if (result) {
             console.log(result.data)
+            return result.data
+        }
+
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}
+
+export const getAccountByUserID = async (user_id) => {
+    try {
+        const result = await axios.get(`${BASE_URL}/accounts/getAccountByUserID/${user_id}`)
+
+        if (result) {
+            console.log('Successfully get account info.')
+            return result.data
+        }
+
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}
+
+export const updateAccountStatus = async (user_id, account_status, request_id) => {
+    try {
+        
+        const result = await axios.post(`${BASE_URL}/accounts/updateAccountStatus`, { user_id, account_status, request_id })
+
+        if (result) {
+            console.log('Successfully update account status.')
             return result.data
         }
 
