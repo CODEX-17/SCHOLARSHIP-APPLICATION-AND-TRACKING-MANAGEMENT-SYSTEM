@@ -69,7 +69,7 @@ router.post('/addPrograms', (req, res) => {
 })
 
 //API get programs
-router.post('/updatePrograms', (req, res) => {
+router.put('/updatePrograms', (req, res) => {
 
     const { program_desc, program_name, program_status, program_id } = req.body
     const query = 'UPDATE programs SET program_desc=?, program_name=?, program_status=? WHERE program_id=?'

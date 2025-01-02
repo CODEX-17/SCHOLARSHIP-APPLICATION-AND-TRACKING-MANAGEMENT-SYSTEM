@@ -123,8 +123,8 @@ button:hover {
 
 .card {
     width: 300px;
-    height: 200px;
-    max-height: 200px;
+    height: 230px;
+    max-height: 230px;
     border-radius: 10px;
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
@@ -138,7 +138,9 @@ button:hover {
 }
 
 .card button {
-    border-radius: 5px;
+  min-height: 40px;
+  height: 40px;
+  border-radius: 5px;
 }
 
 .card h3 {

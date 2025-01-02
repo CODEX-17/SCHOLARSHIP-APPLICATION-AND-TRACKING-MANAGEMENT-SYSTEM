@@ -3,7 +3,7 @@ import style from './DashboardPage.module.css'
 import logo from '../assets/tabuk_logo.png'
 import { GiHamburgerMenu } from "react-icons/gi";
 import { BiLogOutCircle } from "react-icons/bi";
-import RequestPage from './RequestPage';
+import Applications from './Admin/Tabs/Applications/Applications'
 import { useNavigate } from 'react-router-dom';
 import MyApplication from './MyApplication';
 import ManageAccountComponent from '../Components/ManageAccountComponent';
@@ -163,7 +163,7 @@ const DashboardPage = () => {
                 activeDisplay === 'accounts-request' && <AccountsRequestList/> ||
                 activeDisplay === 'dashboard' && <Analytics/> ||
                 activeDisplay === 'homepage' && <Homepage/> ||
-                activeDisplay === 'applications' && <RequestPage/> ||
+                activeDisplay === 'applications' && <Applications/> ||
                 activeDisplay === 'apply' && <ProgramListPage/> ||
                 activeDisplay === 'my-application' && <MyApplication/> ||
                 activeDisplay === 'programs' && <ProgramsPage/> ||

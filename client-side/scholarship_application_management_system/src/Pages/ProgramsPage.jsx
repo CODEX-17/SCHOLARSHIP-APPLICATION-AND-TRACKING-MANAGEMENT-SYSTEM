@@ -11,7 +11,7 @@ import { FiPlusCircle } from "react-icons/fi";
 import { FaEdit } from "react-icons/fa";
 import Switch from '@mui/material/Switch';
 import { useForm } from 'react-hook-form'
-import { addPrograms } from '../Services/programServices';
+import { addPrograms, editProgram } from '../Services/programServices';
 import { 
     convertDateFormatIntoString,
     convertTimeTo12HourFormat
@@ -24,11 +24,12 @@ const ProgramsPage = () => {
 
     const [isShowModal, setIsShowModal] = useState(false)
     const url = 'http://localhost:5001/'
-    const [isShowModalAddProgram, setIsShowModalAddProgram] = useState(false)
+    const [isShowModalForm, setIsShowisShowModalForm] = useState(false)
     const [isShowModalEditProgram, setIsShowModalEditProgram] = useState(false)
     const [isShowModalDelete, setIsShowModalDelete] = useState(false)
     const [selectedData, setSelectedData] = useState(null)
     const [message, setMessage] = useState('')
+    const [modalType, setModalType] = useState('add')
 
 
     const {
@@ -40,7 +41,8 @@ const ProgramsPage = () => {
         formState: { errors }
     } = useForm({
         defaultValues: {
-          limit_slot: '50',
+            program_name: modalType === 'edit' && selectedData.program_name,
+            limit_slot: modalType === 'edit' ? selectedData.limit_slot : '50',
         },
       })
     
@@ -58,23 +60,18 @@ const ProgramsPage = () => {
 
     useEffect(() => {
         reset({
-            limit_slot: '50',
+            limit_slot: '50'
         })
     }, [])
     
     
-
-    const [programName , setProgramName] = useState('')
-    const [programDesc, setProgramDesc] = useState('')
-    const [isCreateBtnDisable, setIsCreateBtnDisable] = useState(true)
-
     const [isShowNotification, setIsShowNotification] = useState(false)
     const userDetails = JSON.parse(localStorage.getItem('user')) || null
 
     //Edit program variables
     const [editProgramName , setEditProgramName] = useState('')
     const [editProgramDesc, setEditProgramDesc] = useState('')
-    const [renewalProg, setRenewalProg] = useState('active')
+    const [renewalProg, setRenewalProg] = useState(false)
     const [isEditBtnDisable, setIsEditBtnDisable] = useState(true)
 
     useEffect(() => {
@@ -87,12 +84,9 @@ const ProgramsPage = () => {
     },[message])
 
     useEffect(() => {
-        if (programName !== '' && programDesc !== '' ) {
-            setIsCreateBtnDisable(false)
-        }else{
-            setIsCreateBtnDisable(true)
-        }
-    },[programName,programDesc])
+        setRenewalProg(selectedData?.renewal)
+    },[selectedData])
+
 
     useEffect(() => {
         if (selectedData) {
@@ -124,14 +118,14 @@ const ProgramsPage = () => {
             key: 'program_id',
         },
         {
-          title: 'Program Name',
-          dataIndex: 'program_name',
-          key: 'program_name',
+            title: 'Program Name',
+            dataIndex: 'program_name',
+            key: 'program_name',
         },
         {
-          title: 'Total Applicant',
-          dataIndex: 'total_applicant',
-          key: 'total_applicant',
+            title: 'Total Applicant',
+            dataIndex: 'total_applicant',
+            key: 'total_applicant',
         },
         {
             title: 'Action',
@@ -152,19 +146,25 @@ const ProgramsPage = () => {
         },
     ];
 
-    const handleCreateProgram = async (data) => {
+    const onSubmit = async (data) => {
         
-
-
         try {
 
-            const result = await addPrograms(data)
+            let updated = data
+            updated.program_id = selectedData?.program_id
+            updated.renewal = renewalProg
+
+            console.log(updated)
+
+            const result = modalType === 'add' ? await addPrograms(updated) : await editProgram(updated)
 
             if (result) {
+                console.log(result)
                 const message = result.message
                 setMessage(message)
                 setIsShowNotification(true)
-                setIsShowModalAddProgram(false)
+                setIsShowisShowModalForm(false)
+                setIsShowModal(false)
                 setTimeout(() => {
                     setIsShowNotification(false)
                 }, 3000)
@@ -200,21 +200,12 @@ const ProgramsPage = () => {
     }
 
     const handleEditModal = () => {
+        setModalType('edit')
         if (selectedData) {
-            setEditProgramDesc(selectedData.program_desc)
-            setEditProgramName(selectedData.program_name)
-            setRenewalProg(selectedData.program_status)
-            setIsShowModal(false)
-            setIsShowModalEditProgram(true)
-        }
-    }
-
-    const handleRenewal = (value) => {
-        console.log(value)
-        if (value) {
-            setRenewalProg('renewal')
-        }else {
-            setRenewalProg('active')
+            setValue('program_desc', selectedData.program_desc)
+            setValue('program_name', selectedData.program_name)
+            setValue('limit_slot', selectedData.limit_slot)
+            setIsShowisShowModalForm(true)
         }
     }
 
@@ -252,6 +243,12 @@ const ProgramsPage = () => {
                 setIsShowNotification(false)
             }, 3000);
         }).catch(err => console.log(err)) 
+    }
+
+    const handleAddProgram = () => {
+        setModalType('add')
+        reset()
+        setIsShowisShowModalForm(true)
     }
 
 
@@ -329,12 +326,12 @@ const ProgramsPage = () => {
         }
 
         {
-            isShowModalAddProgram &&
+            isShowModalForm &&
             <div className={style.modal}>
-                <form onSubmit={handleSubmit(handleCreateProgram)}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <div className={style.head}>
-                        <h1>Add Program</h1>
-                        <BiExit size={25} cursor={'pointer'} onClick={() => setIsShowModalAddProgram(false)}/>
+                        <h1>{modalType === 'add' ? 'Add' : 'Edit'} Program</h1>
+                        <BiExit size={25} cursor={'pointer'} onClick={() => setIsShowisShowModalForm(false)}/>
                     </div>
                     <div className={style.body} style={{ display: 'flex', flexDirection: 'column', width: '100%', }}>
                         <div className='d-flex w-100 flex-column mb-2'>
@@ -389,8 +386,30 @@ const ProgramsPage = () => {
                             </div>
                             
                         </div>
+                        <div className='d-flex align-items-center justify-content-between mt-2'>
+                            <label style={{ color: '#6EC207' }}>Open for Renewal and New Application</label>
+                            <Switch 
+                                checked={renewalProg} 
+                                onChange={(e) => setRenewalProg(e.target.checked)}
+                                sx={{
+                                    '& .MuiSwitch-switchBase.Mui-checked': {
+                                    color: 'green', // Custom color when switch is ON
+                                    },
+                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                    backgroundColor: '#6EC207', // Track color when switch is ON
+                                    },
+                                    '& .MuiSwitch-switchBase': {
+                                    color: '#ccc', // Custom color when switch is OFF
+                                    },
+                                    '& .MuiSwitch-switchBase + .MuiSwitch-track': {
+                                    backgroundColor: '#ccc', // Track color when switch is OFF
+                                    },
+                                }}
+                            />
+                        </div>
+                          
                         <div className='d-flex w-100 flex-column mt-5'>
-                            <button type='submit'>Create</button>
+                            <button type='submit'>{modalType === 'add' ? 'Create' : 'Update'}</button>
                         </div>
                     </div>
                 </form>
@@ -441,7 +460,6 @@ const ProgramsPage = () => {
                     </div>
                 </div> 
             )
-
         }
 
         {
@@ -463,7 +481,7 @@ const ProgramsPage = () => {
         <div className={style.content}>
             <div className={style.menuHead}>
                 <h1>Program List</h1>
-                <button onClick={() => setIsShowModalAddProgram(true)}>Create Program <FiPlusCircle/></button>
+                <button onClick={handleAddProgram}>Create Program <FiPlusCircle/></button>
             </div>
             <Table 
                 className={style.table} 

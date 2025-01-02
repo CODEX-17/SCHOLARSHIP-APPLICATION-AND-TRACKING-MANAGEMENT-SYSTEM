@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import style from './ProgramListPage.module.css'
 import axios from 'axios'
 import ApplicationForm from './ApplicationForm'
+import { Progress } from 'antd';
 
 const ProgramListPage = () => {
 
@@ -157,6 +158,10 @@ const ProgramListPage = () => {
     }
   }
 
+  const handlePercent = (current, limit) => {
+    return ((current/limit)*100)
+  }
+
   return (
         isShowForm ? (
             <>
@@ -210,9 +215,17 @@ const ProgramListPage = () => {
                                               <p><b>Description</b></p>
                                               <p style={{ fontSize: '.8rem' }}>{handleShorten(prog?.program_desc)}</p>
                                             </div>
-                                            
                                         </div>
-                                        <button onClick={() => {setSelectedData(prog), console.log(prog)}}>View</button>
+                                        <div className='w-100 d-flex flex-column gap-2'>
+                                          <Progress
+                                            percent={handlePercent(prog.total_applicant, prog.limit_slot)}
+                                            percentPosition={{ align: 'end', type: 'inner' }}
+                                            size={['100%', 20]}
+                                            strokeColor="#6EC207"
+                                          />
+                                          <button onClick={() => {setSelectedData(prog), console.log(prog)}}>View</button>
+                                        </div>
+                                        
                                     </div>
                                 ))
                                 

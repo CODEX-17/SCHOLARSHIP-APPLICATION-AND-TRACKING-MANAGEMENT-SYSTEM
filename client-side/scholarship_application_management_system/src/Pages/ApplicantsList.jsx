@@ -112,10 +112,10 @@ const ApplicantsList = () => {
   return (
     <div className={style.container}>
         { 
-            isShowNotification &&
-                <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
-                    <NotificationComponent message={message} status={notifStatus}/>
-                </div>
+          isShowNotification &&
+            <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+                <NotificationComponent message={message} status={notifStatus}/>
+            </div>
         }
       <div className={`${style.left} ${!showPanel ? style.hidden : ''}`}>
         <div className={style.head}>
