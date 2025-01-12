@@ -9,6 +9,9 @@ import NotificationComponent from '../../../../Components/NotificationComponent'
 import LoadingComponents from '../../../../Components/LoadingComponents';
 import UserProfilePicture from '../../../ProfilePicture/UserProfilePicture';
 import View from './Modal/View';
+import { archivedRequest, getRequestJoinProfileJoinAccount } from '../../../../Services/requestServices';
+import { convertDateFormatIntoString, convertTimeTo12HourFormat } from '../../../../Utils/dateUtils';
+
 
 
 const RequestPage = () => {
@@ -26,55 +29,58 @@ const RequestPage = () => {
     const userDetails = JSON.parse(localStorage.getItem('user')) || null
 
     useEffect(() => {
-        axios.get('http://localhost:5001/profiles/getProfiles')
-        .then((res) => {
-            const result = res.data
 
-            const filter = result.filter((data) => !data.archive)
-            setRequestList(filter)
-        })
-        .catch((err) => console.log(err))
-    },[message])
+        const fetchData = async () => {
 
-    const formatDate = (dateString) => {
-        // Create a new Date object from the provided date string
-        const date = new Date(dateString);
-    
-        // Use Intl.DateTimeFormat to format the date in the desired style
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Intl.DateTimeFormat('en-US', options).format(date);
-    }
+            try {
+                const result = await getRequestJoinProfileJoinAccount()
+
+                if (result) {
+                    console.log(result)
+                    const programRequest = 
+                        result.filter(
+                            data => data.request_type === 'program' && data?.archived === 0
+                        )
+                    
+                    setRequestList(programRequest)
+                }
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        fetchData()
+
+    },[message, setIsShowModal])
 
     const columns = [
         {
             title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
+            dataIndex: 'request_status',
+            key: 'request_status',
         },
         {
-          title: 'First Name',
-          dataIndex: 'firstname',
-          key: 'firstname',
+            title: 'User ID',
+            dataIndex: 'user_id',
+            key: 'user_id',
         },
         {
-          title: 'Middle Name',
-          dataIndex: 'middlename',
-          key: 'middlename',
+            title: 'Program ID',
+            dataIndex: 'program_id',
+            key: 'program_id',
         },
         {
-          title: 'Last Name',
-          dataIndex: 'lastname',
-          key: 'lastname',
+            title: 'Date',
+            dataIndex: 'request_date',
+            key: 'request_date',
+            render: (data) => convertDateFormatIntoString(data),
         },
         {
-          title: 'Permanent Address',
-          dataIndex: 'permanent_address',
-          key: 'permanent_address',
-        },
-        {
-          title: 'Contact',
-          dataIndex: 'contact',
-          key: 'contact',
+            title: 'Time',
+            dataIndex: 'request_time',
+            key: 'request_time',
+            render: (data) => convertTimeTo12HourFormat(data),
         },
         {
           title: 'Profile Picture',
@@ -96,73 +102,32 @@ const RequestPage = () => {
                     onClick={() => {setIsShowModal(true), setSelectedData(data), console.log(data)}}
                 ><AiFillProfile size={15}/> View
                 </button>
-                <button 
-                    className={style.btn} 
-                    title='Archived' 
-                    onClick={() => {setIsShowArchivedModal(true), setSelectedData(data), console.log(data)}}
-                ><IoMdArchive size={15}/>
-                </button>
+                {
+                    data?.request_status !== 'pending' &&
+                    <button 
+                        className={style.btn} 
+                        title='Archived' 
+                        onClick={() => {setIsShowArchivedModal(true), setSelectedData(data), console.log(data)}}
+                    ><IoMdArchive size={15}/>
+                    </button>
+                }
+                
             </div>
         },
     ];
-      
-    const handleQualification = (qualified) => {
-        setIsLoading(true);
-    
-        const updatingStatus = async () => {
-            try {
-                const data = {
-                    status: qualified ? 'approved' : 'rejected',
-                    profile_id: selectedData.profile_id,
-                    firstname: selectedData.firstname,
-                    email: selectedData.email,
-                    program_id: selectedData?.program_id,
-                    apply_status: qualified ? 'applied' : 'rejected',
-                    user_id: selectedData?.user_id,
-                };
-    
-                const res = await axios.post('http://localhost:5001/accounts/updateStatusProfile', data)
-                const result = res.data;
-                const message = result.message
-    
-                setIsShowNotification(true)
-                notificationConfig(message, true)
-            } catch (error) {
-                console.log(error)
-            } finally {
-                setIsLoading(false)
-                setIsShowModal(false)
-            }
-        };
-    
-        updatingStatus();
-    };
-    
-    const handleDelete = () => {
-        if (selectedData && selectedData.profile_id) {
-            const id = selectedData.profile_id;
-    
-            axios.post('http://localhost:5001/accounts/deleteProfiles', { id })
-                .then((res) => {
-                    const result = res.data;
-                    const message = result.message;
-                    setMessage(message);
-    
-                    const updateData = requestList.filter(data => data.profile_id !== id);
-                    setRequestList(updateData);
-    
-                    setIsShowArchivedModal(false);
-                    setIsShowNotification(true);
-    
-                    setTimeout(() => {
-                        setIsShowNotification(false);
-                    }, 3000);
-                })
-                .catch((err) => console.log(err));
-        } else {
-            console.log('No profile selected or profile ID missing.');
-        }
 
+    const handleAchivedRequest = async () => {
+        try {
+            
+            const result = await archivedRequest(selectedData?.request_id)
+            if (result) {
+                console.log(result.message)
+                notificationConfig(result.message, true)
+                setIsShowArchivedModal(false)
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const notificationConfig = (message, status) => {
@@ -192,7 +157,7 @@ const RequestPage = () => {
                   <h2>Are you sure you want to archive this item?</h2>
                   <p>Archived items will be stored for future reference but cannot be directly accessed or modified. Ensure this action is intentional.</p>
                     <div className='d-flex gap-3'>
-                        <button onClick={handleDelete}>Confirm</button>
+                        <button onClick={handleAchivedRequest}>Confirm</button>
                         <button style={{ backgroundColor: '#B8001F' }} onClick={() => setIsShowArchivedModal(false)}>Cancel</button>
                     </div>
                 </div>
@@ -201,7 +166,7 @@ const RequestPage = () => {
         {
             (isShowModal && selectedData) && (
                 <div className={style.modal}>
-                   <View data={selectedData} setIsShowModal={setIsShowModal}/>
+                   <View data={selectedData} setIsShowModal={setIsShowModal} setMessage={setMessage}/>
                 </div>
             )
         }

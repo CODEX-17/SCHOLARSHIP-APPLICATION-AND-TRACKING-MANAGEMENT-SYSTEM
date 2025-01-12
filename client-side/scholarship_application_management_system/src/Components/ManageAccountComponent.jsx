@@ -18,12 +18,13 @@ const ManageAccountComponent = ({ setIsShowManageAccount, notificationConfig }) 
     
   const {
     handleSubmit,
-    reset,
     register,
     formState: { errors }
   } = useForm({
     defaultValues: {
-        username: userDetails?.username,
+        firstname: userDetails?.firstname,
+        middlename: userDetails?.middlename,
+        lastname: userDetails?.lastname,
         email: userDetails?.email,
     }
   })
@@ -33,7 +34,9 @@ const ManageAccountComponent = ({ setIsShowManageAccount, notificationConfig }) 
   const onSubmit = async (data) => {
 
     const formData = new FormData()
-    formData.append('username', data.username)
+    formData.append('firstname', data.firstname)
+    formData.append('middlename', data.middlename)
+    formData.append('lastname', data.lastname)
     formData.append('email', data.email)
     formData.append('user_id', userDetails?.user_id)
 
@@ -51,7 +54,9 @@ const ManageAccountComponent = ({ setIsShowManageAccount, notificationConfig }) 
             let updatedUserDetails = {...userDetails}
 
             updatedUserDetails.email = data.email
-            updatedUserDetails.username = data.username
+            updatedUserDetails.firstname = data.firstname
+            updatedUserDetails.middlename = data.middlename
+            updatedUserDetails.lastname = data.lastname
             updatedUserDetails.image = data.filename
 
             console.log(updatedUserDetails)
@@ -104,12 +109,31 @@ const ManageAccountComponent = ({ setIsShowManageAccount, notificationConfig }) 
             </div>
         
             <div className='d-flex w-100 flex-column gap-2'>
-                <label>Username</label>
+                <label>First Name</label>
                 <input 
-                    type="text" 
-                    {...register('username', { required: 'Username is required.' })}
+                    type="text"
+                    placeholder='ex.Juan'
+                    {...register('firstname', { required: 'First Name is required.' })}
                 />
-                {errors.username && <p style={{ margin: 0, color: 'red' }}>{errors.username.message}</p>}
+                {errors.firstname && <p style={{ margin: 0, color: 'red' }}>{errors.firstname.message}</p>}
+            </div>
+            <div className='d-flex w-100 flex-column gap-2'>
+                <label>Middle Name</label>
+                <input 
+                    type="text"
+                    placeholder='ex.Reyes' 
+                    {...register('middlename', { required: 'Middle Name is required.' })}
+                />
+                {errors.middlename && <p style={{ margin: 0, color: 'red' }}>{errors.middlename.message}</p>}
+            </div>
+            <div className='d-flex w-100 flex-column gap-2'>
+                <label>Last Name</label>
+                <input 
+                    type="text"
+                    placeholder='ex.Dela Cruz'
+                    {...register('lastname', { required: 'Last Name is required.' })}
+                />
+                {errors.lastname && <p style={{ margin: 0, color: 'red' }}>{errors.lastname.message}</p>}
             </div>
             <div className='d-flex w-100 flex-column gap-2'>
                 <label>Email</label>

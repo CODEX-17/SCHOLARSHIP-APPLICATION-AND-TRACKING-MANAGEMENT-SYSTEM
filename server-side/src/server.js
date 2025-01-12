@@ -3,13 +3,14 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const http = require('http')
 const dotenv = require('dotenv');
+const path = require('path');
 
 
 dotenv.config();
 
 const corsOptions = {
     origin: 'http://localhost:5173',  // Allow the frontend origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Allow these methods
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],  // Allow these methods
     allowedHeaders: ['Content-Type', 'Authorization'],  // Allow specific headers
     credentials: true,  // Allow cookies or authentication headers (if necessary)
 }
@@ -18,11 +19,11 @@ const corsOptions = {
 //middleware//
 const app = express()
 app.use(express.json())
-app.use(cors())
 app.use(cors(corsOptions))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(express.static('uploads'))
+
+app.use(express.static(path.join(__dirname, '../uploads')))
 const server = http.createServer(app)
 
 

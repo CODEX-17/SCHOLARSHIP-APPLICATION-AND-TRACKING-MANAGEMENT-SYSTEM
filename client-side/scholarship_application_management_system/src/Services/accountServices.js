@@ -72,3 +72,19 @@ export const updateAccountStatus = async (user_id, account_status, request_id) =
         return null
     }
 }
+
+export const getUpdatedAccountByUserID = async (user_id) => {
+    try {
+        
+        const result = await axios.get(`${BASE_URL}/accounts/getUpdatedAccountByUserID/${user_id}`)
+
+        if (result) {
+            console.log('Successfully get account info.')
+            return result.data
+        }
+
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}

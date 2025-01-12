@@ -5,7 +5,8 @@ import DashboardPage from './Pages/DashboardPage';
 import CreateAccount from './Pages/CreateAccount/CreateAccount';
 import ResetPasswordPage from './Pages/ResetPassword/ResetPasswordPage';
 import WelcomePage from './Pages/WelcomePage/WelcomePage';
-import ApplicationForm from './Pages/ApplicationForm';
+import MyProfile from './Pages/User/Tabs/MyProfile/MyProfile';
+
 
 function App() {
   return (
@@ -17,9 +18,13 @@ function App() {
           <Route path="welcome-page" element={<WelcomePage/>} />
           <Route path="/dashboard" element={<DashboardPage/>} />
           <Route path="/register" element={<CreateAccount/>} />
-          <Route path="/form" element={<ApplicationForm/>} />
+          <Route path="/form" element={
+            <div className='d-flex h-100 w-100 align-items-center justify-content-center p-4'> 
+              <MyProfile/>
+            </div>
+          } />
           <Route path="/reset-password/:token" element={<ResetPasswordPage/>} />
-          
+        
         </Routes>
       </BrowserRouter>
     </>

@@ -120,7 +120,7 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
     useEffect(() => {
 
             console.log(
-                firstname,
+        firstname,
         middlename,
         lastname,
         birthdate,
@@ -360,7 +360,6 @@ const ApplicationForm = ({ programDetails, handleApply, applicantStatus, selecte
                         </div>
                     ) : (
                         <>
-                           
                             <div className={style.stepDiv}>
                                 <div 
                                     className={style.stepCard} 

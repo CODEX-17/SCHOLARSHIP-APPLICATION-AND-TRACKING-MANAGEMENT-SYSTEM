@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import MyApplication from './MyApplication';
 import ManageAccountComponent from '../Components/ManageAccountComponent';
 import ProgramsPage from './ProgramsPage';
-import ProgramListPage from './ProgramListPage';
+import ProgramListPage from './User/Tabs/ProgramList/ProgramListPage';
 import NotificationComponent from '../Components/NotificationComponent';
 import ApplicantsList from './ApplicantsList';
 import Homepage from './Homepage';
@@ -18,12 +18,16 @@ import { IoPerson } from "react-icons/io5";
 import { getFullname } from '../Utils/nameUtils';
 import AccountsRequestList from './Admin/Tabs/AccountsRequestList/AccountsRequestList';
 import MyProfile from './User/Tabs/MyProfile/MyProfile';
+import Overview from './Admin/Tabs/Overview/Overview';
+import UserProfilePicture from './ProfilePicture/UserProfilePicture';
+import renderStore from '../store/renderStore';
+import { getUpdatedAccountByUserID } from '../Services/accountServices';
 
 const DashboardPage = () => {
 
   const [isShowSideBar, setIsShowSideBar] = useState(true)
   const [isShowManageAccount, setIsShowManageAccount] = useState(false)
-  const [activeDisplay, setActiveDisplay] = useState('homepage')
+
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user')) || null
 
@@ -34,14 +38,35 @@ const DashboardPage = () => {
   const [message, setMessage] = useState('')
   const [notifStatus, setNotifStatus] = useState(true)
 
+  const { currentRender, changeRender } = renderStore()
+
   useEffect(() => {
+
     if (!user) {
        navigate('/')
     }
 
     if (user.type === 'user') {
-        setActiveDisplay('homepage')
+        changeRender('homepage')
     }
+
+    const fetchData = async () => {
+        try {
+        
+        const result = await getUpdatedAccountByUserID(user?.user_id)
+
+        if (result) {
+            console.log(result)
+            localStorage.setItem('user', JSON.stringify(result))
+        }
+
+        } catch (error) {
+            console.log(error)
+        }
+    } 
+
+    fetchData()
+    
 
   },[])
 
@@ -68,33 +93,34 @@ const DashboardPage = () => {
                     <img src={logo} alt="logo" />
                     <div className='d-flex flex-column align-items-center justify-content-center'>
                         <h1>Scholarship Management System</h1>
-                        <p>Tabuk City, Kalinga</p>
+                        <p style={{ fontSize: '.9rem' }}>Tabuk City, Kalinga</p>
                     </div>
                     <GiHamburgerMenu size={25} cursor={'pointer'} title='hide sidebar' onClick={() => setIsShowSideBar(!isShowSideBar)}/>
                 </div>
                 <div className={style.profile}>
-                    {
-                        user.profile_pic !== 'default' ? 
-                        <img src={`${BASE_URL}/${user.profile_pic}`} alt="profile" /> :
-                        <div className={style.defaultProfile}>
-                            <IoPerson size={100}/>
-                        </div>
-                    }
-                    
+
+                    <div 
+                        style={{ 
+                        width: 200, 
+                        height: 200, 
+                        borderRadius: 10,
+                        }}
+                    >
+                        <UserProfilePicture profile_pic={user?.profile_pic}/>
+                    </div>
                     <h1>{getFullname()}</h1>
                     <button onClick={() => setIsShowManageAccount(true)}>Manage Account</button>
                 </div>
                 <div className={style.menus}>
 
-                    <button className={activeDisplay === 'homepage' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('homepage')}>Homepage</button>
-                    {/* <button className={activeDisplay === 'dashboard' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('dashboard')}>Dashboard</button> */}
+                    <button className={currentRender === 'homepage' ? style.btnMenuActive : style.btnMenu} onClick={() => changeRender('homepage')}>Homepage</button>
+                    
                     
                     {
                         user && user.type === 'user' && (
                         <>
-                            <button className={activeDisplay === 'my-profile' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('my-profile')}>My Profile</button>
-                            <button className={activeDisplay === 'apply' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('apply')}>Apply for Scholar</button>
-                            <button className={activeDisplay === 'my-application' ? style.btnMenuActive : style.btnMenu} onClick={() => setActiveDisplay('my-application')}>My Applications</button>
+                            <button className={currentRender === 'my-profile' ? style.btnMenuActive : style.btnMenu} onClick={() => changeRender('my-profile')}>My Profile</button>
+                            <button className={currentRender === 'my-application' ? style.btnMenuActive : style.btnMenu} onClick={() => changeRender('my-application')}>My Applications</button>
                         </>
                         )
                         
@@ -104,24 +130,28 @@ const DashboardPage = () => {
                         user && user.type === 'admin' && (
                             <>
                                 <button 
-                                    className={activeDisplay === 'programs' ? style.btnMenuActive : style.btnMenu}
-                                    onClick={() => setActiveDisplay('programs')}
+                                    className={currentRender === 'overview' ? style.btnMenuActive : style.btnMenu}
+                                    onClick={() => changeRender('overview')}
+                                >Overview</button>
+                                <button 
+                                    className={currentRender === 'programs' ? style.btnMenuActive : style.btnMenu}
+                                    onClick={() => changeRender('programs')}
                                 >Programs</button>
                                 <button 
-                                    className={activeDisplay === 'applications' ? style.btnMenuActive : style.btnMenu} 
-                                    onClick={() => setActiveDisplay('applications')}
+                                    className={currentRender === 'applications' ? style.btnMenuActive : style.btnMenu} 
+                                    onClick={() => changeRender('applications')}
                                 >Applications</button>
                                 <button 
-                                    className={activeDisplay === 'accounts-request' ? style.btnMenuActive : style.btnMenu} 
-                                    onClick={() => setActiveDisplay('accounts-request')}
+                                    className={currentRender === 'accounts-request' ? style.btnMenuActive : style.btnMenu} 
+                                    onClick={() => changeRender('accounts-request')}
                                 >Accounts Request</button>
                                 <button 
-                                    className={activeDisplay === 'applicants' ? style.btnMenuActive : style.btnMenu} 
-                                    onClick={() => setActiveDisplay('applicants')}
+                                    className={currentRender === 'applicants' ? style.btnMenuActive : style.btnMenu} 
+                                    onClick={() => changeRender('applicants')}
                                 >Applicants</button>
                                 <button 
-                                    className={activeDisplay === 'announcements' ? style.btnMenuActive : style.btnMenu} 
-                                    onClick={() => setActiveDisplay('announcements')}
+                                    className={currentRender === 'announcements' ? style.btnMenuActive : style.btnMenu} 
+                                    onClick={() => changeRender('announcements')}
                                 >Announcements</button>
                             </>
                         )
@@ -129,7 +159,7 @@ const DashboardPage = () => {
                     
                 </div>
                 
-            </div>   
+            </div>      
         )
     }
 
@@ -159,16 +189,16 @@ const DashboardPage = () => {
             }
 
             {
-                activeDisplay === 'announcements' && <AnnouncementTable/> ||
-                activeDisplay === 'accounts-request' && <AccountsRequestList/> ||
-                activeDisplay === 'dashboard' && <Analytics/> ||
-                activeDisplay === 'homepage' && <Homepage/> ||
-                activeDisplay === 'applications' && <Applications/> ||
-                activeDisplay === 'apply' && <ProgramListPage/> ||
-                activeDisplay === 'my-application' && <MyApplication/> ||
-                activeDisplay === 'programs' && <ProgramsPage/> ||
-                activeDisplay === 'applicants' && <ApplicantsList/> ||
-                activeDisplay === 'my-profile' && <MyProfile/>
+                currentRender === 'overview' && <Overview/> ||
+                currentRender === 'announcements' && <AnnouncementTable/> ||
+                currentRender === 'accounts-request' && <AccountsRequestList/> ||
+                currentRender === 'dashboard' && <Analytics/> ||
+                currentRender === 'homepage' && <Homepage/> ||
+                currentRender === 'applications' && <Applications/> ||
+                currentRender === 'my-application' && <ProgramListPage/> ||
+                currentRender === 'programs' && <ProgramsPage/> ||
+                currentRender === 'applicants' && <ApplicantsList/> ||
+                currentRender === 'my-profile' && <MyProfile/>
             }
             
         </div>

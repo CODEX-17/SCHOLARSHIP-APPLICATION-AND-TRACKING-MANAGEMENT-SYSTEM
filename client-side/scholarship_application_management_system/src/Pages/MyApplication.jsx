@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import style from './MyApplication.module.css'
 import { Table } from 'antd';
-import { AiFillProfile } from "react-icons/ai";
-import { AiFillDelete } from "react-icons/ai";
+import { AiFillDelete, AiFillProfile } from "react-icons/ai";
 import { BiExit } from "react-icons/bi";
 import { FaDownload } from "react-icons/fa";
 import axios from 'axios';

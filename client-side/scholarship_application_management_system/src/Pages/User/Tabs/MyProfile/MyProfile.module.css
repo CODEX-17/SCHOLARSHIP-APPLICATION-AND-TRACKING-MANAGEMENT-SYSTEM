@@ -1,33 +1,146 @@
 @font-face {
-    font-family: black;
-    src: url('../assets/fonts/black.ttf');
+  font-family: black;
+  src: url('../assets/fonts/black.ttf');
 }
 
 @font-face {
-    font-family: bold;
-    src: url('../assets/fonts/bold.ttf');
+  font-family: bold;
+  src: url('../assets/fonts/bold.ttf');
 }
 
 @font-face {
-    font-family: light;
-    src: url('../assets/fonts/light.ttf');
+  font-family: light;
+  src: url('../assets/fonts/light.ttf');
 }
 
 @font-face {
-    font-family: normal;
-    src: url('../assets/fonts/regular.ttf');
+  font-family: normal;
+  src: url('../assets/fonts/regular.ttf');
 }
 
 
 .container {
-    width: 100%;
-    height: 100%;
-    font-family: normal;
-    display: flex;
-    animation: pop 0.5s ease-in-out;
-    position: relative;
-    padding: 20px;
-    background-color: transparent;
+  width: 100%;
+  height: 100%;
+  font-family: normal;
+  display: flex;
+  animation: pop 0.5s ease-in-out;
+  position: relative;
+  padding: 20px;
+  background-color: transparent;
+}
+
+.card {
+  background-color: transparent;
+  padding: 20px;
+  height: 80%;
+  width: 100%;
+  max-height: none;
+  border-radius: 10px;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.047);
+}
+
+.card h3 {
+  font-family: bold;
+  font-size: 1.3rem;
+  color: #6EC207;
+}
+
+.card h5 {
+  font-family: bold;
+  font-style: italic;
+  margin: 0;
+  color: #6EC207;
+}
+
+.card img {
+  border-radius: 50%;
+  width: 300px;
+}
+
+.card label {
+  font-family: bold;
+  font-size: 1rem;
+}
+
+.card p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+
+.card input {
+  background-color: rgba(128, 128, 128, 0.152);
+  border: none;
+  outline: none;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 5px;
+  height: 40px;
+  width: 100%;
+}
+
+.card input:read-only {
+  background-color: rgba(128, 128, 128, 0.256);
+  border: none;
+  outline: none;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 5px;
+  height: 40px;
+  width: 100%;
+  color: gray;
+}
+
+.card select {
+  background-color: rgba(128, 128, 128, 0.152);
+  border: none;
+  outline: none;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 5px;
+  height: 40px;
+  width: 100%;
+}
+
+
+form button {
+  border-radius: 5px;
+  font-family: bold;
+}
+
+.tabs {
+  font-family: bold;
+  color: #6EC207;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.cardUpload {
+  background-color: rgb(234, 233, 233);
+  padding: 5px;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 5px;
+}
+
+.cardUpload input { 
+  margin: 0;
+  width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardUpload p { 
+  margin: 0;
+  font-family: bold;
 }
 
 

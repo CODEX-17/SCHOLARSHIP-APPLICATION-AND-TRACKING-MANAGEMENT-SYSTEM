@@ -27,11 +27,63 @@ const generateUniqueId = () => {
 const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
 const currentTime = new Date().toISOString().split('T')[1].split('.')[0]; // Format: HH:MM:SS
 
+// Multer setup for file uploads
+const storage = multer.diskStorage({
+    destination: './uploads/',
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to file names
+    }
+});
+
+const upload = multer({ storage: storage });
+
+//Check Hash
+router.get('/getUpdatedAccountByUserID/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+    console.log(user_id)
+    const query = `SELECT * FROM accounts WHERE user_id=?`;
+
+    try {
+        // Fetch the user by email
+        const [user] = await new Promise((resolve, reject) => {
+            pool.query(query, [user_id], (error, data) => {
+                if (error) {
+                    console.log(error);
+                    return reject(error);
+                }
+      
+                resolve(data);
+            });
+        });
+
+        if (user) {
+            
+                return res.status(200).json({
+                    user_id: user.user_id,
+                    program_id: user.program_id,
+                    email: user.email,
+                    type: user.type,
+                    firstname: user.firstname,
+                    middlename: user.middlename,
+                    lastname: user.lastname,
+                    profile_pic: user.profile_pic,
+                    apply_status: user.apply_status,
+                });
+           
+        } else {
+            console.log('User not found');
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+    } catch (error) {
+        console.log('Error in /checkAccount:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 //Check Hash
 router.post('/checkAccounts', async (req, res) => {
     const { email, password } = req.body;
-
     const query = `SELECT * FROM accounts WHERE email=? AND account_status='approved'`;
 
     try {
@@ -92,17 +144,6 @@ router.get('/getAllEmails', (req, res) => {
     })
 })
 
-
-// Multer setup for file uploads
-const storage = multer.diskStorage({
-    destination: './uploads/',
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to file names
-    }
-});
-
-const upload = multer({ storage: storage });
-
 router.post('/createAccount', upload.fields([
     { name: 'valid_id', maxCount: 1 }, 
     { name: 'profile_pic', maxCount: 1 }
@@ -144,7 +185,7 @@ router.post('/createAccount', upload.fields([
 
     const requestSql = `INSERT INTO requests(
     request_id, request_type, 
-    user_id, application_id, 
+    user_id, program_id, 
     date, time, request_status ) 
     VALUES(?, ?, ?, ?, CURDATE(), CURTIME())`
     
@@ -234,14 +275,15 @@ router.post('/createAccount', upload.fields([
 //UPDATE ACCOUNT
 router.post('/updateAccounts', upload.single('image'), (req, res) => {
 
-    const { username, email, user_id, image } = req.body
+    const { firstname, middlename, lastname, email, user_id, image } = req.body
     console.log(req.file)
+    console.log(req.body)
 
     const filename = req.file ? req.file.filename : image
 
-    const query = 'UPDATE accounts SET username=?, email=?, filename=? WHERE user_id=?'
+    const query = 'UPDATE accounts SET firstname=?, middlename=?, lastname=?, email=?, profile_pic=? WHERE user_id=?'
 
-    pool.query(query,[username, email, filename, user_id], (error, data) => {
+    pool.query(query,[firstname, middlename, lastname, email, image, user_id], (error, data) => {
         if (error) {
             console.log(error)
             res.status(500).send(error)
@@ -251,7 +293,9 @@ router.post('/updateAccounts', upload.single('image'), (req, res) => {
         res.status(200).json({
             message: 'Successfully update account info.',
             object: {
-                username,
+                firstname, 
+                middlename, 
+                lastname,
                 email,
                 filename,
             }
@@ -591,6 +635,371 @@ router.post('/updateAccountStatus', async (req, res) => {
 
     
 })
+
+router.post(
+    '/updateProfiles',
+    upload.fields([
+        { name: 'coe_file', maxCount: 1 },
+        { name: 'brgy_indigency', maxCount: 1 },
+        { name: 'cog_file', maxCount: 1 },
+        { name: 'school_id', maxCount: 1 },
+        { name: 'parent_id', maxCount: 1 },
+        { name: 'certificate_of_registration_comelec', maxCount: 1 },
+    ]),
+    async (req, res) => {
+        try {
+            const {
+                user_id,
+                firstname,
+                middlename,
+                lastname,
+                birthdate,
+                gender,
+                civil_status,
+                current_address,
+                permanent_address,
+                contact,
+                // Primary school information
+                primary_school_name,
+                primary_school_address,
+                primary_school_year_attended,
+                // Secondary school information
+                secondary_school_name,
+                secondary_school_address,
+                secondary_school_year_attended,
+                // Mother information
+                mother_firstname,
+                mother_middlename,
+                mother_lastname,
+                mother_current_address,
+                mother_permanent_address,
+                mother_contact_number,
+                mother_registered_voter,
+                mother_voting_years,
+                // Father information
+                father_firstname,
+                father_middlename,
+                father_lastname,
+                father_current_address,
+                father_permanent_address,
+                father_contact_number,
+                father_registered_voter,
+                father_voting_years,
+            } = req.body;
+
+            // Retrieve file paths or fallback to existing ones
+            const coe_file = req.files['coe_file'] ? req.files['coe_file'][0].filename : req.body.coe_file;
+            const brgy_indigency = req.files['brgy_indigency'] ? req.files['brgy_indigency'][0].filename : req.body.brgy_indigency;
+            const cog_file = req.files['cog_file'] ? req.files['cog_file'][0].filename : req.body.cog_file;
+            const parent_id = req.files['parent_id'] ? req.files['parent_id'][0].filename : req.body.parent_id;
+            const school_id = req.files['school_id'] ? req.files['school_id'][0].filename : req.body.school_id;
+            const certificate_of_registration_comelec = req.files['certificate_of_registration_comelec']
+                ? req.files['certificate_of_registration_comelec'][0].filename
+                : req.body.certificate_of_registration_comelec;
+
+            const file_id = generateUniqueId();
+
+            // Update profile information
+            const profileSql = `
+                UPDATE profile SET
+                    firstname = ?, middlename = ?, lastname = ?, birthdate = ?, gender = ?, civil_status = ?,
+                    current_address = ?, permanent_address = ?, contact = ?,
+                    primary_school_name = ?, primary_school_address = ?, primary_school_year_attended = ?,
+                    secondary_school_name = ?, secondary_school_address = ?, secondary_school_year_attended = ?,
+                    mother_firstname = ?, mother_middlename = ?, mother_lastname = ?,
+                    mother_current_address = ?, mother_permanent_address = ?, mother_contact_number = ?, mother_registered_voter = ?, mother_voting_years = ?,
+                    father_firstname = ?, father_middlename = ?, father_lastname = ?,
+                    father_current_address = ?, father_permanent_address = ?, father_contact_number = ?, father_registered_voter = ?, father_voting_years = ?,
+                    parent_id = ?, school_id = ?, cog_file = ?, brgy_indigency = ?, coe_file = ?, certificate_of_registration_comelec = ?
+                WHERE user_id = ?
+            `;
+            const profileValues = [
+                firstname,
+                middlename,
+                lastname,
+                birthdate,
+                gender,
+                civil_status,
+                current_address,
+                permanent_address,
+                contact,
+                primary_school_name,
+                primary_school_address,
+                primary_school_year_attended,
+                secondary_school_name,
+                secondary_school_address,
+                secondary_school_year_attended,
+                mother_firstname,
+                mother_middlename,
+                mother_lastname,
+                mother_current_address,
+                mother_permanent_address,
+                mother_contact_number,
+                mother_registered_voter,
+                mother_voting_years,
+                father_firstname,
+                father_middlename,
+                father_lastname,
+                father_current_address,
+                father_permanent_address,
+                father_contact_number,
+                father_registered_voter,
+                father_voting_years,
+                parent_id,
+                school_id,
+                cog_file,
+                brgy_indigency,
+                coe_file,
+                certificate_of_registration_comelec,
+                user_id,
+            ];
+
+            const updateProfile = new Promise((resolve, reject) => {
+                pool.query(profileSql, profileValues, (error, result) => {
+                    if (error) {
+                        console.error('Error in updating profile:', error);
+                        return reject({ message: 'Error in updating profile', error });
+                    }
+                    resolve('Successfully updated profile.');
+                });
+            });
+
+            // Insert new files
+            const insertFile = (filename) => {
+                if (!filename) return Promise.resolve();
+                const fileSql = `
+                    INSERT INTO files (filename, date, time, file_path, file_id)
+                    VALUES (?, CURDATE(), CURTIME(), ?, ?)
+                `;
+                const fileValues = [filename, `/uploads/${filename}`, file_id];
+                return new Promise((resolve, reject) => {
+                    pool.query(fileSql, fileValues, (error, result) => {
+                        if (error) {
+                            console.error('Error in adding file:', error);
+                            return reject({ message: 'Error in adding file', error });
+                        }
+                        resolve('Successfully added file.');
+                    });
+                });
+            };
+
+            const filePromises = [
+                req.files['coe_file'] && insertFile(coe_file),
+                req.files['brgy_indigency'] && insertFile(brgy_indigency),
+                req.files['cog_file'] && insertFile(cog_file),
+                req.files['parent_id'] && insertFile(parent_id),
+                req.files['school_id'] && insertFile(school_id),
+                req.files['certificate_of_registration_comelec'] && insertFile(certificate_of_registration_comelec),
+            ].filter(Boolean);
+
+            await Promise.all([updateProfile, ...filePromises]);
+
+            console.log('Profile updated successfully!');
+            res.status(200).json({ message: 'Profile updated successfully!' });
+        } catch (err) {
+            console.error('Transaction failed:', err);
+            res.status(500).json({ message: 'Transaction failed', error: err });
+        }
+    }
+);
+
+router.post(
+    '/addProfiles',
+    upload.fields([
+        { name: 'coe_file', maxCount: 1 },
+        { name: 'brgy_indigency', maxCount: 1 },
+        { name: 'cog_file', maxCount: 1 },
+        { name: 'school_id', maxCount: 1 },
+        { name: 'parent_id', maxCount: 1 },
+        { name: 'certificate_of_registration_comelec', maxCount: 1 },
+    ]),
+    async (req, res) => {
+        const {
+            user_id,
+            email,
+            firstname,
+            middlename,
+            lastname,
+            birthdate,
+            gender,
+            civil_status,
+            current_address,
+            permanent_address,
+            contact,
+            mother_firstname,
+            mother_middlename,
+            mother_lastname,
+            mother_current_address,
+            mother_permanent_address,
+            mother_contact_number,
+            mother_registered_voter,
+            mother_voting_years,
+            father_firstname,
+            father_middlename,
+            father_lastname,
+            father_current_address,
+            father_permanent_address,
+            father_contact_number,
+            father_registered_voter,
+            father_voting_years,
+            primary_school_name,
+            primary_school_address,
+            primary_school_year_attended,
+            secondary_school_name,
+            secondary_school_address,
+            secondary_school_year_attended,
+        } = req.body;
+
+        console.log(req.body);
+
+        const coe_file = req.files['coe_file'] ? req.files['coe_file'][0].filename : req.body.coe_file;
+        const brgy_indigency = req.files['brgy_indigency'] ? req.files['brgy_indigency'][0].filename : req.body.brgy_indigency;
+        const cog_file = req.files['cog_file'] ? req.files['cog_file'][0].filename : req.body.cog_file;
+        const parent_id = req.files['parent_id'] ? req.files['parent_id'][0].filename : req.body.parent_id;
+        const school_id = req.files['school_id'] ? req.files['school_id'][0].filename : req.body.school_id;
+        const certificate_of_registration_comelec = req.files['certificate_of_registration_comelec']
+            ? req.files['certificate_of_registration_comelec'][0].filename
+            : req.body.certificate_of_registration_comelec;
+
+        const file_id = generateUniqueId();
+
+        try {
+            // Profile update query
+            const profileSql = `
+                INSERT INTO profile (
+                    user_id,
+                    email,
+                    firstname,
+                    middlename,
+                    lastname,
+                    birthdate,
+                    gender,
+                    civil_status,
+                    current_address,
+                    permanent_address,
+                    contact,
+                    mother_firstname,
+                    mother_middlename,
+                    mother_lastname,
+                    mother_current_address,
+                    mother_permanent_address,
+                    mother_contact_number,
+                    mother_registered_voter,
+                    mother_voting_years,
+                    father_firstname,
+                    father_middlename,
+                    father_lastname,
+                    father_current_address,
+                    father_permanent_address,
+                    father_contact_number,
+                    father_registered_voter,
+                    father_voting_years,
+                    primary_school_name,
+                    primary_school_address,
+                    primary_school_year_attended,
+                    secondary_school_name,
+                    secondary_school_address,
+                    secondary_school_year_attended,
+                    coe_file,
+                    brgy_indigency,
+                    cog_file,
+                    parent_id,
+                    school_id,
+                    certificate_of_registration_comelec
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+
+            const profileValues = [
+                user_id,
+                email,
+                firstname,
+                middlename,
+                lastname,
+                birthdate,
+                gender,
+                civil_status,
+                current_address,
+                permanent_address,
+                contact,
+                mother_firstname,
+                mother_middlename,
+                mother_lastname,
+                mother_current_address,
+                mother_permanent_address,
+                mother_contact_number,
+                mother_registered_voter,
+                mother_voting_years,
+                father_firstname,
+                father_middlename,
+                father_lastname,
+                father_current_address,
+                father_permanent_address,
+                father_contact_number,
+                father_registered_voter,
+                father_voting_years,
+                primary_school_name,
+                primary_school_address,
+                primary_school_year_attended,
+                secondary_school_name,
+                secondary_school_address,
+                secondary_school_year_attended,
+                coe_file,
+                brgy_indigency,
+                cog_file,
+                parent_id,
+                school_id,
+                certificate_of_registration_comelec,
+            ];
+
+            const addProfile = new Promise((resolve, reject) => {
+                pool.query(profileSql, profileValues, (error, result) => {
+                    if (error) {
+                        console.error('Error in adding profile:', error);
+                        return reject({ message: 'Error in adding profile', error });
+                    }
+                    console.log('Successfully added profile.');
+                    resolve('Successfully added profile.');
+                });
+            });
+
+            // File insertion query
+            const insertFile = (filename) => {
+                if (!filename) return Promise.resolve();
+                const fileSql = `
+                    INSERT INTO files (filename, date, time, file_path, file_id)
+                    VALUES (?, CURDATE(), CURTIME(), ?, ?)
+                `;
+                const fileValues = [filename, `/uploads/${filename}`, file_id];
+                return new Promise((resolve, reject) => {
+                    pool.query(fileSql, fileValues, (error, result) => {
+                        if (error) {
+                            console.error('Error in adding file:', error);
+                            return reject({ message: 'Error in adding file', error });
+                        }
+                        console.log('Successfully added file.');
+                        resolve('Successfully added file.');
+                    });
+                });
+            };
+
+            const filePromises = [
+                req.files['coe_file'] && insertFile(coe_file),
+                req.files['brgy_indigency'] && insertFile(brgy_indigency),
+                req.files['cog_file'] && insertFile(cog_file),
+                req.files['parent_id'] && insertFile(parent_id),
+                req.files['school_id'] && insertFile(school_id),
+                req.files['certificate_of_registration_comelec'] && insertFile(certificate_of_registration_comelec),
+            ].filter(Boolean);
+
+            await Promise.all([addProfile, ...filePromises]);
+            console.log('Profile added successfully!');
+            res.status(200).json({ message: 'Profile added successfully!' });
+        } catch (err) {
+            console.error('Transaction failed:', err);
+            res.status(500).json({ message: 'Transaction failed', error: err });
+        }
+    }
+);
 
 
 module.exports = router
