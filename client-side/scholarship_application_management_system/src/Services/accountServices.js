@@ -57,6 +57,21 @@ export const getAccountByUserID = async (user_id) => {
     }
 }
 
+export const getAccounts = async () => {
+    try {
+        const result = await axios.get(`${BASE_URL}/accounts/getAccounts`)
+
+        if (result) {
+            console.log('Successfully get all accounts.')
+            return result.data
+        }
+
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}
+
 export const updateAccountStatus = async (user_id, account_status, request_id) => {
     try {
         

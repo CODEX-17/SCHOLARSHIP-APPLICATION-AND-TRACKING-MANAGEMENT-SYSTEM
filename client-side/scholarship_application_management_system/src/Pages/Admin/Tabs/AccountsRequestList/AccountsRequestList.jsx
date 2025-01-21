@@ -27,7 +27,7 @@ const AccountsRequestList = () => {
         }
 
         fetchData()
-    },[])
+    },[setIsShowModal])
 
     const column = [
         {

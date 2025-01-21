@@ -171,3 +171,19 @@ export const updateProfile = async (data) => {
 
     
 }
+
+export const getProfiles = async () => {
+
+    try {
+        const result = await axios.get(`${BASE_URL}/profiles/getProfiles`)
+
+        if (result) {
+            console.log('Successfully get all profiles.')
+            return result.data
+        }
+        
+    } catch (error) {
+        console.log('Server error:', error)
+        return null
+    }
+}

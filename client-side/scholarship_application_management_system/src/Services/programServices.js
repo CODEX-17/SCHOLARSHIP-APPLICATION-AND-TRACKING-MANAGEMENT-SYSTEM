@@ -21,6 +21,22 @@ export const addPrograms = async (data) => {
     
 }
 
+export const getPrograms = async () => {
+
+    try {
+        const result = await axios.get(`${BASE_URL}/programs/getPrograms`)
+        
+        if (result) {
+            console.log('Successfull get all program.')
+            return result.data
+        }
+    } catch (error) {
+        console.log('Server error:', error)
+        return null
+    }
+    
+}
+
 export const editProgram = async (data) => {
 
     try {

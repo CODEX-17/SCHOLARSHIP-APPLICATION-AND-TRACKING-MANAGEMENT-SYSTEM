@@ -161,9 +161,7 @@ const CreateAccount = () => {
     ) {
         setStepTwo('error')
     }
-console.log('enter:',(email.length > 0 && errors?.email?.message === '') &&
-(password.length > 0 && errors?.password?.message === '') &&
-(re_password.length > 0 && errors?.re_password?.message === ''), errors)
+
     if (
         (email.length > 0 && handleValidateEmail(email)) &&
         (password.length > 0 && validLengthChar && mixChar && specialChar) &&
@@ -186,8 +184,6 @@ console.log('enter:',(email.length > 0 && errors?.email?.message === '') &&
     ) {
         setIsBtnDisabled(false)
     }
-
-    console.log(stepOne,stepTwo, stepThree)
     
   },[
     firstname, 

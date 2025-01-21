@@ -30,7 +30,7 @@ const AccountRequestModal = ({ selectData, setIsShowModal }) => {
     const fetchData = async () => {
         try {
             const result = await getAccountByUserID(selectData?.user_id)
-            
+            console.log('result', result)
             if (result) {
                 setCurrentData(result[0])
             }

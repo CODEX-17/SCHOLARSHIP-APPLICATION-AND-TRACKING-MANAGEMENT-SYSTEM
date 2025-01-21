@@ -82,6 +82,29 @@ router.get('/getUpdatedAccountByUserID/:user_id', async (req, res) => {
 });
 
 //Check Hash
+router.get('/getAccounts', async (req, res) => {
+
+    const query = `SELECT * FROM accounts`;
+
+    try {
+        
+       pool.query(query, (error, data) => {
+        if (error) {
+            console.log('Error getting the accounts:', error)
+            res.status(400).send(error)
+        }
+
+        console.log('Succefully get all accounts.')
+        res.status(200).json(data)
+       })
+
+    } catch (error) {
+        console.log('Error in server:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+//Check Hash
 router.post('/checkAccounts', async (req, res) => {
     const { email, password } = req.body;
     const query = `SELECT * FROM accounts WHERE email=? AND account_status='approved'`;
@@ -187,7 +210,7 @@ router.post('/createAccount', upload.fields([
     request_id, request_type, 
     user_id, program_id, 
     date, time, request_status ) 
-    VALUES(?, ?, ?, ?, CURDATE(), CURTIME())`
+    VALUES(?, ?, ?, ?, CURDATE(), CURTIME(), ?)`
     
     try {
         // Insert the account into the 'accounts' table
@@ -221,7 +244,7 @@ router.post('/createAccount', upload.fields([
             pool.query(requestSql, [
                 generateUniqueId(),
                 'account',
-                generateUniqueId(),
+                user_id,
                 null,
                 'pending'
             ], (error, result) => {
@@ -564,6 +587,8 @@ router.post('/reset-password/:token', async (req, res) => {
 router.get('/getAccountByUserID/:user_id', (req, res) => {
 
     const { user_id } = req.params
+
+    console.log(req.params)
     const query = `SELECT * FROM accounts WHERE user_id=?`
 
     try {
@@ -574,6 +599,7 @@ router.get('/getAccountByUserID/:user_id', (req, res) => {
                 res.status(400).send(error)
             }
 
+            console.log('Successfully get account info.', data)
             res.status(200).json(data)
         })
 
