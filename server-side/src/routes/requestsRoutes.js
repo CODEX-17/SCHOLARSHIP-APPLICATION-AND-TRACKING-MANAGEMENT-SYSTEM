@@ -163,7 +163,7 @@ router.post('/addRequest', async (req, res) => {
                 console.log('Successfully update profile.')
                 resolve('Successfully update profile.')
             })
-        })s
+        })
 
         const mailOptions = {
             to: email,

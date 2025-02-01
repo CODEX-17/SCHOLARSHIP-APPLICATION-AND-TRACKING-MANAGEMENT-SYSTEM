@@ -5,10 +5,11 @@ import axios from 'axios';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
-const Homepage = () => {
+const Homepage = ({ changeRender }) => {
 
   const [postList, setPostList] = useState([])
   const url = 'http://localhost:5001'
+  const userDetails = JSON.parse(localStorage.getItem('user'))
 
   useEffect(() => {
     axios.get(`${url}/announcements/getAnnouncements`)
@@ -86,17 +87,30 @@ const Homepage = () => {
                                 <p>{data.anc_content}</p>
                                 {
                                     data.anc_image && 
-                                    <div className={style.imgContainer}>
-                                        <LazyLoadImage
-                                            id={style.imagePost}
-                                            height='100%'
-                                            alt="Post picture"
-                                            src={`${url}/${data.anc_image}`}
-                                            effect="blur" // You can also use "opacity" or "black-and-white"
-                                        />
-                                    </div>
+                                    <div>
+                                        <div className={style.imgContainer}>
+                                            <LazyLoadImage
+                                                id={style.imagePost}
+                                                height='100%'
+                                                alt="Post picture"
+                                                src={`${url}/${data.anc_image}`}
+                                                effect="blur" // You can also use "opacity" or "black-and-white"
+                                            />
+                                        </div>
+                                        
+                                     </div>
                                 }
-                                
+                                {
+                                    userDetails?.type === 'user' && 
+                                    <button 
+                                        style={{ 
+                                            borderRadius: 5, 
+                                            marginTop: 10 
+                                        }}
+                                        onClick={() => changeRender('my-application')}
+                                    >Apply here</button>
+                                }
+                               
                             </div>
                         ))
                     ) : (

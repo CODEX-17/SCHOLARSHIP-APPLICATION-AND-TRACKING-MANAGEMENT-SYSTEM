@@ -193,7 +193,7 @@ const DashboardPage = () => {
                 currentRender === 'announcements' && <AnnouncementTable/> ||
                 currentRender === 'accounts-request' && <AccountsRequestList/> ||
                 currentRender === 'dashboard' && <Analytics/> ||
-                currentRender === 'homepage' && <Homepage/> ||
+                currentRender === 'homepage' && <Homepage changeRender={changeRender}/> ||
                 currentRender === 'applications' && <Applications/> ||
                 currentRender === 'my-application' && <ProgramListPage/> ||
                 currentRender === 'programs' && <ProgramsPage/> ||
