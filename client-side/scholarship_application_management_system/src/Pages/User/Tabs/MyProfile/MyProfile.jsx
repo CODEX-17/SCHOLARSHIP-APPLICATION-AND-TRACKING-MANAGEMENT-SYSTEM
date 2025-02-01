@@ -52,6 +52,8 @@ const MyProfile = () => {
   const [isProfileComplete, setIsProfileComplete] = useState(false)
   const navigate = useNavigate()
 
+  const [errorFileMessage, setErrorFileMessage] = useState(false)
+
   const { 
     handleSubmit, 
     reset, 
@@ -154,41 +156,54 @@ const MyProfile = () => {
   const [certificate_of_registration_comelec, setCertificate_of_registration_comelec] = useState(null)
 
   const onSubmit = async (data) => {
-    
+    console.log('asds')
     console.log(data)
     
-    setIsLoading(true) 
-    let updated = {...data}
-    
-    updated["user_id"] = userDetails?.user_id
-    updated.coe_file = coe_file
-    updated.brgy_indigency = brgy_indigency
-    updated.cog_file = cog_file
-    updated.school_id = school_id
-    updated.parent_id = parent_id
-    updated.certificate_of_registration_comelec = certificate_of_registration_comelec
-
-    console.log(updated)
-
-    try {
-      const result = isProfileComplete ? await updateProfile(updated) : await addProfile(updated)
-
-      if (result) {
-        console.log(result.message)
-        setMessage(result.message)
-
-        setTimeout(() => {
-          setIsLoading(false)
-
-          if (!isProfileComplete) {
-            navigate('/dashboard')
-          }
-        }, 3000)
-      }
+    if (
+      cog_file && 
+      brgy_indigency && 
+      school_id && 
+      parent_id && 
+      certificate_of_registration_comelec
+    ) {
+      setErrorFileMessage(false)
+      setIsLoading(true) 
+      let updated = {...data}
       
-    } catch (error) {
-      console.log(error)
-    }
+      updated["user_id"] = userDetails?.user_id
+      updated.coe_file = coe_file
+      updated.brgy_indigency = brgy_indigency
+      updated.cog_file = cog_file
+      updated.school_id = school_id
+      updated.parent_id = parent_id
+      updated.certificate_of_registration_comelec = certificate_of_registration_comelec
+
+      console.log(updated)
+
+      try {
+        const result = isProfileComplete ? await updateProfile(updated) : await addProfile(updated)
+
+        if (result) {
+          console.log(result.message)
+          setMessage(result.message)
+
+          setTimeout(() => {
+            setIsLoading(false)
+
+            if (!isProfileComplete) {
+              navigate('/dashboard')
+            }
+          }, 3000)
+        }
+        
+      } catch (error) {
+        console.log(error)
+      }
+
+   }else {
+      setErrorFileMessage(true)
+   }
+
   }
 
   const handleUploadFile = (e, type) => {
@@ -580,93 +595,99 @@ const MyProfile = () => {
                       </div>
                   </TabPane>
                   <TabPane tab={<Files />} key="3">
-                  <div className='w-100 h-100'>  
-                      <div className='d-flex w-100'>
-                          <p id={style.subtitle}>Makesure the file uploaded is pdf format @sample.pdf</p>
-                      </div>
-                      <div className='d-flex w-100 flex-column gap-2 align-items-center justify-content-between mt-2'>
-                        <div className='row w-100 gap-2'>
-
-                          <div className='col-sm d-flex align-items-center'>
-                              <div className={style.cardUpload} style={{ border: coe_file ? '2px solid #6EC207' : 'none' }}>
-                                  <p>Certificate of Enrollment</p>
-                                  {coe_file && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(coe_file)}...</p>}
-                                  <input 
-                                    type="file"
-                                    accept='.pdf' 
-                                    onChange={(e) => handleUploadFile(e, 'coe_file')}
-                                  />
-                              </div>
-                          </div>
-
-                          <div className='col-sm d-flex align-items-center'>
-                              <div className={style.cardUpload} style={{ border: brgy_indigency ? '2px solid #6EC207' : 'none' }}>
-                                  <p>Baragay Indigency</p>
-                                  {brgy_indigency && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(brgy_indigency)}...</p>}
-                                  <input 
-                                    type="file"
-                                    accept='.pdf' 
-                                    onChange={(e) => handleUploadFile(e, 'brgy_indigency')}
-                                  />
-                              </div>
-                          </div>
-
+                    <div className='w-100 h-100'>  
+                        <div className='d-flex w-100'>
+                            <p id={style.subtitle}>Makesure the file uploaded is pdf format @sample.pdf</p>
                         </div>
+                        <div className='d-flex w-100 flex-column gap-2 align-items-center justify-content-between mt-2'>
+                          <div className='row w-100 gap-2'>
 
-                        <div className='row w-100 gap-2'>
-
-                          <div className='col-sm d-flex align-items-center'>
-                              <div className={style.cardUpload} style={{ border: cog_file ? '2px solid #6EC207' : 'none' }}>
-                                  <p>Last Sem Certificate of Grades</p>
-                                  {cog_file && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(cog_file)}...</p>}
-                                  <input 
-                                    type="file"
-                                    accept='.pdf' 
-                                    onChange={(e) => handleUploadFile(e, 'cog_file')}
-                                  />
-                              </div>
-                          </div>
-
-                          <div className='col-sm d-flex align-items-center'>
-                              <div className={style.cardUpload} style={{ border: school_id ? '2px solid #6EC207' : 'none' }}>
-                                  <p>School ID</p>
-                                  {school_id && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(school_id)}...</p>}
-                                  <input 
-                                    type="file"
-                                    accept='.pdf' 
-                                    onChange={(e) => handleUploadFile(e, 'school_id')}
-                                  />
-                              </div>
-                          </div>
-
-                        </div>
-
-                        <div className='d-flex w-100 align-items-center p-2'>
-                            <div className={style.cardUpload} style={{ border: parent_id ? '2px solid #6EC207' : 'none' }}>
-                                <p>Perent ID</p>
-                                {parent_id && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(parent_id)}...</p>}
-                                <input 
-                                    type="file"
-                                    accept='.pdf' 
-                                    onChange={(e) => handleUploadFile(e, 'parent_id')}
-                                  />
+                            <div className='col-sm d-flex align-items-center'>
+                                <div className={style.cardUpload} style={{ border: coe_file ? '2px solid #6EC207' : 'none' }}>
+                                    <p>Certificate of Enrollment</p>
+                                    {coe_file && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(coe_file)}...</p>}
+                                    <input 
+                                      type="file"
+                                      accept='.pdf' 
+                                      onChange={(e) => handleUploadFile(e, 'coe_file')}
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div className='d-flex w-100 align-items-center p-2'>
-                            <div className={style.cardUpload} style={{ border: certificate_of_registration_comelec ? '2px solid #6EC207' : 'none' }}>
-                                <p>Certificate of Registration from Comelec</p>
-                                {certificate_of_registration_comelec && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(certificate_of_registration_comelec)}...</p>}
-                                <input 
-                                    type="file"
-                                    accept='.pdf' 
-                                    onChange={(e) => handleUploadFile(e, 'certificate_of_registration_comelec')}
-                                  />
+                            <div className='col-sm d-flex align-items-center'>
+                                <div className={style.cardUpload} style={{ border: brgy_indigency ? '2px solid #6EC207' : 'none' }}>
+                                    <p>Baragay Indigency</p>
+                                    {brgy_indigency && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(brgy_indigency)}...</p>}
+                                    <input 
+                                      type="file"
+                                      accept='.pdf' 
+                                      onChange={(e) => handleUploadFile(e, 'brgy_indigency')}
+                                    />
+                                </div>
                             </div>
+
+                          </div>
+
+                          <div className='row w-100 gap-2'>
+
+                            <div className='col-sm d-flex align-items-center'>
+                                <div className={style.cardUpload} style={{ border: cog_file ? '2px solid #6EC207' : 'none' }}>
+                                    <p>Last Sem Certificate of Grades</p>
+                                    {cog_file && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(cog_file)}...</p>}
+                                    <input 
+                                      type="file"
+                                      accept='.pdf' 
+                                      onChange={(e) => handleUploadFile(e, 'cog_file')}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className='col-sm d-flex align-items-center'>
+                                <div className={style.cardUpload} style={{ border: school_id ? '2px solid #6EC207' : 'none' }}>
+                                    <p>School ID</p>
+                                    {school_id && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(school_id)}...</p>}
+                                    <input 
+                                      type="file"
+                                      accept='.pdf' 
+                                      onChange={(e) => handleUploadFile(e, 'school_id')}
+                                    />
+                                </div>
+                            </div>
+
+                          </div>
+
+                          <div className='d-flex w-100 align-items-center p-2'>
+                              <div className={style.cardUpload} style={{ border: parent_id ? '2px solid #6EC207' : 'none' }}>
+                                  <p>Perent ID</p>
+                                  {parent_id && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(parent_id)}...</p>}
+                                  <input 
+                                      type="file"
+                                      accept='.pdf' 
+                                      onChange={(e) => handleUploadFile(e, 'parent_id')}
+                                    />
+                              </div>
+                          </div>
+
+                          <div className='d-flex w-100 align-items-center p-2'>
+                              <div className={style.cardUpload} style={{ border: certificate_of_registration_comelec ? '2px solid #6EC207' : 'none' }}>
+                                  <p>Certificate of Registration from Comelec</p>
+                                  {certificate_of_registration_comelec && <p style={{ fontSize: '8pt' }}>Filename : {handleFileNameDisplay(certificate_of_registration_comelec)}...</p>}
+                                  <input 
+                                      type="file"
+                                      accept='.pdf' 
+                                      onChange={(e) => handleUploadFile(e, 'certificate_of_registration_comelec')}
+                                    />
+                              </div>
+                          </div>
+                          
+                          {
+                            errorFileMessage && <p style={{ color: 'red', fontSize: '1rem' }}>No files uploaded.</p>
+                          }
+                            
+              
+                          
                         </div>
-                        
-                      </div>
-                  </div>
+                    </div>
                   </TabPane>
                 </Tabs>
         

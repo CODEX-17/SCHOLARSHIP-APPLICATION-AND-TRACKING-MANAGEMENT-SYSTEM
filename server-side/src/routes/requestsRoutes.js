@@ -8,6 +8,17 @@ const generateUniqueId = () => {
     return uuidv4();
 }
 
+const nodemailer = require('nodemailer');
+const emailPassword = 'sokb hpyq oevl gmkl';
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'librarysmart69@gmail.com',
+      pass: emailPassword
+    }
+});
+
 //API ALL REQUEST
 router.get('/getAllRequest', (req, res) => {
 
@@ -152,7 +163,29 @@ router.post('/addRequest', async (req, res) => {
                 console.log('Successfully update profile.')
                 resolve('Successfully update profile.')
             })
-        })
+        })s
+
+        const mailOptions = {
+            to: email,
+            from: 'librarysmart69@gmail.com',
+            subject: 'Scholarship Application Received',
+            text: `Thank you for submitting your scholarship application. We have successfully received your application, and it is currently under review by our administration team.
+        
+        Please note that the approval process may take some time, and we will notify you once a decision has been made. Until then, we appreciate your patience.
+        
+        If you have any questions or need further assistance, feel free to contact us.
+        
+        Best regards,
+        The Administration Team`
+        };
+      
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                return res.status(500).json({ message: 'Error sending email' });
+            }
+            res.status(200).json({ message: 'Reset email sent' });
+        });
 
         await Promise.all([requestAdd, accountUpdateStatus, profileUpdateStatus])
         res.status(200).json({

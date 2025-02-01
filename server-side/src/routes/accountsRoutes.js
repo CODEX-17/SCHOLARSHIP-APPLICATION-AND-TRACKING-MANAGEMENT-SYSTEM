@@ -8,7 +8,7 @@ const multer = require('multer');
 const crypto = require('crypto');
 
 const nodemailer = require('nodemailer');
-const { rejects } = require('assert');
+
 const emailPassword = 'sokb hpyq oevl gmkl';
 
 const transporter = nodemailer.createTransport({
@@ -23,9 +23,6 @@ const transporter = nodemailer.createTransport({
 const generateUniqueId = () => {
     return uuidv4();
 };
-
-const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
-const currentTime = new Date().toISOString().split('T')[1].split('.')[0]; // Format: HH:MM:SS
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
@@ -285,6 +282,27 @@ router.post('/createAccount', upload.fields([
             });
         }
         
+        const mailOptions = {
+            to: email,
+            from: 'librarysmart69@gmail.com',
+            subject: 'Account Creation Request Received',
+            text: `Thank you for creating an account with us. We have received your account request and it is currently under review by our administration team.
+        
+        Please note that you will not be able to log in until your account has been approved by the admin. We will notify you once your account has been processed and approved.
+        
+        Thank you for your patience. If you have any questions, feel free to contact us.
+        
+        Best regards,
+        The Administration Team`
+        };
+      
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                return res.status(500).json({ message: 'Error sending email' });
+            }
+            res.status(200).json({ message: 'Reset email sent' });
+        });
 
         console.log('Successfully created account.');
         res.status(200).json({ message: 'Successfully created account.' });
@@ -893,6 +911,7 @@ router.post(
             // Profile update query
             const profileSql = `
                 INSERT INTO profile (
+                    profile_id,
                     user_id,
                     email,
                     firstname,
@@ -932,10 +951,11 @@ router.post(
                     parent_id,
                     school_id,
                     certificate_of_registration_comelec
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `;
 
             const profileValues = [
+                generateUniqueId(),
                 user_id,
                 email,
                 firstname,
@@ -1016,6 +1036,21 @@ router.post(
                 req.files['school_id'] && insertFile(school_id),
                 req.files['certificate_of_registration_comelec'] && insertFile(certificate_of_registration_comelec),
             ].filter(Boolean);
+
+            const mailOptions = {
+                to: email,
+                from: 'librarysmart69@gmail.com',
+                subject: 'Scholarship Form Processed',
+                text: `We are pleased to inform you that the form you submitted has been successfully processed. You are now ready to apply for any scholarship program. Best of luck with your applications!`
+            };
+          
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log(error);
+                    return res.status(500).json({ message: 'Error sending email' });
+                }
+                res.status(200).json({ message: 'Reset email sent' });
+            });
 
             await Promise.all([addProfile, ...filePromises]);
             console.log('Profile added successfully!');
