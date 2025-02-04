@@ -4,7 +4,6 @@ import style from './ProgramsPage.module.css'
 import axios from 'axios';
 import { AiFillProfile } from "react-icons/ai";
 import { BiExit } from "react-icons/bi";
-import { FaDownload } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
 import NotificationComponent from '../Components/NotificationComponent';
 import { FiPlusCircle } from "react-icons/fi";
@@ -129,8 +128,8 @@ const ProgramsPage = () => {
         },
         {
             title: 'Action',
-            render: (record) => 
-            <div className='d-flex gap-2'>
+            render: (record, index) => 
+            <div className='d-flex gap-2' key={index}>
                 <button 
                     className={style.btn} 
                     title='View Details' 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import style from './LoginPage.module.css'
-import logo from '../../assets/tabuk_logo.png'
+import logo from '../../../public/assets/tabuk_logo.png'
 import { TbEyeClosed } from "react-icons/tb";
 import { TbEye } from "react-icons/tb";
 import { IoIosArrowRoundForward } from "react-icons/io";

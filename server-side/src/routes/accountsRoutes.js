@@ -314,33 +314,79 @@ router.post('/createAccount', upload.fields([
 });
 
 //UPDATE ACCOUNT
-router.post('/updateAccounts', upload.single('image'), (req, res) => {
+router.post('/updateAccounts', upload.single('image'), async (req, res) => {
 
-    const { firstname, middlename, lastname, email, user_id, image } = req.body
+    const { 
+        firstname, 
+        middlename, 
+        lastname, 
+        email, 
+        user_id, 
+        image 
+    } = req.body
+
     console.log(req.file)
     console.log(req.body)
 
     const filename = req.file ? req.file.filename : image
 
-    const query = 'UPDATE accounts SET firstname=?, middlename=?, lastname=?, email=?, profile_pic=? WHERE user_id=?'
+    const queryAccount = 'UPDATE accounts SET firstname=?, middlename=?, lastname=?, email=?, profile_pic=? WHERE user_id=?'
+    const queryAccountValues = [firstname, middlename, lastname, email, filename, user_id]
 
-    pool.query(query,[firstname, middlename, lastname, email, image, user_id], (error, data) => {
-        if (error) {
-            console.log(error)
-            res.status(500).send(error)
-        }
+    const processQuery = (query, values, type) => {
+        return new Promise ((resolve, reject) => {
+            pool.query(query, values, (error, data) => {
+                if (error) {
+                    console.log(`Error query ${type}:`, error)
+                    reject(`Error query ${type}:`, error)
+                }
 
-        console.log('Successfully update account info.')
-        res.status(200).json({
-            message: 'Successfully update account info.',
-            object: {
-                firstname, 
-                middlename, 
-                lastname,
-                email,
-                filename,
-            }
+                resolve(`Successfully query ${type}.`)
+            })
         })
+    }
+
+    // File insertion query
+    const insertFile = (file) => {
+
+        if (!file) return Promise.resolve();
+
+        const fileSql = `
+            INSERT INTO files (filename, date, time, file_path, file_id)
+            VALUES (?, CURDATE(), CURTIME(), ?, ?)
+        `;
+
+        const fileValues = [file?.filename, file?.path, generateUniqueId()];
+
+        return new Promise((resolve, reject) => {
+
+            pool.query(fileSql, fileValues, (error, result) => {
+                if (error) {
+                    console.error('Error in adding file:', error);
+                    return reject({ message: 'Error in adding file', error });
+                }
+
+                console.log('Successfully added file.');
+                resolve('Successfully added file.');
+            });
+        });
+    };
+
+    await Promise.all([
+        processQuery(queryAccount, queryAccountValues),
+        insertFile(req.file)
+    ])
+
+    console.log('Successfully update account info.')
+    res.status(200).json({
+        message: 'Successfully update account info.',
+        object: {
+            firstname, 
+            middlename, 
+            lastname,
+            email,
+            filename,
+        }
     })
 })
 

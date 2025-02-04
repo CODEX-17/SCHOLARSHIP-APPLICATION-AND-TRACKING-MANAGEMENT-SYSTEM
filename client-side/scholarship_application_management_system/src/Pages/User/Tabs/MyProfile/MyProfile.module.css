@@ -1,21 +1,21 @@
 @font-face {
   font-family: black;
-  src: url('../assets/fonts/black.ttf');
+  src: url('../../public/assets/fonts/black.ttf');
 }
 
 @font-face {
   font-family: bold;
-  src: url('../assets/fonts/bold.ttf');
+  src: url('../../public/assets/fonts/bold.ttf');
 }
 
 @font-face {
   font-family: light;
-  src: url('../assets/fonts/light.ttf');
+  src: url('../../public/assets/fonts/light.ttf');
 }
 
 @font-face {
   font-family: normal;
-  src: url('../assets/fonts/regular.ttf');
+  src: url('../../public/assets/fonts/regular.ttf');
 }
 
 

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import style from './ManageAccountComponent.module.css'
 import { IoMdSettings } from "react-icons/io";
 import { BiExit } from "react-icons/bi";
@@ -7,11 +7,12 @@ import { useForm } from 'react-hook-form'
 import { sendPasswordLink } from '../Auth/password';
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import { updateAccount } from '../Services/accountServices'
+import { UserContext } from '../context/userContext';
 
 
 const ManageAccountComponent = ({ setIsShowManageAccount, notificationConfig }) => {
 
-  const userDetails = JSON.parse(localStorage.getItem('user')) || null
+  const { userDetails, setUserDetails } = useContext(UserContext)
 
   const [image, setImage] = useState(null)
   const [isShowInfoBox, setIsShowInfoBox] = useState(false)
@@ -46,6 +47,7 @@ const ManageAccountComponent = ({ setIsShowManageAccount, notificationConfig }) 
         formData.append('image', userDetails?.image)
     }
 
+
     try {
         const result =  await updateAccount(formData)
         console.log(result)
@@ -59,9 +61,7 @@ const ManageAccountComponent = ({ setIsShowManageAccount, notificationConfig }) 
             updatedUserDetails.lastname = data.lastname
             updatedUserDetails.image = data.filename
 
-            console.log(updatedUserDetails)
-
-            localStorage.setItem('user', JSON.stringify(updatedUserDetails))
+            setUserDetails(updatedUserDetails)
             notificationConfig(result.message, true)
             setIsShowManageAccount(false)
         }

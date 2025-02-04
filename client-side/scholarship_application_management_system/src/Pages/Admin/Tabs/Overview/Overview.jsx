@@ -28,57 +28,7 @@ const Overview = () => {
   const [selectedGraphData, setSelectedGraphData] = useState('daily')
 
 
-  const handleGetLastYears = () => {
-
-    const currentYear = new Date().getFullYear()
-    const lastFiveYears = []
-
-    for (let i = 0; i < 5; i++) {
-      lastFiveYears.push(currentYear - i)
-    }
-
-    return lastFiveYears
-  }
-
-  const listOfYear = handleGetLastYears()
-
-  const monthlyGraph = [
-    {
-      name: "Monday",
-      approved: 0,
-      rejected: 0,
-      pending: 0,
-    },
-    {
-      name: "Tuesday",
-      approved: 0,
-      rejected: 0,
-      pending: 0,
-    },
-    {
-      name: "Wednesday",
-      approved: 0,
-      rejected: 0,
-      pending: 0,
-    },
-    {
-      name: "Thursday",
-      approved: 0,
-      rejected: 0,
-      pending: 0,
-    },
-    {
-      name: "Friday",
-      approved: 0,
-      rejected: 0,
-      pending: 0,
-    },
-  ]
-
-  const [yearlyGraph, setYearlyGraph] = useState([])
-
   const [graphData, setGraphData] = useState([]) 
-
 
   const [prograssCircleColor, setPrograssCircleColor] = useState('#6EC207')
   const [progressCirclePercent, setPrograssCirclePercent] = useState(80)
@@ -226,8 +176,6 @@ const Overview = () => {
       let rejected = 0
       let pending = 0
 
-      console.log(data[i])
-
       if (data[i].request_type === 'program') {
 
         const [year, month, day] = data[i].date.split('-')
@@ -239,8 +187,6 @@ const Overview = () => {
         }else {
           pending += 1
         }
-
-        console.log('approved', approved, 'rej', rejected, 'pen',pending)
 
         if (yearlyData.includes(year)) {
           yearlyData[i].approved += approved
@@ -276,10 +222,6 @@ const Overview = () => {
       }
       
     }
-
-    console.log('yearly', yearlyData)
-    console.log('monthly', monthly)
-    console.log('day', daily)
     
     return selectedGraphData === 'daily' && daily || selectedGraphData === 'monthly' && monthly || selectedGraphData === 'yearly' && yearlyData
 
@@ -314,7 +256,6 @@ const Overview = () => {
       }
       if (profiles) setProfilesList(profiles)
 
-      console.log(requestsList)
     }
 
     fetchData()

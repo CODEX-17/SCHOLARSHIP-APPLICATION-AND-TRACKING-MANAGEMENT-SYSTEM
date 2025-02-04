@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import style from './ResetPasswordPage.module.css'
-import logo from '../../assets/tabuk_logo.png'
+import logo from '../../../public/assets/tabuk_logo.png'
 import { useForm } from 'react-hook-form'
 import { MdLockReset } from "react-icons/md";
 import LoadingComponents from '../../Components/LoadingComponents'

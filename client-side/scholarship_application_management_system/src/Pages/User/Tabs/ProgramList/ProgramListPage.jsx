@@ -14,7 +14,10 @@ const PendingPage = () => {
     <div className='w-100 h-100 d-flex flex-column align-items-center justify-content-center '>
       <h2>Application Submitted Successfully</h2>
       <p className='text-center mb-5'>Thank you for submitting your application! Please allow some time for the admin to review and approve your request. <br/> You will receive updates regarding the status of your application via email. Stay tuned!</p>
-      <button style={{ width: 300, borderRadius: 5 }}>Check Email</button>
+      <button 
+        style={{ width: 300, borderRadius: 5 }} 
+        onClick={() => window.location.href = `https://gmail.com/`}
+      >Check Email</button>
     </div>
   )
 }
@@ -74,6 +77,7 @@ const ProgramListPage = () => {
       const data = {
         user_id: userDetails?.user_id,
         program_id: currentProgram?.program_id,
+        email: userDetails?.email
       }
 
       const result = await addRequest(data)

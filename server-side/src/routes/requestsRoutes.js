@@ -110,7 +110,8 @@ router.post('/addRequest', async (req, res) => {
 
     const { 
         user_id, 
-        program_id
+        program_id,
+        email,
     } = req.body
 
     console.log(req.body)

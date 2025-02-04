@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import style from './DashboardPage.module.css'
-import logo from '../assets/tabuk_logo.png'
+import logo from '../../public/assets/tabuk_logo.png'
 import { GiHamburgerMenu } from "react-icons/gi";
 import { BiLogOutCircle } from "react-icons/bi";
 import Applications from './Admin/Tabs/Applications/Applications'
 import { useNavigate } from 'react-router-dom';
-import MyApplication from './MyApplication';
 import ManageAccountComponent from '../Components/ManageAccountComponent';
 import ProgramsPage from './ProgramsPage';
 import ProgramListPage from './User/Tabs/ProgramList/ProgramListPage';
@@ -14,7 +13,6 @@ import ApplicantsList from './ApplicantsList';
 import Homepage from './Homepage';
 import AnnouncementTable from './AnnouncementTable';
 import Analytics from './Analytics';
-import { IoPerson } from "react-icons/io5";
 import { getFullname } from '../Utils/nameUtils';
 import AccountsRequestList from './Admin/Tabs/AccountsRequestList/AccountsRequestList';
 import MyProfile from './User/Tabs/MyProfile/MyProfile';
@@ -27,7 +25,6 @@ const DashboardPage = () => {
 
   const [isShowSideBar, setIsShowSideBar] = useState(true)
   const [isShowManageAccount, setIsShowManageAccount] = useState(false)
-
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user')) || null
 
@@ -56,7 +53,6 @@ const DashboardPage = () => {
         const result = await getUpdatedAccountByUserID(user?.user_id)
 
         if (result) {
-            console.log(result)
             localStorage.setItem('user', JSON.stringify(result))
         }
 
@@ -69,6 +65,7 @@ const DashboardPage = () => {
     
 
   },[])
+
 
 
   const notificationConfig = (message, status) => {
@@ -106,7 +103,7 @@ const DashboardPage = () => {
                         borderRadius: 10,
                         }}
                     >
-                        <UserProfilePicture profile_pic={user?.profile_pic}/>
+                        <UserProfilePicture/>
                     </div>
                     <h1>{getFullname()}</h1>
                     <button onClick={() => setIsShowManageAccount(true)}>Manage Account</button>

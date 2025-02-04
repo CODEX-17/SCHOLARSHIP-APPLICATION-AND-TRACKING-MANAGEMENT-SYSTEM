@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import style from './View.module.css'
 import { BiExit } from "react-icons/bi";
 import { FaDownload } from "react-icons/fa";
-import sample from '../../../../../assets/tabuk_logo.png'
+import sample from '../../../../../../public/assets/tabuk_logo.png'
 import { IoPerson } from "react-icons/io5";
 import { Tabs } from 'antd';
 import { FaLocationDot } from "react-icons/fa6";
@@ -118,6 +118,7 @@ const View = ({ data, setIsShowModal, setMessage }) => {
                             onClick={() => setIsShowModal(false)}
                         />
                         <h3>Profile Picture <FaInfoCircle/></h3>
+
                         <img className='img-fluid mb-4' src={sample} alt="profile picture" />
                         
                         {

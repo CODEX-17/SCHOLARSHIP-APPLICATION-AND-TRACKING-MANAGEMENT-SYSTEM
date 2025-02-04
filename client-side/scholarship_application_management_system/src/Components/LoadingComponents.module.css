@@ -1,6 +1,6 @@
 @font-face {
     font-family: bold;
-    src: url('../assets/fonts/bold.ttf');
+    src: url('../../public/assets/fonts/bold.ttf');
 }
 
 .container {

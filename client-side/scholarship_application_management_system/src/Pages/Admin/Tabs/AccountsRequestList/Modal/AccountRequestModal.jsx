@@ -3,7 +3,6 @@ import style from './AccountRequestModal.module.css'
 import { BiExit } from "react-icons/bi";
 import { IoPersonSharp } from "react-icons/io5";
 import { SiFiles } from "react-icons/si";
-import sample from '../../../../../assets/tabuk_logo.png'
 import { FaFile } from "react-icons/fa";
 import { getAccountByUserID, updateAccountStatus } from '../../../../../Services/accountServices';
 import ViewPDFFile from '../../../../../Components/ViewPDFFile';
